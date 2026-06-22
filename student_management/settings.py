@@ -79,7 +79,7 @@ WSGI_APPLICATION = 'student_management.wsgi.application'
 DATABASE_URL = env('DATABASE_URL')
 if DATABASE_URL:
     import re
-    m = re.match(r'postgres://(.+):(.+)@(.+):(\d+)/(.+)', DATABASE_URL)
+    m = re.match(r'postgres(?:ql)?://(.+):(.+)@(.+):(\d+)/(.+)', DATABASE_URL)
     if m:
         DATABASES = {
             'default': {
