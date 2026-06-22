@@ -4,7 +4,7 @@ services:
     runtime: python
     plan: free
     buildCommand: './build.sh'
-    startCommand: 'gunicorn student_management.wsgi --preload --workers 4 --timeout 120 --access-logfile - --error-logfile -'
+    startCommand: 'bash start.sh'
     envVars:
       - key: DJANGO_SETTINGS_MODULE
         value: student_management.settings
