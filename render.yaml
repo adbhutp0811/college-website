@@ -15,6 +15,6 @@ services:
       - key: DJANGO_ALLOWED_HOSTS
         value: '.onrender.com,127.0.0.1,localhost'
       - key: DATABASE_URL
-        value: postgresql://miracle_3wkm_user:wtLZe3I8LpJMplRlFG41o0lHxB7IXLiR@dpg-d8sophcm0tmc73aqf3dg-a.virginia-postgres.render.com/miracle_3wkm
+        value: postgresql://postgres:Adbhutpatel%402007@db.iqhhekuprbaotdwfkqul.supabase.co:5432/postgres?sslmode=require
       - key: DJANGO_EMAIL_BACKEND
         value: django.core.mail.backends.console.EmailBackend

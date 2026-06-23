@@ -81,6 +81,7 @@ WSGI_APPLICATION = 'student_management.wsgi.application'
 DATABASE_URL = env('DATABASE_URL')
 if DATABASE_URL:
     import re
+    from urllib.parse import unquote
     m = re.match(r'postgres(?:ql)?://(.+):(.+)@(.+?)(?::(\d+))?/(.+)', DATABASE_URL)
     if m:
         DATABASES = {
@@ -88,13 +89,26 @@ if DATABASE_URL:
                 'ENGINE': 'django.db.backends.postgresql',
                 'NAME': m.group(5),
                 'USER': m.group(1),
-                'PASSWORD': m.group(2),
+                'PASSWORD': unquote(m.group(2)),
                 'HOST': m.group(3),
                 'PORT': m.group(4) or '5432',
+                'OPTIONS': {'sslmode': 'require'},
             }
         }
     else:
         DATABASES = {'default': env.db()}
+elif env('DJANGO_DB_ENGINE') == 'postgresql':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': env('DB_NAME'),
+            'USER': env('DB_USER'),
+            'PASSWORD': env('DB_PASSWORD'),
+            'HOST': env('DB_HOST'),
+            'PORT': env('DB_PORT'),
+            'OPTIONS': {'sslmode': 'require'},
+        }
+    }
 elif env('DJANGO_DB_ENGINE') == 'mysql':
     DATABASES = {
         'default': {
