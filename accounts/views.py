@@ -1,6 +1,6 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, View
 from django.contrib import messages
@@ -10,6 +10,7 @@ from django.utils.text import slugify
 from .forms import LoginForm
 from students.models import Class, Student
 from results.models import Exam, Result, calculate_sgpa
+from faculty.models import Faculty
 
 class AdmissionsView(TemplateView):
     template_name = 'admissions.html'
@@ -26,42 +27,29 @@ class NIRFView(TemplateView):
 class ResearchView(TemplateView):
     template_name = 'research.html'
 
-def _faculty_initials(name):
-    parts = name.split()
-    for p in parts:
-        if not p.endswith('.'):
-            return p[0]
-    return name[0]
-
-FACULTY_DATA = [
-    {'slug': 'dr-alok-kumar', 'name': 'Dr. Alok Kumar', 'designation': 'Professor & HOD', 'qualification': 'Ph.D. (IIT Delhi)', 'department': 'Textile Technology (TT)', 'email': 'alok.kumar@mit.edu', 'experience': '15 years', 'specialization': 'Fiber Science'},
-    {'slug': 'dr-sunita-verma', 'name': 'Dr. Sunita Verma', 'designation': 'Associate Professor', 'qualification': 'Ph.D. (IIT Kanpur)', 'department': 'Textile Technology (TT)', 'email': 'sunita.verma@mit.edu', 'experience': '12 years', 'specialization': 'Yarn Manufacturing'},
-    {'slug': 'mr-rajesh-singh', 'name': 'Mr. Rajesh Singh', 'designation': 'Assistant Professor', 'qualification': 'M.Tech (NIT Patna)', 'department': 'Textile Technology (TT)', 'email': 'rajesh.singh@mit.edu', 'experience': '8 years', 'specialization': 'Fabric Design'},
-    {'slug': 'ms-neha-gupta', 'name': 'Ms. Neha Gupta', 'designation': 'Assistant Professor', 'qualification': 'M.Tech (NIT Jalandhar)', 'department': 'Textile Technology (TT)', 'email': 'neha.gupta@mit.edu', 'experience': '6 years', 'specialization': 'Textile Testing'},
-    {'slug': 'dr-priya-sharma', 'name': 'Dr. Priya Sharma', 'designation': 'Professor & HOD', 'qualification': 'Ph.D. (IIT Bombay)', 'department': 'Textile Chemistry (TC)', 'email': 'priya.sharma@mit.edu', 'experience': '14 years', 'specialization': 'Dyeing Chemistry'},
-    {'slug': 'dr-manoj-tiwari', 'name': 'Dr. Manoj Tiwari', 'designation': 'Associate Professor', 'qualification': 'Ph.D. (IIT Roorkee)', 'department': 'Textile Chemistry (TC)', 'email': 'manoj.tiwari@mit.edu', 'experience': '11 years', 'specialization': 'Polymer Chemistry'},
-    {'slug': 'ms-anjali-mishra', 'name': 'Ms. Anjali Mishra', 'designation': 'Assistant Professor', 'qualification': 'M.Tech (MNNIT Allahabad)', 'department': 'Textile Chemistry (TC)', 'email': 'anjali.mishra@mit.edu', 'experience': '7 years', 'specialization': 'Textile Finishing'},
-    {'slug': 'dr-ip-mishra', 'name': 'Dr. I.P. Mishra', 'designation': 'Professor & HOD', 'qualification': 'Ph.D. (IIT BHU)', 'department': 'Computer Science & Engineering (CSE)', 'email': 'ip.mishra@mit.edu', 'experience': '16 years', 'specialization': 'Artificial Intelligence'},
-    {'slug': 'dr-rohan-gupta', 'name': 'Dr. Rohan Gupta', 'designation': 'Associate Professor', 'qualification': 'Ph.D. (NIT Trichy)', 'department': 'Computer Science & Engineering (CSE)', 'email': 'rohan.gupta@mit.edu', 'experience': '10 years', 'specialization': 'Cybersecurity'},
-    {'slug': 'mr-abhishek-pandey', 'name': 'Mr. Abhishek Pandey', 'designation': 'Assistant Professor', 'qualification': 'M.Tech (IIT Guwahati)', 'department': 'Computer Science & Engineering (CSE)', 'email': 'abhishek.pandey@mit.edu', 'experience': '5 years', 'specialization': 'Cloud Computing'},
-]
-
-for f in FACULTY_DATA:
-    f['initial'] = _faculty_initials(f['name'])
-
 
 class FacultyView(TemplateView):
     template_name = 'faculty.html'
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-        dept_order = ['Textile Technology (TT)', 'Textile Chemistry (TC)', 'Computer Science & Engineering (CSE)']
+        from faculty.models import Faculty
+        faculty_qs = Faculty.objects.filter(is_active=True).prefetch_related('classes')
+        dept_order = list(dict.fromkeys(faculty_qs.values_list('classes__name', flat=True)))
         departments = []
-        for dname in dept_order:
-            members = [f for f in FACULTY_DATA if f['department'] == dname]
-            if members:
-                departments.append({'name': dname, 'faculty': members})
+        for code in dept_order:
+            if not code:
+                continue
+            members = faculty_qs.filter(classes__name=code).distinct()
+            if members.exists():
+                full_name = DEPT_NAMES.get(code, [code])[0] if isinstance(DEPT_NAMES.get(code), (list, tuple)) else DEPT_NAMES.get(code, code)
+                departments.append({
+                    'name': f'{full_name} ({code})',
+                    'code': code,
+                    'faculty': members,
+                })
         ctx['departments'] = departments
+        ctx['total_faculty'] = faculty_qs.count()
         return ctx
 
 
@@ -70,15 +58,8 @@ class FacultyDetailView(TemplateView):
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-        slug = kwargs['slug']
-        faculty = None
-        for f in FACULTY_DATA:
-            if f['slug'] == slug:
-                faculty = f
-                break
-        ctx['faculty'] = faculty
-        if not faculty:
-            ctx['error'] = 'Faculty member not found.'
+        from faculty.models import Faculty
+        ctx['faculty'] = get_object_or_404(Faculty, slug=kwargs['slug'])
         return ctx
 
 class SyllabusView(TemplateView):

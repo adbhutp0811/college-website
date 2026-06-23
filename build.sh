@@ -14,5 +14,6 @@ python manage.py seed_club_images
 python manage.py seed_club_photos
 python manage.py seed_student_photos
 python manage.py seed_timetable
+python manage.py seed_faculty
 
 echo "Build complete"

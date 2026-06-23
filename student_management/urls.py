@@ -22,6 +22,7 @@ urlpatterns = [
     path('hostel/', include('hostel.urls', namespace='hostel')),
     path('grievances/', include('grievances.urls', namespace='grievances')),
     path('exam-forms/', include('exam_forms.urls', namespace='exam_forms')),
+    path('faculty/', include('faculty.urls', namespace='faculty')),
 ]
 
 if settings.DEBUG:

@@ -45,9 +45,13 @@
                 <div class="col-md-3 col-6">
                     <a href="{% url 'accounts:faculty_detail' f.slug %}" style="text-decoration:none;color:inherit;">
                         <div class="faculty-card shadow-sm">
+                            {% if f.profile_pic %}
+                            <img src="{{ f.profile_pic.url }}" alt="{{ f.full_name }}" class="rounded-circle mx-auto" style="width:70px;height:70px;object-fit:cover;">
+                            {% else %}
                             <div class="bg-secondary text-white d-flex align-items-center justify-content-center rounded-circle mx-auto" style="width:70px;height:70px;font-size:1.5rem;">{{ f.initial }}</div>
-                            <h6 class="fw-bold mt-2 small">{{ f.name }}</h6>
-                            <p class="text-muted mb-0" style="font-size:0.75rem;">{{ f.designation }}</p>
+                            {% endif %}
+                            <h6 class="fw-bold mt-2 small">{{ f.full_name }}</h6>
+                            <p class="text-muted mb-0" style="font-size:0.75rem;">{{ f.designation_display }}</p>
                             <p class="text-muted mb-0" style="font-size:0.7rem;">{{ f.qualification }}</p>
                         </div>
                     </a>
@@ -58,7 +62,7 @@
         {% endfor %}
     </div>
     <div class="mt-4 text-center">
-        <p class="text-muted small">Total Faculty: <strong>65</strong> | PhD Holders: <strong>28</strong> | Industry Experience: <strong>40%</strong></p>
+        <p class="text-muted small">Total Faculty: <strong>{{ total_faculty }}</strong></p>
     </div>
 </div>
 <footer style="background:var(--primary);color:rgba(255,255,255,0.7);padding:20px 0;margin-top:30px;">

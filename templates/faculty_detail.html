@@ -32,9 +32,13 @@
 {% if faculty %}
 <div class="page-header">
     <div class="container text-center">
+        {% if faculty.profile_pic %}
+        <img src="{{ faculty.profile_pic.url }}" alt="{{ faculty.full_name }}" class="rounded-circle mx-auto mb-3" style="width:100px;height:100px;object-fit:cover;border:3px solid var(--accent);">
+        {% else %}
         <div class="bg-secondary text-white d-flex align-items-center justify-content-center rounded-circle mx-auto mb-3" style="width:100px;height:100px;font-size:2.5rem;border:3px solid var(--accent);">{{ faculty.initial }}</div>
-        <h1 class="fw-bold display-5">{{ faculty.name }}</h1>
-        <p class="mb-0 opacity-75">{{ faculty.designation }}</p>
+        {% endif %}
+        <h1 class="fw-bold display-5">{{ faculty.full_name }}</h1>
+        <p class="mb-0 opacity-75">{{ faculty.designation_display }}</p>
     </div>
 </div>
 <div class="container py-5">
@@ -46,11 +50,11 @@
                     <div class="row g-4">
                         <div class="col-md-6">
                             <div class="info-label">Full Name</div>
-                            <div class="info-value">{{ faculty.name }}</div>
+                            <div class="info-value">{{ faculty.full_name }}</div>
                         </div>
                         <div class="col-md-6">
                             <div class="info-label">Designation</div>
-                            <div class="info-value">{{ faculty.designation }}</div>
+                            <div class="info-value">{{ faculty.designation_display }}</div>
                         </div>
                         <div class="col-md-6">
                             <div class="info-label">Department</div>
@@ -71,6 +75,10 @@
                         <div class="col-md-6">
                             <div class="info-label">Email</div>
                             <div class="info-value">{{ faculty.email }}</div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-label">Employee ID</div>
+                            <div class="info-value"><code>{{ faculty.employee_id }}</code></div>
                         </div>
                     </div>
                 </div>

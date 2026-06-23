@@ -3,6 +3,12 @@ from pathlib import Path
 
 import environ
 
+try:
+    import pymysql
+    pymysql.install_as_MySQLdb()
+except ImportError:
+    pass
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 env = environ.Env(
@@ -17,7 +23,7 @@ env = environ.Env(
     DATABASE_URL=(str, ''),
 )
 
-environ.Env.read_env(BASE_DIR / '.env')
+environ.Env.read_env(BASE_DIR / '.env', overwrite=True)
 
 SECRET_KEY = env('DJANGO_SECRET_KEY', default='django-insecure-dev-key-change-in-production')
 DEBUG = env('DJANGO_DEBUG')
@@ -46,6 +52,7 @@ INSTALLED_APPS = [
     'hostel',
     'grievances',
     'exam_forms',
+    'faculty',
 ]
 
 MIDDLEWARE = [
@@ -78,9 +85,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'student_management.wsgi.application'
 
-ON_RENDER = os.environ.get('RENDER', False)
-DATABASE_URL = os.environ.get('DATABASE_URL') or env('DATABASE_URL')
-
+DATABASE_URL = env('DATABASE_URL')
 if DATABASE_URL:
     import re
     from urllib.parse import unquote
@@ -89,7 +94,7 @@ if DATABASE_URL:
         DATABASES = {
             'default': {
                 'ENGINE': 'django.db.backends.postgresql',
-                'NAME': m.group(5).split('?')[0],
+                'NAME': m.group(5),
                 'USER': m.group(1),
                 'PASSWORD': unquote(m.group(2)),
                 'HOST': m.group(3),
@@ -126,11 +131,6 @@ elif env('DJANGO_DB_ENGINE') == 'mysql':
             },
         }
     }
-elif ON_RENDER:
-    raise RuntimeError(
-        'DATABASE_URL must be set on Render. '
-        'Check render.yaml env vars are applied.'
-    )
 else:
     import sqlite3
     DB_PATH = str(BASE_DIR / 'db.sqlite3')
