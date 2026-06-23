@@ -14,7 +14,19 @@ services:
         value: 'False'
       - key: DJANGO_ALLOWED_HOSTS
         value: '.onrender.com,127.0.0.1,localhost'
+      - key: DJANGO_DB_ENGINE
+        value: postgresql
       - key: DATABASE_URL
-        value: postgresql://postgres:Adbhutpatel%402007@db.iqhhekuprbaotdwfkqul.supabase.co:5432/postgres?sslmode=require
+        value: "postgresql://postgres:Adbhutpatel%402007@db.iqhhekuprbaotdwfkqul.supabase.co:5432/postgres?sslmode=require"
+      - key: DB_NAME
+        value: postgres
+      - key: DB_USER
+        value: postgres
+      - key: DB_PASSWORD
+        value: "Adbhutpatel@2007"
+      - key: DB_HOST
+        value: db.iqhhekuprbaotdwfkqul.supabase.co
+      - key: DB_PORT
+        value: "5432"
       - key: DJANGO_EMAIL_BACKEND
         value: django.core.mail.backends.console.EmailBackend
