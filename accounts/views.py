@@ -250,6 +250,10 @@ class CollegeHomeView(TemplateView):
             {'title': 'Placements', 'icon': 'bi-briefcase', 'url': '/placements/drives/'},
             {'title': 'Hostel', 'icon': 'bi-building', 'url': '/hostel/'},
             {'title': 'NIRF', 'icon': 'bi-trophy', 'url': '/accounts/nirf/'},
+            {'title': 'Photo Gallery', 'icon': 'bi-images', 'url': '/gallery/'},
+            {'title': 'Alumni', 'icon': 'bi-people-fill', 'url': '/alumni/'},
+            {'title': 'Elections', 'icon': 'bi-person-check', 'url': '/elections/'},
+            {'title': 'Pay Online', 'icon': 'bi-wallet', 'url': '/fees/pay-online/'},
         ]
         return context
 

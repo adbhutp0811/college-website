@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}Payment Successful{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card border-success">
+            <div class="card-body text-center py-5">
+                <i class="bi bi-check-circle-fill text-success" style="font-size:4rem;"></i>
+                <h3 class="mt-3 text-success">Payment Successful!</h3>
+                <hr>
+                <p><strong>Transaction ID:</strong> <code>{{ payment.transaction_id }}</code></p>
+                <p><strong>Fee Head:</strong> {{ payment.fee_structure.name }}</p>
+                <p><strong>Amount Paid:</strong> ₹{{ payment.amount_paid }}</p>
+                <p><strong>Status:</strong> <span class="badge bg-success">{{ payment.get_status_display }}</span></p>
+                {% if gateway != 'demo' %}
+                <p><strong>Gateway:</strong> {{ gateway|title }}</p>
+                {% endif %}
+                <p><strong>Date:</strong> {{ payment.paid_at|date:"d M Y H:i" }}</p>
+                <hr>
+                <a href="{% url 'fees:student_fees' %}" class="btn btn-primary"><i class="bi bi-arrow-left"></i> Back to Fees</a>
+                <a href="{% url 'fees:payment_history' %}" class="btn btn-outline-secondary"><i class="bi bi-clock-history"></i> Payment History</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

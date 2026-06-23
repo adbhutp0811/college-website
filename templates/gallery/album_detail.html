@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ album.title }} - Photo Gallery</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *{font-family:'Inter',sans-serif;}
+        :root{--primary:#0b1d3a;--accent:#f0a500;}
+        .page-header{background:linear-gradient(135deg,#0b1d3a,#1a3a6b);color:#fff;padding:50px 0 40px;position:relative;overflow:hidden;}
+        .page-header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--accent),#ff6b35);}
+        .nav-link-main{color:#333!important;font-weight:500;padding:1.2rem 0.9rem!important;font-size:0.88rem;transition:all 0.2s;border-bottom:3px solid transparent;text-decoration:none;}
+        .nav-link-main:hover,.nav-link-main.active{color:var(--primary)!important;border-bottom-color:var(--accent);}
+        .photo-card{border-radius:10px;overflow:hidden;transition:0.2s;cursor:pointer;position:relative;}
+        .photo-card:hover{box-shadow:0 4px 20px rgba(0,0,0,0.15);}
+        .photo-card img{width:100%;height:240px;object-fit:cover;transition:0.3s;}
+        .photo-card:hover img{transform:scale(1.03);}
+        .photo-overlay{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,0.6));color:#fff;padding:1rem;opacity:0;transition:0.2s;}
+        .photo-card:hover .photo-overlay{opacity:1;}
+    </style>
+</head>
+<body>
+<nav style="background:#fff;box-shadow:0 2px 15px rgba(0,0,0,0.06);">
+    <div class="container d-flex justify-content-between align-items-center" style="padding:8px 0;">
+        <a href="/" style="font-weight:800;color:var(--primary);text-decoration:none;font-size:1.1rem;"><i class="bi bi-mortarboard-fill me-2" style="color:var(--accent);"></i>Miracle Institute</a>
+        <div><a href="/" class="nav-link-main d-inline-block">Home</a><a href="{% url 'gallery:album_list' %}" class="nav-link-main d-inline-block">Gallery</a></div>
+    </div>
+</nav>
+
+<div class="page-header">
+    <div class="container">
+        <h1 class="fw-bold display-5">{{ album.title }}</h1>
+        {% if album.description %}
+        <p class="mb-0 opacity-75">{{ album.description }}</p>
+        {% endif %}
+        <p class="mb-0 mt-2"><span class="badge bg-light text-dark">{{ album.photos.count }} photo{{ album.photos.count|pluralize }}</span></p>
+    </div>
+</div>
+<div class="container py-4">
+    <div class="row g-3">
+        {% for photo in album.photos.all %}
+        <div class="col-md-4 col-lg-3">
+            <div class="photo-card shadow-sm" data-bs-toggle="modal" data-bs-target="#photoModal{{ photo.pk }}">
+                <img src="{{ photo.image.url }}" alt="{{ photo.title|default:'Photo' }}" loading="lazy">
+                <div class="photo-overlay">
+                    {% if photo.title %}<small class="fw-bold">{{ photo.title }}</small>{% endif %}
+                    {% if photo.caption %}<br><small>{{ photo.caption|truncatewords:8 }}</small>{% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="photoModal{{ photo.pk }}" tabindex="-1">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content border-0">
+                    <div class="modal-body p-0 position-relative">
+                        <button type="button" class="btn-close position-absolute top-0 end-0 m-3 bg-light rounded-circle p-2 z-1" data-bs-dismiss="modal" style="opacity:0.8;"></button>
+                        <img src="{{ photo.image.url }}" alt="{{ photo.title|default:'Photo' }}" style="width:100%;border-radius:8px;">
+                        {% if photo.title or photo.caption %}
+                        <div class="p-3">
+                            {% if photo.title %}<h6 class="fw-bold mb-1">{{ photo.title }}</h6>{% endif %}
+                            {% if photo.caption %}<p class="text-muted small mb-0">{{ photo.caption }}</p>{% endif %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <i class="bi bi-image display-1 text-muted"></i>
+            <h4 class="mt-3 text-muted">No photos in this album yet</h4>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="text-center mt-4">
+        <a href="{% url 'gallery:album_list' %}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i>Back to Albums</a>
+    </div>
+</div>
+<footer style="background:var(--primary);color:rgba(255,255,255,0.7);padding:20px 0;margin-top:30px;">
+    <div class="container text-center small">&copy; 2026 Miracle Institute of Technology</div>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

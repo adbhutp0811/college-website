@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Upload Photos - {{ album.title }}{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4><i class="bi bi-upload"></i> Upload Photos - {{ album.title }}</h4>
+    <a href="{% url 'gallery:manage_albums' %}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i> Back</a>
+</div>
+<div class="row g-4">
+    <div class="col-lg-5">
+        <div class="card shadow-sm">
+            <div class="card-header"><i class="bi bi-cloud-upload"></i> Add New Photos</div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Select Photos</label>
+                        <input type="file" name="images" class="form-control" multiple accept="image/*" required>
+                        <div class="form-text">You can select multiple photos at once.</div>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100"><i class="bi bi-cloud-upload me-1"></i>Upload</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-7">
+        <div class="card shadow-sm">
+            <div class="card-header d-flex justify-content-between">
+                <span><i class="bi bi-images"></i> Existing Photos ({{ photos|length }})</span>
+            </div>
+            <div class="card-body">
+                <div class="row g-2">
+                    {% for photo in photos %}
+                    <div class="col-4 col-md-3 position-relative">
+                        <img src="{{ photo.image.url }}" alt="{{ photo.title|default:'Photo' }}" style="width:100%;height:120px;object-fit:cover;border-radius:6px;">
+                        <form method="post" action="{% url 'gallery:delete_photo' photo.pk %}" class="position-absolute top-0 end-0 m-1">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-danger rounded-circle p-1" style="width:28px;height:28px;font-size:0.7rem;" onclick="return confirm('Delete this photo?')"><i class="bi bi-x"></i></button>
+                        </form>
+                        {% if photo.title %}
+                        <small class="d-block text-muted mt-1" style="font-size:0.7rem;">{{ photo.title }}</small>
+                        {% endif %}
+                    </div>
+                    {% empty %}
+                    <div class="col-12 text-center py-4">
+                        <i class="bi bi-image text-muted" style="font-size:2rem;"></i>
+                        <p class="text-muted small mt-2">No photos yet.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

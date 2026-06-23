@@ -34,6 +34,7 @@
                         <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown"><i class="bi bi-credit-card"></i> Finance</a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="{% url 'fees:student_fees' %}"><i class="bi bi-credit-card me-2"></i>Fee Account</a></li>
+                            <li><a class="dropdown-item" href="{% url 'fees:fee_selection' %}"><i class="bi bi-wallet me-2"></i>Pay Online</a></li>
                             <li><a class="dropdown-item" href="{% url 'scholarships:scheme_list' %}"><i class="bi bi-cash-stack me-2"></i>Scholarships</a></li>
                         </ul>
                     </li>
@@ -53,6 +54,10 @@
                             <li><a class="dropdown-item" href="{% url 'sports:sport_list' %}"><i class="bi bi-trophy me-2"></i>Sports</a></li>
                             <li><a class="dropdown-item" href="{% url 'quiz:quiz_list' %}"><i class="bi bi-question-circle me-2"></i>Quizzes</a></li>
                             <li><a class="dropdown-item" href="{% url 'feedback:give_feedback' %}"><i class="bi bi-chat-square-text me-2"></i>Feedback</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'gallery:album_list' %}"><i class="bi bi-images me-2"></i>Photo Gallery</a></li>
+                            <li><a class="dropdown-item" href="{% url 'elections:election_list' %}"><i class="bi bi-person-check me-2"></i>Elections</a></li>
+                            <li><a class="dropdown-item" href="{% url 'alumni:directory' %}"><i class="bi bi-people-fill me-2"></i>Alumni</a></li>
                         </ul>
                     </li>
                     <li class="nav-item dropdown">
@@ -130,6 +135,9 @@
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="{% url 'course_materials:create_assignment' %}"><i class="bi bi-pencil-square me-2"></i>Create Assignment</a></li>
                             <li><a class="dropdown-item" href="{% url 'course_materials:assignment_list' %}">All Assignments</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'gallery:manage_albums' %}"><i class="bi bi-images me-2"></i>Photo Gallery</a></li>
+                            <li><a class="dropdown-item" href="{% url 'gallery:album_list' %}">View Gallery</a></li>
                         </ul>
                     </li>
                     <li class="nav-item dropdown">
@@ -159,6 +167,10 @@
                             <li><a class="dropdown-item" href="{% url 'grievances:staff_list' %}"><i class="bi bi-megaphone me-2"></i>Grievances</a></li>
                             <li><a class="dropdown-item" href="{% url 'antiragging:staff_complaints' %}"><i class="bi bi-shield me-2"></i>Anti-Ragging</a></li>
                             <li><a class="dropdown-item" href="{% url 'feedback:staff_results' %}"><i class="bi bi-chat-square-text me-2"></i>Feedback Results</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'elections:manage_elections' %}"><i class="bi bi-person-check me-2"></i>Elections</a></li>
+                            <li><a class="dropdown-item" href="{% url 'alumni:directory' %}"><i class="bi bi-people-fill me-2"></i>Alumni</a></li>
+                            <li><a class="dropdown-item" href="{% url 'alumni:manage' %}">Manage Alumni</a></li>
                         </ul>
                     </li>
                 </ul>

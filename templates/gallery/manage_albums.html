@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Manage Albums{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4><i class="bi bi-images"></i> Manage Albums</h4>
+    <a href="{% url 'gallery:create_album' %}" class="btn btn-success"><i class="bi bi-plus-lg"></i> Create Album</a>
+</div>
+<div class="card shadow-sm">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Cover</th>
+                        <th>Title</th>
+                        <th>Photos</th>
+                        <th>Status</th>
+                        <th>Created</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for album in albums %}
+                    <tr>
+                        <td style="width:60px;">
+                            {% if album.cover_image %}
+                            <img src="{{ album.cover_image.url }}" alt="" style="width:50px;height:40px;object-fit:cover;border-radius:4px;">
+                            {% else %}
+                            <div style="width:50px;height:40px;background:#e9ecef;border-radius:4px;display:flex;align-items:center;justify-content:center;"><i class="bi bi-image text-muted small"></i></div>
+                            {% endif %}
+                        </td>
+                        <td class="fw-bold">{{ album.title }}</td>
+                        <td>{{ album.photos.count }}</td>
+                        <td>{% if album.is_published %}<span class="badge bg-success">Published</span>{% else %}<span class="badge bg-secondary">Draft</span>{% endif %}</td>
+                        <td><small class="text-muted">{{ album.created_at|date:"d M Y" }}</small></td>
+                        <td>
+                            <a href="{% url 'gallery:edit_album' album.pk %}" class="btn btn-sm btn-outline-primary" title="Edit"><i class="bi bi-pencil"></i></a>
+                            <a href="{% url 'gallery:upload_photos' album.pk %}" class="btn btn-sm btn-outline-success" title="Upload Photos"><i class="bi bi-upload"></i></a>
+                            <a href="{% url 'gallery:delete_album' album.pk %}" class="btn btn-sm btn-outline-danger" title="Delete"><i class="bi bi-trash"></i></a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center text-muted py-4">No albums yet. <a href="{% url 'gallery:create_album' %}">Create one</a>.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

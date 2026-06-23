@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block title %}Pay Online{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0"><i class="bi bi-credit-card"></i> Pay Online</h4>
+    <a href="{% url 'fees:student_fees' %}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i> Back</a>
+</div>
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card bg-light border-0 text-center p-3">
+            <h6 class="text-muted">Total Due</h6>
+            <h3 class="text-danger fw-bold">₹{{ total_due }}</h3>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-light border-0 text-center p-3">
+            <h6 class="text-muted">Total Paid</h6>
+            <h3 class="text-success fw-bold">₹{{ total_paid }}</h3>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-light border-0 text-center p-3">
+            <h6 class="text-muted">Balance</h6>
+            <h3 class="{% if balance > 0 %}text-warning{% else %}text-success{% endif %} fw-bold">₹{{ balance }}</h3>
+        </div>
+    </div>
+</div>
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <span>Select Fee to Pay Online</span>
+        <a href="{% url 'fees:payment_history' %}" class="btn btn-sm btn-outline-primary"><i class="bi bi-clock-history"></i> Payment History</a>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead><tr><th>Fee Head</th><th>Amount</th><th>Due Date</th><th>Action</th></tr></thead>
+                <tbody>
+                    {% for fee in unpaid_fees %}
+                    <tr>
+                        <td>{{ fee.name }}</td>
+                        <td>₹{{ fee.amount }}</td>
+                        <td>{{ fee.due_date|date:"d M Y" }}</td>
+                        <td>
+                            <a href="{% url 'fees:initiate_payment' fee.id %}" class="btn btn-sm btn-success"><i class="bi bi-credit-card"></i> Pay Online</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="4" class="text-center text-muted py-4">All fees have been paid.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

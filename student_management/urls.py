@@ -33,6 +33,9 @@ urlpatterns = [
     path('course-materials/', include('course_materials.urls', namespace='course_materials')),
     path('feedback/', include('feedback.urls', namespace='feedback')),
     path('leave-management/', include('leave_management.urls', namespace='leave_management')),
+    path('gallery/', include('gallery.urls', namespace='gallery')),
+    path('alumni/', include('alumni.urls', namespace='alumni')),
+    path('elections/', include('elections.urls', namespace='elections')),
 ]
 
 if settings.DEBUG:

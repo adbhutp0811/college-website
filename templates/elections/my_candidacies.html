@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Candidacies</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *{font-family:'Inter',sans-serif;}
+        :root{--primary:#0b1d3a;--accent:#f0a500;}
+        .page-header{background:linear-gradient(135deg,#0b1d3a,#1a3a6b);color:#fff;padding:50px 0 40px;position:relative;overflow:hidden;}
+        .page-header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--accent),#ff6b35);}
+        .nav-link-main{color:#333!important;font-weight:500;padding:1.2rem 0.9rem!important;font-size:0.88rem;transition:all 0.2s;border-bottom:3px solid transparent;text-decoration:none;}
+        .nav-link-main:hover,.nav-link-main.active{color:var(--primary)!important;border-bottom-color:var(--accent);}
+    </style>
+</head>
+<body>
+<nav style="background:#fff;box-shadow:0 2px 15px rgba(0,0,0,0.06);">
+    <div class="container d-flex justify-content-between align-items-center" style="padding:8px 0;">
+        <a href="/" style="font-weight:800;color:var(--primary);text-decoration:none;font-size:1.1rem;"><i class="bi bi-mortarboard-fill me-2" style="color:var(--accent);"></i>Miracle Institute</a>
+        <div>
+            <a href="/" class="nav-link-main d-inline-block">Home</a>
+            <a href="{% url 'elections:election_list' %}" class="nav-link-main d-inline-block">Elections</a>
+            <a href="{% url 'elections:register_candidacy' %}" class="nav-link-main d-inline-block">Register</a>
+            <a href="{% url 'elections:my_candidacies' %}" class="nav-link-main d-inline-block active">My Candidacies</a>
+        </div>
+    </div>
+</nav>
+{% include '_back_button.html' %}
+
+{% if messages %}
+<div class="container mt-3">
+    {% for msg in messages %}
+    <div class="alert alert-{{ msg.tags }} alert-dismissible fade show">{{ msg }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<div class="page-header">
+    <div class="container text-center">
+        <h1 class="fw-bold display-5">My Candidacies</h1>
+        <p class="mb-0 opacity-75">Track your nominations and their status</p>
+    </div>
+</div>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            {% if candidacies %}
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Election</th>
+                            <th>Position</th>
+                            <th>Status</th>
+                            <th>Votes</th>
+                            <th>Nominated On</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for c in candidacies %}
+                        <tr>
+                            <td><strong>{{ c.election.title }}</strong></td>
+                            <td>{{ c.position.title }}</td>
+                            <td>
+                                {% if c.is_approved %}
+                                <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>Approved</span>
+                                {% else %}
+                                <span class="badge bg-warning text-dark"><i class="bi bi-hourglass-split me-1"></i>Pending</span>
+                                {% endif %}
+                            </td>
+                            <td><strong>{{ c.vote_count }}</strong></td>
+                            <td><small class="text-muted">{{ c.nomination_date|date:"d M Y" }}</small></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-5">
+                <i class="bi bi-person-plus display-1 text-muted"></i>
+                <h4 class="mt-3 text-muted">No nominations yet</h4>
+                <p class="text-muted">Register as a candidate for an upcoming election.</p>
+                <a href="{% url 'elections:register_candidacy' %}" class="btn btn-success"><i class="bi bi-send me-1"></i>Register Now</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+<footer style="background:var(--primary);color:rgba(255,255,255,0.7);padding:20px 0;margin-top:30px;">
+    <div class="container text-center small">&copy; 2026 Miracle Institute of Technology</div>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

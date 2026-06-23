@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block title %}Checkout{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="mb-0"><i class="bi bi-credit-card"></i> Checkout</h4>
+            <a href="{% url 'fees:fee_selection' %}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i> Back</a>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <p><strong>Student:</strong> {{ student.full_name }} ({{ student.roll_number }})</p>
+                <p><strong>Fee Head:</strong> {{ fee.name }}</p>
+                <p><strong>Amount:</strong> ₹{{ amount }}</p>
+                <p><strong>Due Date:</strong> {{ fee.due_date|date:"d M Y" }}</p>
+                <hr>
+                {% if gateway == 'razorpay' %}
+                <div class="d-grid gap-2">
+                    <button id="razorpay-btn" class="btn btn-success btn-lg"><i class="bi bi-lock-fill"></i> Pay ₹{{ amount }}</button>
+                </div>
+                <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+                <script>
+                var options = {
+                    key: "{{ razorpay_key_id }}",
+                    amount: "{{ amount_paise }}",
+                    currency: "INR",
+                    name: "Miracle Institute of Technology",
+                    description: "{{ fee.name|escapejs }}",
+                    order_id: "{{ order_id }}",
+                    handler: function(response){
+                        window.location.href = "{% url 'fees:payment_success' %}?razorpay_payment_id=" + response.razorpay_payment_id + "&razorpay_order_id=" + response.razorpay_order_id + "&razorpay_signature=" + response.razorpay_signature;
+                    },
+                    modal: {
+                        ondismiss: function(){
+                            window.location.href = "{% url 'fees:fee_selection' %}";
+                        }
+                    }
+                };
+                var rzp = new Razorpay(options);
+                document.getElementById('razorpay-btn').onclick = function(e){
+                    rzp.open();
+                    e.preventDefault();
+                }
+                </script>
+                {% elif gateway == 'stripe' %}
+                <div class="alert alert-info">
+                    <i class="bi bi-arrow-right-circle"></i> Redirecting to Stripe Checkout...
+                </div>
+                <meta http-equiv="refresh" content="2">
+                {% elif gateway == 'demo' %}
+                <div class="alert alert-warning">
+                    <i class="bi bi-info-circle"></i> Demo Mode: No payment gateway is configured. Submit to simulate a successful payment.
+                </div>
+                <form method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-success w-100"><i class="bi bi-lock-fill"></i> Complete Demo Payment</button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

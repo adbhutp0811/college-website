@@ -1,6 +1,6 @@
 # Student Management System
 
-A full-stack Student Management System built with **Django 6**, **MySQL/SQLite**, and **Bootstrap 5** featuring student records, attendance, results, timetable, clubs, fees, grievances, exam forms, library, hostel, placements, leave management, course materials, feedback, SMS alerts, and ID card PDF generation.
+A full-stack Student Management System built with **Django 6**, **MySQL/SQLite**, and **Bootstrap 5** featuring student records, attendance, results, timetable, clubs, fees, grievances, exam forms, library, hostel, placements, leave management, course materials, feedback, photo gallery, alumni management, student council/elections, online fee payment (Razorpay/Stripe), SMS alerts, ID card PDF generation, and result PDF email.
 
 ## Features
 
@@ -18,6 +18,10 @@ A full-stack Student Management System built with **Django 6**, **MySQL/SQLite**
 - **Leave Management** — Student leave applications, staff approval/rejection workflow
 - **Course Materials & Assignments** — Upload study materials, create assignments, student submissions with grading
 - **Feedback System** — Faculty feedback with categories & questions, student submission, staff results view
+- **Photo Gallery** — Albums with multiple photos, cover images, staff upload/deletion, public viewing
+- **Alumni Management** — Alumni registration, verified directory with search/filter, alumni events with registration, donation system
+- **Student Council/Elections** — Position-based elections, candidate registration with approval workflow, one-student-one-vote-per-position, live vote counting with `F()` atomic increments, results with progress bars
+- **Online Fee Payment** — Select pending fees, pay via Razorpay (checkout.js) or Stripe (Checkout Sessions), demo mode without API keys, signature verification, payment history
 
 ### Clubs & Cells
 - 23 clubs/cells (technical, cultural, sports, outreach)
@@ -47,18 +51,23 @@ A full-stack Student Management System built with **Django 6**, **MySQL/SQLite**
 - **Placement Partners** — Company name, logo upload, website link
 - **Testimonials** — Student name, batch, program, content
 - **Contact Info** — Address, phone, email (single-instance)
+- **Student Portal Section** — Green-themed cards highlighting Academics, Finance, Services, Engagement, Support features with login CTA
+- **Staff Portal Section** — Blue-themed cards highlighting Dashboard, Students, Academics, Content, Services, Student Life tools with login CTA
 
 ### Student ID Card
 - Circular student photo via PIL `Image.composite`
 - Name, roll number, class, DOB, blood group, guardian details, address
 - Navy/gold bands, signature fields, QR code, validity dates
 
-### Additional Modules
-- **Fees** — Fee structure, student fee dashboard with balance
-- **Grievances** — Student grievance submission, staff manage/resolve workflow
-- **Exam Forms** — Exam registration per semester, staff approval
-- **Events** — Event creation & listing on homepage
-- **Notices** — Publish notices with categories
+- **Additional Modules**
+  - **Quiz** — Create quizzes, add questions, student attempts with auto-grading
+  - **Mentor** — Mentor assignment, meetings, mentee tracking
+  - **Sports** — Sports/tournament management, team registration
+  - **Anti-Ragging** — Complaint submission & tracking
+  - **Scholarships** — Schemes & student applications
+  - **Exam Seating** — Seat allocation with PDF export
+  - **Mess** — Menu, complaints, feedback
+  - **Faculty** — Staff directory & profiles
 
 ## Tech Stack
 
@@ -66,7 +75,7 @@ A full-stack Student Management System built with **Django 6**, **MySQL/SQLite**
 - **Database:** MySQL (production) / SQLite (development)
 - **Frontend:** Bootstrap 5, jQuery, HTML5, CSS3
 - **Static Files:** Whitenoise
-- **Libraries:** xhtml2pdf, reportlab, Pillow, openpyxl, requests
+- **Libraries:** xhtml2pdf, reportlab, Pillow, openpyxl, requests, razorpay, stripe
 
 ## Setup Instructions
 
@@ -126,7 +135,20 @@ python manage.py seed_student_photos       # profile photos for club members
 python manage.py seed_timetable            # timetable for all 48 classes
 ```
 
-### 7. Configure SMS (Optional)
+### 7. Configure Payment Gateway (Optional)
+
+Set in `.env` for real payments:
+```
+PAYMENT_GATEWAY=razorpay       # or 'stripe'
+RAZORPAY_KEY_ID=your_key_id
+RAZORPAY_KEY_SECRET=your_secret
+STRIPE_PUBLISHABLE_KEY=your_pk
+STRIPE_SECRET_KEY=your_sk
+```
+
+Without these, the system runs in **Demo Mode** — payments appear successful without real charges.
+
+### 8. Configure SMS (Optional)
 
 Add to `settings.py` for real SMS:
 
@@ -137,13 +159,13 @@ SMS_API_KEY = 'your-api-key'
 
 Without this, SMS is logged to console.
 
-### 8. Run Development Server
+### 9. Run Development Server
 
 ```bash
 python manage.py runserver
 ```
 
-### 9. Access
+### 10. Access
 
 - **App:** http://127.0.0.1:8000/
 - **Admin:** http://127.0.0.1:8000/admin/
@@ -162,13 +184,13 @@ python manage.py runserver
 
 ```
 student_management/
-├── accounts/               # Custom User model, auth, homepage sections
+├── accounts/               # Custom User model, auth, homepage sections (leadership, depts, partners, etc.)
 ├── students/               # Student & Class CRUD, ID card PDF
 ├── attendance/             # Mark/history/summary/notify, SMS utils
 ├── results/                # Subjects, exams, marks, report cards, email PDF
 ├── timetable/              # Timetable management
 ├── clubs/                  # Clubs & cells with members
-├── fees/                   # Fee structures, payments
+├── fees/                   # Fee structures, payments, online payment (Razorpay/Stripe)
 ├── grievances/             # Grievance submission & management
 ├── exam_forms/             # Exam registration & approval
 ├── placements/             # Placement partners, drives, apps
@@ -177,8 +199,19 @@ student_management/
 ├── leave_management/       # Leave applications & approvals
 ├── course_materials/       # Study materials, assignments, submissions
 ├── feedback/               # Faculty feedback with categories
+├── gallery/                # Photo albums with multi-upload
+├── alumni/                 # Alumni directory, events, donations
+├── elections/              # Student council candidates, voting, results
 ├── notices/                # Notice publishing
 ├── events/                 # Event management
+├── mentor/                 # Mentor/mentee assignments & meetings
+├── sports/                 # Sports & tournament management
+├── quiz/                   # Quiz creation & student attempts
+├── antiragging/            # Anti-ragging complaints
+├── scholarships/           # Scholarship schemes & applications
+├── exam_seating/           # Exam seating allocation
+├── mess/                   # Mess menu & complaints
+├── faculty/                # Staff directory (separate from auth users)
 ├── templates/              # All HTML templates
 ├── static/                 # CSS, JS, images
 ├── student_management/     # Project settings, URLs, WSGI

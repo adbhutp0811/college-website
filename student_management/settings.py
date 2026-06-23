@@ -63,6 +63,9 @@ INSTALLED_APPS = [
     'feedback',
     'course_materials',
     'leave_management',
+    'gallery',
+    'alumni',
+    'elections',
 ]
 
 MIDDLEWARE = [
@@ -212,5 +215,12 @@ EMAIL_HOST_USER = env('EMAIL_HOST_USER', default='')
 EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD', default='')
 DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL', default='')
 EMAIL_SUBJECT_PREFIX = '[Miracle Institute] '
+
+# Payment Gateway
+RAZORPAY_KEY_ID = env('RAZORPAY_KEY_ID', default='')
+RAZORPAY_KEY_SECRET = env('RAZORPAY_KEY_SECRET', default='')
+STRIPE_PUBLISHABLE_KEY = env('STRIPE_PUBLISHABLE_KEY', default='')
+STRIPE_SECRET_KEY = env('STRIPE_SECRET_KEY', default='')
+PAYMENT_GATEWAY = env('PAYMENT_GATEWAY', default='razorpay')  # razorpay or stripe
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

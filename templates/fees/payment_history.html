@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block title %}Payment History{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0"><i class="bi bi-clock-history"></i> Payment History</h4>
+    <a href="{% url 'fees:fee_selection' %}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i> Back</a>
+</div>
+<div class="card">
+    <div class="card-header">Online Payments</div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead><tr><th>Date</th><th>Fee Head</th><th>Amount</th><th>Order ID</th><th>Payment ID</th><th>Gateway</th><th>Status</th></tr></thead>
+                <tbody>
+                    {% for op in online_payments %}
+                    <tr>
+                        <td>{{ op.created_at|date:"d M Y H:i" }}</td>
+                        <td>{{ op.fee_structure.name|default:"—" }}</td>
+                        <td>₹{{ op.amount }}</td>
+                        <td><code>{{ op.order_id|truncatechars:20 }}</code></td>
+                        <td><code>{{ op.gateway_payment_id|truncatechars:20|default:"—" }}</code></td>
+                        <td><span class="badge bg-secondary">{{ op.gateway|title }}</span></td>
+                        <td>
+                            <span class="badge bg-{% if op.status == 'paid' %}success{% elif op.status == 'failed' %}danger{% elif op.status == 'attempted' %}warning{% else %}secondary{% endif %}">
+                                {{ op.get_status_display }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="7" class="text-center text-muted py-4">No online payments yet.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

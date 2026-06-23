@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Results - {{ election.title }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *{font-family:'Inter',sans-serif;}
+        :root{--primary:#0b1d3a;--accent:#f0a500;}
+        .page-header{background:linear-gradient(135deg,#0b1d3a,#1a3a6b);color:#fff;padding:50px 0 40px;position:relative;overflow:hidden;}
+        .page-header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--accent),#ff6b35);}
+        .nav-link-main{color:#333!important;font-weight:500;padding:1.2rem 0.9rem!important;font-size:0.88rem;transition:all 0.2s;border-bottom:3px solid transparent;text-decoration:none;}
+        .nav-link-main:hover,.nav-link-main.active{color:var(--primary)!important;border-bottom-color:var(--accent);}
+        .winner-badge{background:var(--accent);color:var(--primary);font-weight:700;}
+        .progress-bar-custom{height:24px;border-radius:12px;background:#e9ecef;overflow:hidden;}
+        .progress-bar-custom .bar{height:100%;border-radius:12px;background:linear-gradient(90deg,var(--accent),#ff6b35);transition:width 0.6s ease;}
+    </style>
+</head>
+<body>
+<nav style="background:#fff;box-shadow:0 2px 15px rgba(0,0,0,0.06);">
+    <div class="container d-flex justify-content-between align-items-center" style="padding:8px 0;">
+        <a href="/" style="font-weight:800;color:var(--primary);text-decoration:none;font-size:1.1rem;"><i class="bi bi-mortarboard-fill me-2" style="color:var(--accent);"></i>Miracle Institute</a>
+        <div>
+            <a href="/" class="nav-link-main d-inline-block">Home</a>
+            <a href="{% url 'elections:election_list' %}" class="nav-link-main d-inline-block">Elections</a>
+            {% if user.is_authenticated %}
+            <a href="{% url 'elections:manage_elections' %}" class="nav-link-main d-inline-block">Manage</a>
+            {% endif %}
+        </div>
+    </div>
+</nav>
+{% include '_back_button.html' %}
+
+{% if messages %}
+<div class="container mt-3">
+    {% for msg in messages %}
+    <div class="alert alert-{{ msg.tags }} alert-dismissible fade show">{{ msg }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<div class="page-header">
+    <div class="container text-center">
+        <h1 class="fw-bold display-5"><i class="bi bi-trophy me-2"></i>Election Results</h1>
+        <p class="mb-0 opacity-75">{{ election.title }}</p>
+    </div>
+</div>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4 text-center">
+                    <h5 class="fw-bold" style="color:var(--primary);">{{ election.title }}</h5>
+                    <p class="text-muted small mb-0">{{ election.start_date|date:"d M Y" }} - {{ election.end_date|date:"d M Y" }}</p>
+                </div>
+            </div>
+
+            {% for position, data in results.items %}
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-transparent border-bottom-0 pt-4 px-4">
+                    <h4 class="fw-bold mb-0" style="color:var(--primary);">{{ position.title }}</h4>
+                    <small class="text-muted">Total votes: {{ data.total_votes }}</small>
+                </div>
+                <div class="card-body px-4 pb-4">
+                    <div class="table-responsive">
+                        <table class="table table-borderless align-middle">
+                            <thead>
+                                <tr class="text-muted small">
+                                    <th>Candidate</th>
+                                    <th>Votes</th>
+                                    <th>Percentage</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for candidate in data.candidates %}
+                                <tr class="{% if candidate.vote_count == data.winner_votes and data.winner_votes > 0 %}table-warning{% endif %}">
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            {% if candidate.photo %}
+                                            <img src="{{ candidate.photo.url }}" alt="{{ candidate.student.full_name }}" class="rounded-circle" style="width:40px;height:40px;object-fit:cover;">
+                                            {% else %}
+                                            <div class="bg-secondary text-white d-flex align-items-center justify-content-center rounded-circle flex-shrink-0" style="width:40px;height:40px;font-size:0.9rem;">{{ candidate.student.first_name|first }}</div>
+                                            {% endif %}
+                                            <div>
+                                                <strong class="small">{{ candidate.student.full_name }}</strong>
+                                                <br><small class="text-muted">{{ candidate.student.roll_number }}</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><strong>{{ candidate.vote_count }}</strong></td>
+                                    <td style="min-width:200px;">
+                                        <div class="progress-bar-custom">
+                                            <div class="bar" style="width:{% if data.total_votes > 0 %}{{ candidate.vote_count|floatformat:0 }}{% else %}0{% endif %}%;">
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="small text-muted">{% if data.total_votes > 0 %}{{ candidate.vote_count|divisibleby:data.total_votes|yesno:"100," }}{% widthratio candidate.vote_count data.total_votes 100 %}%{% else %}0%{% endif %}</span>
+                                        {% if candidate.vote_count == data.winner_votes and data.winner_votes > 0 %}
+                                        <span class="badge winner-badge ms-2"><i class="bi bi-crown me-1"></i>Winner</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="4" class="text-center text-muted py-3">No candidates contested for this position.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+
+            <div class="text-center mt-4">
+                <a href="{% url 'elections:election_detail' election.pk %}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i>Back to Election</a>
+            </div>
+        </div>
+    </div>
+</div>
+<footer style="background:var(--primary);color:rgba(255,255,255,0.7);padding:20px 0;margin-top:30px;">
+    <div class="container text-center small">&copy; 2026 Miracle Institute of Technology</div>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
