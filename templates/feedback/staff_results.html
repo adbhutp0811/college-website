@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% block title %}Feedback Results{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0"><i class="bi bi-bar-chart"></i> Faculty Feedback Results</h4>
+    <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i> Back</a>
+</div>
+
+<div class="card mb-3">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label">Select Faculty</label>
+                <select name="faculty_id" class="form-select" onchange="this.form.submit()">
+                    <option value="">-- Choose Faculty --</option>
+                    {% for f in faculties %}
+                    <option value="{{ f.id }}" {% if selected_faculty.id == f.id %}selected{% endif %}>{{ f.full_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% if selected_faculty %}
+<div class="card">
+    <div class="card-header"><i class="bi bi-person-badge"></i> Results for {{ selected_faculty.full_name }}</div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead><tr><th>#</th><th>Subject</th><th>Student</th><th>Avg Rating</th><th>Responses</th></tr></thead>
+                <tbody>
+                    {% for r in results %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ r.feedback.subject.name }}</td>
+                        <td>{{ r.feedback.student.full_name }}</td>
+                        <td>
+                            {% if r.avg_rating %}
+                            <span class="badge bg-{% if r.avg_rating >= 4 %}success{% elif r.avg_rating >= 3 %}warning{% else %}danger{% endif %}">
+                                {{ r.avg_rating }} / 5
+                            </span>
+                            {% else %}
+                            <span class="text-muted">N/A</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-info" type="button" data-bs-toggle="collapse" data-bs-target="#resp{{ forloop.counter }}">
+                                View ({{ r.responses|length }})
+                            </button>
+                            <div class="collapse mt-2" id="resp{{ forloop.counter }}">
+                                <ul class="list-group list-group-flush">
+                                    {% for resp in r.responses %}
+                                    <li class="list-group-item py-1">
+                                        <small><strong>{{ resp.question.question_text }}:</strong>
+                                        {% if resp.rating_value %}{{ resp.rating_value }}/5{% endif %}
+                                        {% if resp.text_value %}{{ resp.text_value }}{% endif %}
+                                        {% if resp.boolean_value is not None %}{{ resp.boolean_value|yesno:"Yes,No" }}{% endif %}
+                                        </small>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="5" class="text-center text-muted py-4">No submitted feedback for this faculty.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block title %}My Feedback{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0"><i class="bi bi-chat-square-text"></i> My Feedback</h4>
+    <div>
+        <a href="{% url 'feedback:give_feedback' %}" class="btn btn-primary btn-sm"><i class="bi bi-plus-lg"></i> New Feedback</a>
+        <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i> Back</a>
+    </div>
+</div>
+<div class="card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead><tr><th>#</th><th>Faculty</th><th>Subject</th><th>Semester</th><th>Status</th><th>Submitted At</th></tr></thead>
+                <tbody>
+                    {% for fb in feedbacks %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ fb.faculty.full_name }}</td>
+                        <td>{{ fb.subject.name }}</td>
+                        <td>{{ fb.semester }}</td>
+                        <td>
+                            <span class="badge bg-{% if fb.status == 'submitted' %}success{% else %}secondary{% endif %}">
+                                {{ fb.get_status_display }}
+                            </span>
+                        </td>
+                        <td>{{ fb.submitted_at|date:"d M Y H:i"|default:"-" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="6" class="text-center text-muted py-4">No feedback submitted yet.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

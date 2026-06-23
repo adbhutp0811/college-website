@@ -226,14 +226,17 @@ class CollegeHomeView(TemplateView):
         context = super().get_context_data(**kwargs)
         from attendance.models import Attendance
         from django.utils import timezone
+        from .models import LeadershipMember, DirectorMessage, Department, PlacementPartner, Testimonial, ContactInfo
         today = timezone.localdate()
         context['total_students'] = Student.objects.filter(is_deleted=False).count()
         context['classes_count'] = Class.objects.values('name').distinct().count()
         context['exams_count'] = Exam.objects.count()
-        context['departments'] = [
-            {'code': code, 'name': full, 'desc': desc}
-            for code, (full, desc) in sorted(DEPT_NAMES.items())
-        ]
+        context['leadership_members'] = LeadershipMember.objects.filter(is_active=True)
+        context['director_message'] = DirectorMessage.objects.filter(is_active=True).first()
+        context['departments'] = Department.objects.filter(is_active=True)
+        context['placement_partners'] = PlacementPartner.objects.filter(is_active=True)
+        context['testimonials'] = Testimonial.objects.filter(is_active=True)
+        context['contact_info'] = ContactInfo.objects.filter(is_active=True).first()
         context['quick_links'] = [
             {'title': 'Admissions', 'icon': 'bi-pencil-square', 'url': '/accounts/admissions/'},
             {'title': 'Academic Calendar', 'icon': 'bi-calendar-event', 'url': '/accounts/academic-calendar/'},

@@ -20,16 +20,52 @@
             </button>
             <div class="collapse navbar-collapse" id="studentNav">
                 <ul class="navbar-nav me-auto">
-                    <li class="nav-item"><a class="nav-link" href="{% url 'fees:student_fees' %}"><i class="bi bi-credit-card"></i> Fees</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'exam_forms:list' %}"><i class="bi bi-file-text"></i> Exam Forms</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'grievances:list' %}"><i class="bi bi-megaphone"></i> Grievances</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'mentor:student_mentor' %}"><i class="bi bi-people"></i> Mentor</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'sports:sport_list' %}"><i class="bi bi-trophy"></i> Sports</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'scholarships:scheme_list' %}"><i class="bi bi-cash-stack"></i> Scholarships</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'mess:home' %}"><i class="bi bi-cup-hot"></i> Mess</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'antiragging:home' %}"><i class="bi bi-shield"></i> Anti-Ragging</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'exam_seating:student_seating' %}"><i class="bi bi-calendar-range"></i> Exam Seating</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'quiz:quiz_list' %}"><i class="bi bi-question-circle"></i> Quizzes</a></li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown"><i class="bi bi-book"></i> Academics</a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'exam_forms:list' %}"><i class="bi bi-file-text me-2"></i>Exam Forms</a></li>
+                            <li><a class="dropdown-item" href="{% url 'exam_seating:student_seating' %}"><i class="bi bi-calendar-range me-2"></i>Exam Seating</a></li>
+                            <li><a class="dropdown-item" href="{% url 'course_materials:material_list' %}"><i class="bi bi-journal-text me-2"></i>Materials</a></li>
+                            <li><a class="dropdown-item" href="{% url 'course_materials:assignment_list' %}"><i class="bi bi-pencil-square me-2"></i>Assignments</a></li>
+                            <li><a class="dropdown-item" href="{% url 'timetable:timetable' %}"><i class="bi bi-calendar-week me-2"></i>Timetable</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown"><i class="bi bi-credit-card"></i> Finance</a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'fees:student_fees' %}"><i class="bi bi-credit-card me-2"></i>Fee Account</a></li>
+                            <li><a class="dropdown-item" href="{% url 'scholarships:scheme_list' %}"><i class="bi bi-cash-stack me-2"></i>Scholarships</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown"><i class="bi bi-building"></i> Services</a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'library:my_issues' %}"><i class="bi bi-bookmarks me-2"></i>Library</a></li>
+                            <li><a class="dropdown-item" href="{% url 'hostel:my_allocation' %}"><i class="bi bi-building me-2"></i>Hostel</a></li>
+                            <li><a class="dropdown-item" href="{% url 'mess:home' %}"><i class="bi bi-cup-hot me-2"></i>Mess</a></li>
+                            <li><a class="dropdown-item" href="{% url 'placements:my_applications' %}"><i class="bi bi-briefcase me-2"></i>Placements</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown"><i class="bi bi-star"></i> Engagement</a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'mentor:student_mentor' %}"><i class="bi bi-people me-2"></i>Mentor</a></li>
+                            <li><a class="dropdown-item" href="{% url 'sports:sport_list' %}"><i class="bi bi-trophy me-2"></i>Sports</a></li>
+                            <li><a class="dropdown-item" href="{% url 'quiz:quiz_list' %}"><i class="bi bi-question-circle me-2"></i>Quizzes</a></li>
+                            <li><a class="dropdown-item" href="{% url 'feedback:give_feedback' %}"><i class="bi bi-chat-square-text me-2"></i>Feedback</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown"><i class="bi bi-shield"></i> Support</a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'grievances:submit' %}"><i class="bi bi-megaphone me-2"></i>Submit Grievance</a></li>
+                            <li><a class="dropdown-item" href="{% url 'grievances:list' %}">My Grievances</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'antiragging:home' %}"><i class="bi bi-shield me-2"></i>Anti-Ragging</a></li>
+                            <li><a class="dropdown-item" href="{% url 'leave_management:apply' %}"><i class="bi bi-calendar-check me-2"></i>Apply Leave</a></li>
+                            <li><a class="dropdown-item" href="{% url 'leave_management:my_leaves' %}">My Leaves</a></li>
+                        </ul>
+                    </li>
                 </ul>
                 <ul class="navbar-nav">
                     <li class="nav-item">
@@ -57,51 +93,74 @@
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="{% url 'students:list' %}">All Students</a></li>
                             <li><a class="dropdown-item" href="{% url 'students:add' %}">Add Student</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'faculty:list' %}">Faculty</a></li>
+                            <li><a class="dropdown-item" href="{% url 'leave_management:staff_list' %}">Leave Approvals</a></li>
                         </ul>
                     </li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'faculty:list' %}"><i class="bi bi-person-badge"></i> Faculty</a></li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown"><i class="bi bi-calendar-check-fill"></i> Attendance</a>
+                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown"><i class="bi bi-book"></i> Academics</a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="{% url 'attendance:mark' %}">Mark Attendance</a></li>
                             <li><a class="dropdown-item" href="{% url 'attendance:history' %}">Attendance History</a></li>
                             <li><a class="dropdown-item" href="{% url 'attendance:summary' %}">Monthly Summary</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown"><i class="bi bi-award-fill"></i> Results</a>
-                        <ul class="dropdown-menu">
+                            <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="{% url 'results:manage' %}">Manage Results</a></li>
                             <li><a class="dropdown-item" href="{% url 'results:class_summary' %}">Branch Summary</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown"><i class="bi bi-megaphone"></i> Grievances</a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="{% url 'grievances:staff_list' %}">Manage Grievances</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown"><i class="bi bi-file-text"></i> Exams</a>
-                        <ul class="dropdown-menu">
+                            <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="{% url 'exam_forms:staff_list' %}">Exam Registrations</a></li>
-                            <li><a class="dropdown-item" href="{% url 'exam_seating:schedule_list' %}">Exam Schedule & Seating</a></li>
+                            <li><a class="dropdown-item" href="{% url 'exam_seating:schedule_list' %}">Exam Schedule</a></li>
+                            <li><a class="dropdown-item" href="{% url 'exam_seating:create_schedule' %}">Create Schedule</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'timetable:timetable' %}">View Timetable</a></li>
+                            <li><a class="dropdown-item" href="{% url 'timetable:manage' %}">Manage Timetable</a></li>
                         </ul>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown"><i class="bi bi-people"></i> Mentor</a>
+                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown"><i class="bi bi-journal-text"></i> Content</a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="{% url 'mentor:dashboard' %}">Mentor Dashboard</a></li>
+                            <li><a class="dropdown-item" href="{% url 'notices:create_notice' %}"><i class="bi bi-megaphone me-2"></i>Add Notice</a></li>
+                            <li><a class="dropdown-item" href="{% url 'notices:notice_list' %}">All Notices</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'events:create_event' %}"><i class="bi bi-calendar-plus me-2"></i>Add Event</a></li>
+                            <li><a class="dropdown-item" href="{% url 'events:event_list' %}">All Events</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'course_materials:create_material' %}"><i class="bi bi-upload me-2"></i>Upload Material</a></li>
+                            <li><a class="dropdown-item" href="{% url 'course_materials:material_list' %}">All Materials</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'course_materials:create_assignment' %}"><i class="bi bi-pencil-square me-2"></i>Create Assignment</a></li>
+                            <li><a class="dropdown-item" href="{% url 'course_materials:assignment_list' %}">All Assignments</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown"><i class="bi bi-building"></i> Services</a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'library:book_list' %}"><i class="bi bi-book me-2"></i>Library Catalog</a></li>
+                            <li><a class="dropdown-item" href="{% url 'library:my_issues' %}">Issues & Returns</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'hostel:staff_allocations' %}"><i class="bi bi-building me-2"></i>Hostel Allocations</a></li>
+                            <li><a class="dropdown-item" href="{% url 'mess:staff_complaints' %}"><i class="bi bi-cup-hot me-2"></i>Mess Complaints</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'placements:staff_applications' %}"><i class="bi bi-briefcase me-2"></i>Placement Apps</a></li>
+                            <li><a class="dropdown-item" href="{% url 'scholarships:staff_list' %}"><i class="bi bi-cash-stack me-2"></i>Scholarships</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown"><i class="bi bi-star"></i> Student Life</a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'mentor:dashboard' %}"><i class="bi bi-people me-2"></i>Mentor Dashboard</a></li>
                             <li><a class="dropdown-item" href="{% url 'mentor:my_mentees' %}">My Mentees</a></li>
                             <li><a class="dropdown-item" href="{% url 'mentor:meetings' %}">Meetings</a></li>
                             <li><a class="dropdown-item" href="{% url 'mentor:assign' %}">Assign Mentors</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'sports:sport_list' %}"><i class="bi bi-trophy me-2"></i>Sports</a></li>
+                            <li><a class="dropdown-item" href="{% url 'quiz:quiz_list' %}"><i class="bi bi-question-circle me-2"></i>Quizzes</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'grievances:staff_list' %}"><i class="bi bi-megaphone me-2"></i>Grievances</a></li>
+                            <li><a class="dropdown-item" href="{% url 'antiragging:staff_complaints' %}"><i class="bi bi-shield me-2"></i>Anti-Ragging</a></li>
+                            <li><a class="dropdown-item" href="{% url 'feedback:staff_results' %}"><i class="bi bi-chat-square-text me-2"></i>Feedback Results</a></li>
                         </ul>
                     </li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'sports:sport_list' %}"><i class="bi bi-trophy"></i> Sports</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'scholarships:staff_list' %}"><i class="bi bi-cash-stack"></i> Scholarships</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'mess:staff_complaints' %}"><i class="bi bi-cup-hot"></i> Mess</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'antiragging:staff_complaints' %}"><i class="bi bi-shield"></i> Anti-Ragging</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'quiz:quiz_list' %}"><i class="bi bi-question-circle"></i> Quizzes</a></li>
                 </ul>
                 <ul class="navbar-nav">
                     <li class="nav-item dropdown">

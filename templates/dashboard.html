@@ -72,12 +72,25 @@
                 <div class="d-grid gap-2">
                     <a href="{% url 'students:add' %}" class="btn btn-primary"><i class="bi bi-person-plus"></i> Add New Student</a>
                     <a href="{% url 'attendance:mark' %}" class="btn btn-success"><i class="bi bi-calendar-check"></i> Mark Today's Attendance</a>
+                    <a href="{% url 'attendance:summary' %}" class="btn btn-outline-danger"><i class="bi bi-chat-dots-fill"></i> SMS Attendance to Guardians</a>
+                    <a href="{% url 'attendance:custom_sms' %}" class="btn btn-outline-primary"><i class="bi bi-send-fill"></i> Send Custom SMS</a>
                     <a href="{% url 'results:manage' %}" class="btn btn-warning"><i class="bi bi-pencil-square"></i> Enter Results</a>
                     <a href="{% url 'results:class_summary' %}" class="btn btn-info"><i class="bi bi-bar-chart"></i> View Branch Summary</a>
+                    <hr>
+                    <a href="{% url 'results:class_summary' %}" class="btn btn-primary"><i class="bi bi-envelope-paper"></i> Email Results to Students</a>
                     <hr>
                     <a href="{% url 'faculty:list' %}" class="btn btn-outline-secondary"><i class="bi bi-person-badge"></i> Manage Faculty</a>
                     <a href="{% url 'grievances:staff_list' %}" class="btn btn-outline-danger"><i class="bi bi-megaphone"></i> Manage Grievances</a>
                     <a href="{% url 'exam_forms:staff_list' %}" class="btn btn-outline-primary"><i class="bi bi-file-text"></i> Exam Registrations</a>
+                    <hr>
+                    <a href="{% url 'notices:create_notice' %}" class="btn btn-outline-info"><i class="bi bi-megaphone"></i> Publish Notice</a>
+                    <a href="{% url 'events:create_event' %}" class="btn btn-outline-warning"><i class="bi bi-calendar-plus"></i> Create Event</a>
+                    <a href="{% url 'timetable:manage' %}" class="btn btn-outline-dark"><i class="bi bi-calendar-week"></i> Manage Timetable</a>
+                    <a href="{% url 'hostel:staff_allocations' %}" class="btn btn-outline-success"><i class="bi bi-building"></i> Hostel Allocations</a>
+                    <a href="{% url 'placements:staff_applications' %}" class="btn btn-outline-primary"><i class="bi bi-briefcase"></i> Placement Apps</a>
+                    <a href="{% url 'leave_management:staff_list' %}" class="btn btn-outline-secondary"><i class="bi bi-calendar-check"></i> Leave Approvals</a>
+                    <a href="{% url 'course_materials:create_material' %}" class="btn btn-outline-info"><i class="bi bi-journal-text"></i> Upload Material</a>
+                    <a href="{% url 'course_materials:create_assignment' %}" class="btn btn-outline-warning"><i class="bi bi-pencil-square"></i> Create Assignment</a>
                 </div>
             </div>
         </div>

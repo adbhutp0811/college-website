@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% block title %}Give Feedback{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0"><i class="bi bi-chat-square-text"></i> Give Faculty Feedback</h4>
+    <a href="{% url 'feedback:my_feedback' %}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i> My Feedback</a>
+</div>
+
+<div class="card mb-3">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-5">
+                <label class="form-label">Select Faculty</label>
+                <select name="faculty_id" class="form-select" required onchange="this.form.submit()">
+                    <option value="">-- Choose Faculty --</option>
+                    {% for f in faculties %}
+                    <option value="{{ f.id }}" {% if selected_faculty_id == f.id %}selected{% endif %}>{{ f.full_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-5">
+                <label class="form-label">Select Subject</label>
+                <select name="subject_id" class="form-select" required onchange="this.form.submit()">
+                    <option value="">-- Choose Subject --</option>
+                    {% for s in subjects %}
+                    <option value="{{ s.id }}" {% if selected_subject_id == s.id %}selected{% endif %}>{{ s.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100"><i class="bi bi-search"></i> Load</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% if questions %}
+<div class="card">
+    <div class="card-header"><i class="bi bi-pencil-square"></i> Feedback Questions</div>
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="faculty_id" value="{{ selected_faculty_id }}">
+            <input type="hidden" name="subject_id" value="{{ selected_subject_id }}">
+
+            {% for q in questions %}
+            <div class="mb-4 p-3 border rounded">
+                <label class="form-label fw-semibold">{{ q.question_text }}</label>
+                {% if q.question_type == 'rating' %}
+                <div class="d-flex gap-3 mt-2">
+                    {% for i in "12345" %}
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="q_{{ q.id }}" id="q_{{ q.id }}_{{ i }}" value="{{ i }}" {% if q.is_required %}required{% endif %}>
+                        <label class="form-check-label" for="q_{{ q.id }}_{{ i }}">{{ i }}</label>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% elif q.question_type == 'text' %}
+                <textarea class="form-control mt-2" name="q_{{ q.id }}" rows="3" {% if q.is_required %}required{% endif %}></textarea>
+                {% elif q.question_type == 'boolean' %}
+                <div class="d-flex gap-3 mt-2">
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="q_{{ q.id }}" id="q_{{ q.id }}_yes" value="yes" {% if q.is_required %}required{% endif %}>
+                        <label class="form-check-label" for="q_{{ q.id }}_yes">Yes</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="q_{{ q.id }}" id="q_{{ q.id }}_no" value="no" {% if q.is_required %}required{% endif %}>
+                        <label class="form-check-label" for="q_{{ q.id }}_no">No</label>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+
+            <button type="submit" class="btn btn-success"><i class="bi bi-send"></i> Submit Feedback</button>
+        </form>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

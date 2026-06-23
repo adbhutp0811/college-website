@@ -73,7 +73,6 @@ class ClubApplyView(View):
     def post(self, request, *args, **kwargs):
         club = get_object_or_404(Club, pk=kwargs['pk'])
         roll = request.POST.get('roll_number', '').strip()
-        email = request.POST.get('email', '').strip()
         reason = request.POST.get('reason', '').strip()
 
         try:
@@ -90,7 +89,7 @@ class ClubApplyView(View):
             messages.warning(request, f'You have already applied to {club.name}. Wait for review.')
             return redirect('clubs:club_detail', pk=club.pk)
 
-        ClubApplication.objects.create(club=club, student=student, email=email, reason=reason)
+        ClubApplication.objects.create(club=club, student=student, reason=reason)
         messages.success(request, f'Application submitted to {club.name}. Wait for approval.')
         return redirect('clubs:club_detail', pk=club.pk)
 

@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block title %}My Leaves{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0"><i class="bi bi-calendar-check"></i> My Leave Applications</h4>
+    <div>
+        <a href="{% url 'leave_management:apply' %}" class="btn btn-primary btn-sm"><i class="bi bi-plus-lg"></i> Apply for Leave</a>
+        <a href="{% url 'accounts:student_portal' %}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i> Back</a>
+    </div>
+</div>
+<div class="card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead><tr><th>#</th><th>Leave Type</th><th>From</th><th>To</th><th>Days</th><th>Status</th><th>Reason</th><th>Applied At</th></tr></thead>
+                <tbody>
+                    {% for leave in leaves %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td><span class="badge bg-info">{{ leave.get_leave_type_display }}</span></td>
+                        <td>{{ leave.from_date|date:"d M Y" }}</td>
+                        <td>{{ leave.to_date|date:"d M Y" }}</td>
+                        <td>{{ leave.total_days }}</td>
+                        <td>
+                            <span class="badge bg-{% if leave.status == 'approved' %}success{% elif leave.status == 'rejected' %}danger{% else %}warning{% endif %}">
+                                {{ leave.get_status_display }}
+                            </span>
+                        </td>
+                        <td>{{ leave.reason|truncatechars:30 }}</td>
+                        <td>{{ leave.applied_at|date:"d M Y H:i" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="8" class="text-center text-muted py-4">No leave applications yet.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% if is_paginated %}
+<nav class="mt-3"><ul class="pagination pagination-sm justify-content-center">{% if page_obj.has_previous %}<li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a></li>{% endif %}<li class="page-item disabled"><span class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span></li>{% if page_obj.has_next %}<li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>{% endif %}</ul></nav>
+{% endif %}
+{% endblock %}

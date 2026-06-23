@@ -68,6 +68,15 @@
             </div>
             <div class="text-center mt-4">
                 <a href="{% url 'library:book_list' %}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i>Back to Library</a>
+                {% if request.session.student_id and book.available_copies > 0 %}
+                <form method="post" action="{% url 'library:issue_book' book.pk %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-success mt-3"><i class="bi bi-bookmark-check me-1"></i>Issue This Book</button>
+                </form>
+                {% endif %}
+                {% if request.session.student_id %}
+                <a href="{% url 'library:my_issues' %}" class="btn btn-outline-primary mt-3 ms-2"><i class="bi bi-bookmarks me-1"></i>My Issues</a>
+                {% endif %}
             </div>
         </div>
     </div>

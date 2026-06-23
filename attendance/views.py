@@ -11,6 +11,7 @@ from django.views.generic import DetailView, FormView, ListView, TemplateView
 from students.models import Class, Student
 from .forms import AttendanceForm, BulkAttendanceForm
 from .models import Attendance
+from .sms_utils import send_sms
 
 
 class MarkAttendanceView(LoginRequiredMixin, TemplateView):
@@ -49,6 +50,7 @@ class SaveAttendanceView(LoginRequiredMixin, View):
         student_ids = Student.objects.filter(
             student_class_id=class_id, is_deleted=False
         ).values_list('id', flat=True)
+        sms_sent = 0
         for sid in student_ids:
             status = statuses.get(f'status_{sid}', 'present')
             Attendance.objects.update_or_create(
@@ -60,7 +62,23 @@ class SaveAttendanceView(LoginRequiredMixin, View):
                     'marked_by': request.user,
                 }
             )
-        messages.success(request, 'Attendance saved successfully!')
+            if status == 'absent':
+                try:
+                    student = Student.objects.get(pk=sid)
+                    if student.guardian_contact:
+                        msg = (
+                            f'Dear Parent, your ward {student.full_name} ({student.roll_number}) '
+                            f'was marked ABSENT on {date}. '
+                            f'- Miracle Institute of Technology'
+                        )
+                        if send_sms(student.guardian_contact, msg):
+                            sms_sent += 1
+                except Student.DoesNotExist:
+                    pass
+        msg = 'Attendance saved successfully!'
+        if sms_sent:
+            msg += f' Auto-SMS sent to {sms_sent} guardian(s).'
+        messages.success(request, msg)
         return redirect('attendance:mark')
 
 
@@ -153,3 +171,87 @@ class AttendanceNotifyView(LoginRequiredMixin, View):
                     pass
         messages.success(request, f'Attendance alerts sent to {count} parent(s).')
         return redirect('attendance:summary')
+
+
+class AttendanceSMSView(LoginRequiredMixin, View):
+    def post(self, request):
+        class_id = request.POST.get('class_id')
+        student_id = request.POST.get('student_id')
+        date = request.POST.get('date', '')
+        status_filter = request.POST.get('status', 'absent')
+
+        if student_id:
+            students = Student.objects.filter(pk=student_id, is_deleted=False)
+        elif class_id:
+            students = Student.objects.filter(student_class_id=class_id, is_deleted=False)
+        else:
+            messages.error(request, 'Please select a class or student.')
+            return redirect('attendance:summary')
+
+        sent = 0
+        skipped = 0
+
+        for s in students:
+            if not s.guardian_contact:
+                skipped += 1
+                continue
+
+            records = Attendance.objects.filter(student=s)
+            if date:
+                records = records.filter(date=date)
+            if status_filter:
+                records = records.filter(status=status_filter)
+
+            if not records.exists():
+                skipped += 1
+                continue
+
+            absent_dates = records.filter(status='absent').values_list('date', flat=True)
+            msg = (
+                f'Dear Parent, your ward {s.full_name} ({s.roll_number}) '
+                f'was absent on {", ".join(d.strftime("%d-%b") for d in absent_dates)}. '
+                f'- Miracle Institute of Technology'
+            )
+
+            if send_sms(s.guardian_contact, msg):
+                sent += 1
+            else:
+                skipped += 1
+
+        msg_text = f'Attendance SMS sent to {sent} guardian(s).'
+        if skipped:
+            msg_text += f' {skipped} skipped (no contact or no absences).'
+        messages.success(request, msg_text)
+        return redirect('attendance:summary')
+
+
+class CustomSMSView(LoginRequiredMixin, TemplateView):
+    template_name = 'attendance/custom_sms.html'
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx['classes'] = Class.objects.all()
+        ctx['students'] = Student.objects.filter(is_deleted=False)
+        return ctx
+
+    def post(self, request):
+        student_id = request.POST.get('student_id')
+        message = request.POST.get('message', '').strip()
+
+        if not student_id or not message:
+            messages.error(request, 'Please select a student and enter a message.')
+            return redirect('attendance:custom_sms')
+
+        student = get_object_or_404(Student, pk=student_id)
+
+        if not student.guardian_contact:
+            messages.error(request, f'{student.full_name} has no guardian contact number.')
+            return redirect('attendance:custom_sms')
+
+        full_msg = f'Dear Parent, {message} - Miracle Institute of Technology'
+        if send_sms(student.guardian_contact, full_msg):
+            messages.success(request, f'SMS sent to guardian of {student.full_name}.')
+        else:
+            messages.error(request, 'Failed to send SMS.')
+
+        return redirect('attendance:custom_sms')

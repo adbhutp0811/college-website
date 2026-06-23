@@ -66,6 +66,15 @@
             </div>
             <div class="text-center mt-4">
                 <a href="{% url 'placements:drive_list' %}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i>Back to Drives</a>
+                {% if request.session.student_id and drive.is_active %}
+                <form method="post" action="{% url 'placements:apply_drive' drive.pk %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-success mt-3"><i class="bi bi-send-check me-1"></i>Apply for this Drive</button>
+                </form>
+                {% endif %}
+                {% if request.session.student_id %}
+                <a href="{% url 'placements:my_applications' %}" class="btn btn-outline-primary mt-3 ms-2"><i class="bi bi-file-earmark-text me-1"></i>My Applications</a>
+                {% endif %}
             </div>
         </div>
     </div>

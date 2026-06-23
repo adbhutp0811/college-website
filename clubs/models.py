@@ -37,7 +37,6 @@ class ClubApplication(models.Model):
     STATUS_CHOICES = [('pending', 'Pending'), ('approved', 'Approved'), ('rejected', 'Rejected')]
     club = models.ForeignKey(Club, on_delete=models.CASCADE, related_name='applications')
     student = models.ForeignKey('students.Student', on_delete=models.CASCADE, related_name='club_applications')
-    email = models.EmailField(blank=True, help_text='Student email for contact')
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
     reason = models.TextField(blank=True, help_text='Why do you want to join?')
     reviewed_at = models.DateTimeField(null=True, blank=True)

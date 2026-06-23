@@ -60,6 +60,9 @@ INSTALLED_APPS = [
     'antiragging',
     'exam_seating',
     'quiz',
+    'feedback',
+    'course_materials',
+    'leave_management',
 ]
 
 MIDDLEWARE = [

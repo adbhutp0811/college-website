@@ -9,7 +9,7 @@ from .models import Club, ClubMembership, ClubEvent, ClubApplication, CellCoordi
 
 @admin.register(ClubApplication)
 class ClubApplicationAdmin(admin.ModelAdmin):
-    list_display = ('student_name', 'roll_number', 'email', 'club', 'status', 'applied_on', 'reviewed_on')
+    list_display = ('student_name', 'roll_number', 'club', 'status', 'applied_on', 'reviewed_on')
     list_filter = ('status', 'club')
     search_fields = ('student__first_name', 'student__last_name', 'student__roll_number', 'club__name')
     actions = ['approve_applications', 'reject_applications']
@@ -31,7 +31,7 @@ class ClubApplicationAdmin(admin.ModelAdmin):
     reviewed_on.short_description = 'Reviewed'
 
     def _send_notification(self, app, subject, template, status):
-        recipient = app.email or app.student.email
+        recipient = app.student.email
         if not recipient:
             return
         context = {'student': app.student, 'club': app.club, 'status': status}

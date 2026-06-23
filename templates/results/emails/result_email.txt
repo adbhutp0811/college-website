@@ -1,0 +1,20 @@
+Dear {{ student.full_name }},
+
+Your result for {{ exam.name }} ({{ exam.exam_type }}) has been published.
+
+Roll Number: {{ student.roll_number }}
+Branch: {{ branch }}
+Semester: {{ semester }}
+
+{% for r in results %}{{ r.subject.name }}: {{ r.marks_obtained }}/{{ r.subject.max_marks }} (Grade: {{ r.grade }})
+{% endfor %}
+------------------------------
+Total: {{ total_marks }}/{{ max_marks }}
+SGPA: {{ sgpa }}
+Credits: {{ total_credits }}
+Status: {% if failed %}FAIL{% else %}PASS{% endif %}
+
+Visit the result portal: {{ result_portal_url }}
+
+Regards,
+Miracle Institute of Technology, Kanpur

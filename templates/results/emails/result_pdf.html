@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><style>
+    body { font-family: sans-serif; padding: 30px; font-size: 12px; }
+    h2 { color: #c62828; text-align: center; margin-bottom: 5px; }
+    .subtitle { text-align: center; color: #555; font-size: 11px; margin-bottom: 20px; }
+    .info { width: 100%; margin-bottom: 15px; }
+    .info td { padding: 3px 8px; }
+    table.det { width: 100%; border-collapse: collapse; margin: 15px 0; }
+    table.det th { background: #c62828; color: #fff; padding: 6px 8px; text-align: left; }
+    table.det td { padding: 5px 8px; border: 1px solid #ddd; }
+    table.det tr:nth-child(even) { background: #f9f9f9; }
+    .total { font-weight: bold; margin-top: 10px; }
+    .status { text-align: center; font-size: 14px; margin-top: 15px; }
+    .pass { color: green; }
+    .fail { color: red; }
+    .footer { text-align: center; color: #888; font-size: 10px; margin-top: 30px; border-top: 1px solid #ddd; padding-top: 10px; }
+</style></head>
+<body>
+    <h2>Miracle Institute of Technology, Kanpur</h2>
+    <p class="subtitle">Result Statement - {{ exam.name }} ({{ exam.exam_type }})</p>
+    <table class="info">
+        <tr><td><strong>Student:</strong> {{ student.full_name }}</td><td><strong>Roll No:</strong> {{ student.roll_number }}</td></tr>
+        <tr><td><strong>Branch:</strong> {{ branch }}</td><td><strong>Semester:</strong> {{ semester }}</td></tr>
+    </table>
+    <table class="det">
+        <tr><th>#</th><th>Subject</th><th>Code</th><th>Max Marks</th><th>Marks Obtained</th><th>Grade</th></tr>
+        {% for r in results %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ r.subject.name }}</td>
+            <td>{{ r.subject.code }}</td>
+            <td>{{ r.subject.max_marks }}</td>
+            <td>{{ r.marks_obtained }}</td>
+            <td>{{ r.grade }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <p class="total">Total: {{ total_marks }} / {{ max_marks }} | SGPA: {{ sgpa }} | Credits: {{ total_credits }}</p>
+    <p class="status {% if failed %}fail{% else %}pass{% endif %}">
+        Status: {% if failed %}FAIL{% else %}PASS{% endif %}
+    </p>
+    <p><strong>Note:</strong> This is a computer-generated statement. For official verification, visit the result portal.</p>
+    <div class="footer">Miracle Institute of Technology, Kanpur &bull; GT Road, Kanpur - 208001</div>
+</body>
+</html>

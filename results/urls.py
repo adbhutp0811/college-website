@@ -5,6 +5,7 @@ from .views import (
     ManageResultsView,
     ReportCardView,
     SaveResultsView,
+    SendResultsView,
 )
 
 app_name = 'results'
@@ -15,4 +16,5 @@ urlpatterns = [
     path('api/save/', SaveResultsView.as_view(), name='save'),
     path('class-summary/', ClassResultSummaryView.as_view(), name='class_summary'),
     path('report-card/<int:pk>/', ReportCardView.as_view(), name='report_card'),
+    path('send-results/', SendResultsView.as_view(), name='send_results'),
 ]

@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block title %}Send Custom SMS{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0"><i class="bi bi-chat-dots-fill"></i> Send Custom SMS</h4>
+    <a href="{% url 'attendance:summary' %}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i> Back</a>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label">Student <span class="text-danger">*</span></label>
+                        <select name="student_id" class="form-select" required>
+                            <option value="">Select Student</option>
+                            {% for c in classes %}
+                            <optgroup label="{{ c }}">
+                                {% for s in students %}
+                                {% if s.student_class_id == c.id %}
+                                <option value="{{ s.id }}">{{ s.full_name }} ({{ s.roll_number }})</option>
+                                {% endif %}
+                                {% endfor %}
+                            </optgroup>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Message <span class="text-danger">*</span></label>
+                        <textarea name="message" class="form-control" rows="4" required placeholder="Type your message here..."></textarea>
+                        <div class="form-text">"Dear Parent, " will be prepended automatically.</div>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100"><i class="bi bi-send-fill"></i> Send SMS</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -65,7 +65,7 @@
                     <div class="table-responsive">
                         <table class="table table-bordered">
                             <thead class="table-dark">
-                                <tr><th>Room</th><th>Capacity</th><th>Occupied</th><th>Available</th><th>Rent/Month</th></tr>
+                                <tr><th>Room</th><th>Capacity</th><th>Occupied</th><th>Available</th><th>Rent/Month</th><th>Action</th></tr>
                             </thead>
                             <tbody>
                                 {% for room in hostel.rooms.all %}
@@ -75,9 +75,10 @@
                                     <td>{{ room.occupied }}</td>
                                     <td>{% if room.is_available %}<span class="text-success fw-bold">Yes</span>{% else %}<span class="text-danger fw-bold">Full</span>{% endif %}</td>
                                     <td>₹{{ room.rent_per_month }}</td>
+                                    <td>{% if room.is_available and request.session.student_id %}<a href="{% url 'hostel:apply_room' room.pk %}" class="btn btn-sm btn-success">Apply</a>{% else %}<span class="text-muted">-</span>{% endif %}</td>
                                 </tr>
                                 {% empty %}
-                                <tr><td colspan="5" class="text-center text-muted">No rooms added</td></tr>
+                                <tr><td colspan="6" class="text-center text-muted">No rooms added</td></tr>
                                 {% endfor %}
                             </tbody>
                         </table>

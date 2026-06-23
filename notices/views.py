@@ -1,4 +1,8 @@
-from django.views.generic import ListView, DetailView
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import redirect
+from django.urls import reverse_lazy
+from django.views.generic import ListView, DetailView, CreateView
+from django.contrib import messages
 from .models import Notice
 
 
@@ -27,3 +31,15 @@ class NoticeDetailView(DetailView):
     template_name = 'notices/notice_detail.html'
     context_object_name = 'notice'
     slug_field = 'pk'
+
+
+class CreateNoticeView(LoginRequiredMixin, CreateView):
+    model = Notice
+    template_name = 'notices/notice_form.html'
+    fields = ['title', 'content', 'category']
+    success_url = reverse_lazy('notices:notice_list')
+
+    def form_valid(self, form):
+        form.instance.posted_by = self.request.user
+        messages.success(self.request, 'Notice published successfully!')
+        return super().form_valid(form)

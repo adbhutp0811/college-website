@@ -315,57 +315,50 @@
             <div class="section-title-bar" style="margin:8px auto 0;"></div>
         </div>
         <div class="row g-4 justify-content-center">
+            {% for member in leadership_members %}
             <div class="col-md-3 col-6">
                 <div class="text-center card border-0 p-3">
-                    <div class="bg-secondary text-white d-flex align-items-center justify-content-center rounded-circle mx-auto" style="width:90px;height:90px;font-size:2rem;">R</div>
-                    <h6 class="fw-bold mt-3 mb-1">Dr. Rajendra Prasad</h6>
-                    <p class="small text-muted mb-0">Director</p>
+                    {% if member.photo %}
+                    <img src="{{ member.photo.url }}" alt="{{ member.name }}" class="rounded-circle mx-auto" style="width:90px;height:90px;object-fit:cover;">
+                    {% else %}
+                    <div class="bg-secondary text-white d-flex align-items-center justify-content-center rounded-circle mx-auto" style="width:90px;height:90px;font-size:2rem;">{{ member.name|first }}</div>
+                    {% endif %}
+                    <h6 class="fw-bold mt-3 mb-1">{{ member.name }}</h6>
+                    <p class="small text-muted mb-0">{{ member.designation }}</p>
                 </div>
             </div>
-            <div class="col-md-3 col-6">
-                <div class="text-center card border-0 p-3">
-                    <div class="bg-secondary text-white d-flex align-items-center justify-content-center rounded-circle mx-auto" style="width:90px;height:90px;font-size:2rem;">N</div>
-                    <h6 class="fw-bold mt-3 mb-1">Dr. G. Nalankilli</h6>
-                    <p class="small text-muted mb-0">Dean Academics</p>
-                </div>
-            </div>
-            <div class="col-md-3 col-6">
-                <div class="text-center card border-0 p-3">
-                    <div class="bg-secondary text-white d-flex align-items-center justify-content-center rounded-circle mx-auto" style="width:90px;height:90px;font-size:2rem;">A</div>
-                    <h6 class="fw-bold mt-3 mb-1">Dr. Alok Kumar</h6>
-                    <p class="small text-muted mb-0">HOD - TT</p>
-                </div>
-            </div>
-            <div class="col-md-3 col-6">
-                <div class="text-center card border-0 p-3">
-                    <div class="bg-secondary text-white d-flex align-items-center justify-content-center rounded-circle mx-auto" style="width:90px;height:90px;font-size:2rem;">I</div>
-                    <h6 class="fw-bold mt-3 mb-1">Dr. I.P. Mishra</h6>
-                    <p class="small text-muted mb-0">HOD - CSE</p>
-                </div>
-            </div>
+            {% empty %}
+            <p class="text-center text-muted">No leadership members added yet.</p>
+            {% endfor %}
         </div>
     </div>
 </section>
 
+{% if director_message %}
 <section id="director" class="py-5" style="background:#fafafa;">
     <div class="container py-3">
         <div class="row g-5 align-items-center">
             <div class="col-lg-3 text-center">
-                <div class="bg-secondary text-white d-flex align-items-center justify-content-center rounded-circle mx-auto" style="width:200px;height:200px;font-size:4rem;border:4px solid var(--accent);">R</div>
+                {% if director_message.photo %}
+                <img src="{{ director_message.photo.url }}" alt="{{ director_message.name }}" class="rounded-circle mx-auto" style="width:200px;height:200px;object-fit:cover;border:4px solid var(--accent);">
+                {% else %}
+                <div class="bg-secondary text-white d-flex align-items-center justify-content-center rounded-circle mx-auto" style="width:200px;height:200px;font-size:4rem;border:4px solid var(--accent);">{{ director_message.name|first }}</div>
+                {% endif %}
             </div>
             <div class="col-lg-9">
                 <p class="text-uppercase small fw-bold" style="color:var(--accent);letter-spacing:1px;">Director's Message</p>
                 <h2 class="section-title">From the Director's Desk</h2>
                 <div class="section-title-bar"></div>
                 <div class="mt-3">
-                    <p class="text-muted fst-italic" style="line-height:1.9;font-size:1.05rem;">"At Miracle Institute of Technology, we are committed to creating an environment where academic excellence meets innovation. Our faculty, state-of-the-art infrastructure, and industry partnerships ensure that our students are not just degree holders but well-rounded professionals ready to make a difference in the world."</p>
-                    <p class="fw-bold mb-1">Dr. Rajendra Prasad</p>
-                    <p class="small text-muted">Director, Miracle Institute of Technology</p>
+                    <p class="text-muted fst-italic" style="line-height:1.9;font-size:1.05rem;">"{{ director_message.message }}"</p>
+                    <p class="fw-bold mb-1">{{ director_message.name }}</p>
+                    <p class="small text-muted">{{ director_message.designation }}</p>
                 </div>
             </div>
         </div>
     </div>
 </section>
+{% endif %}
 
 <section class="py-5">
     <div class="container py-3">
@@ -389,7 +382,9 @@
         </div>
         <div class="row g-4">
             {% for dept in departments %}
-            <div class="col-md-4 col-6"><div class="dept-card"><div class="code">B.Tech - {{ dept.code }}</div><h5 class="mt-1">{{ dept.name }}</h5><p class="small text-muted mb-0">{{ dept.desc }}</p></div></div>
+            <div class="col-md-4 col-6"><div class="dept-card"><div class="code">B.Tech - {{ dept.code }}</div><h5 class="mt-1">{{ dept.full_name }}</h5><p class="small text-muted mb-0">{{ dept.description }}</p></div></div>
+            {% empty %}
+            <p class="text-center text-muted">No programs added yet.</p>
             {% endfor %}
         </div>
     </div>
@@ -404,17 +399,23 @@
             <p class="text-muted mt-3">Our students are placed in leading multinational corporations worldwide</p>
         </div>
         <div class="row g-3 justify-content-center align-items-center">
-            {% with 'tcs.svg infosys.svg wipro.svg cognizant.png accenture.svg capgemini.svg hcl.svg techmahindra.svg amazon.svg ibm.svg lti.svg deloitte.svg' as companies %}
-            {% for c in companies.split %}
-            {% with c|cut:'.svg'|cut:'.png' as name %}
+            {% for partner in placement_partners %}
             <div class="col-4 col-md-3 col-lg-2">
                 <div class="p-2 text-center">
-                    <img src="{% static 'images/partners/'|add:c %}" alt="{{ name|title }}" class="img-fluid" style="max-height:50px;filter:grayscale(0.4);opacity:0.8;transition:all 0.3s;" onmouseover="this.style.filter='grayscale(0)';this.style.opacity='1';" onmouseout="this.style.filter='grayscale(0.4)';this.style.opacity='0.8';">
+                    {% if partner.logo %}
+                    <a href="{{ partner.website }}" target="_blank" rel="noopener">
+                        <img src="{{ partner.logo.url }}" alt="{{ partner.name }}" class="img-fluid" style="max-height:50px;filter:grayscale(0.4);opacity:0.8;transition:all 0.3s;" onmouseover="this.style.filter='grayscale(0)';this.style.opacity='1';" onmouseout="this.style.filter='grayscale(0.4)';this.style.opacity='0.8';">
+                    </a>
+                    {% else %}
+                    <a href="{{ partner.website }}" target="_blank" rel="noopener" class="text-decoration-none">
+                        <span class="fw-semibold small">{{ partner.name }}</span>
+                    </a>
+                    {% endif %}
                 </div>
             </div>
-            {% endwith %}
+            {% empty %}
+            <p class="text-center text-muted">No placement partners added yet.</p>
             {% endfor %}
-            {% endwith %}
         </div>
     </div>
 </section>
@@ -427,13 +428,16 @@
             <div class="section-title-bar" style="margin:8px auto 0;"></div>
         </div>
         <div class="row g-4">
-            <div class="col-md-4"><div class="card border-0 p-4 h-100 shadow-sm"><i class="bi bi-quote" style="font-size:2rem;color:var(--accent);opacity:0.2;"></i><p class="small text-muted fst-italic" style="line-height:1.7;">"The faculty at MIT are incredibly supportive. The labs and library are world-class. I got placed at TCS through campus placement."</p><p class="fw-bold small mb-0 mt-2">Ananya Kumar</p><p class="small text-muted">CSE, 2024</p></div></div>
-            <div class="col-md-4"><div class="card border-0 p-4 h-100 shadow-sm"><i class="bi bi-quote" style="font-size:2rem;color:var(--accent);opacity:0.2;"></i><p class="small text-muted fst-italic" style="line-height:1.7;">"The practical exposure through lab sessions and industry visits was amazing. MIT shaped my career in the right direction."</p><p class="fw-bold small mb-0 mt-2">Rohit Pandey</p><p class="small text-muted">ME, 2024</p></div></div>
-            <div class="col-md-4"><div class="card border-0 p-4 h-100 shadow-sm"><i class="bi bi-quote" style="font-size:2rem;color:var(--accent);opacity:0.2;"></i><p class="small text-muted fst-italic" style="line-height:1.7;">"The textile engineering program is comprehensive and unique. Excellent faculty with deep industry knowledge."</p><p class="fw-bold small mb-0 mt-2">Shreya Verma</p><p class="small text-muted">TT, 2025</p></div></div>
+            {% for testimonial in testimonials %}
+            <div class="col-md-4"><div class="card border-0 p-4 h-100 shadow-sm"><i class="bi bi-quote" style="font-size:2rem;color:var(--accent);opacity:0.2;"></i><p class="small text-muted fst-italic" style="line-height:1.7;">"{{ testimonial.content }}"</p><p class="fw-bold small mb-0 mt-2">{{ testimonial.student_name }}</p><p class="small text-muted">{{ testimonial.program }}, {{ testimonial.batch }}</p></div></div>
+            {% empty %}
+            <p class="text-center text-muted">No testimonials added yet.</p>
+            {% endfor %}
         </div>
     </div>
 </section>
 
+{% if contact_info %}
 <section id="contact" class="py-5" style="background:#fafafa;">
     <div class="container py-3">
         <div class="text-center mb-5">
@@ -443,17 +447,18 @@
         </div>
         <div class="row g-4 justify-content-center">
             <div class="col-md-4">
-                <div class="card border-0 p-4 h-100 shadow-sm"><h5 class="fw-bold"><i class="bi bi-geo-alt me-2" style="color:var(--accent);"></i>Address</h5><p class="small text-muted mb-0">GT Road, Kanpur<br>Uttar Pradesh - 208001</p></div>
+                <div class="card border-0 p-4 h-100 shadow-sm"><h5 class="fw-bold"><i class="bi bi-geo-alt me-2" style="color:var(--accent);"></i>Address</h5><p class="small text-muted mb-0">{{ contact_info.address|linebreaksbr }}</p></div>
             </div>
             <div class="col-md-4">
-                <div class="card border-0 p-4 h-100 shadow-sm"><h5 class="fw-bold"><i class="bi bi-telephone me-2" style="color:var(--accent);"></i>Phone</h5><p class="small text-muted mb-0">+91-512-2550123<br>+91-512-2550456</p></div>
+                <div class="card border-0 p-4 h-100 shadow-sm"><h5 class="fw-bold"><i class="bi bi-telephone me-2" style="color:var(--accent);"></i>Phone</h5><p class="small text-muted mb-0">{{ contact_info.phone|linebreaksbr }}</p></div>
             </div>
             <div class="col-md-4">
-                <div class="card border-0 p-4 h-100 shadow-sm"><h5 class="fw-bold"><i class="bi bi-envelope me-2" style="color:var(--accent);"></i>Email</h5><p class="small text-muted mb-0">director@miracle.ac.in<br>admissions@miracle.ac.in</p></div>
+                <div class="card border-0 p-4 h-100 shadow-sm"><h5 class="fw-bold"><i class="bi bi-envelope me-2" style="color:var(--accent);"></i>Email</h5><p class="small text-muted mb-0">{{ contact_info.email|linebreaksbr }}</p></div>
             </div>
         </div>
     </div>
 </section>
+{% endif %}
 
 <footer class="footer">
     <div class="container py-5">

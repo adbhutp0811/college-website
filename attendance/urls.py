@@ -6,6 +6,8 @@ from .views import (
     MarkAttendanceView,
     SaveAttendanceView,
     AttendanceNotifyView,
+    AttendanceSMSView,
+    CustomSMSView,
 )
 
 app_name = 'attendance'
@@ -17,4 +19,6 @@ urlpatterns = [
     path('history/', AttendanceHistoryView.as_view(), name='history'),
     path('summary/', AttendanceSummaryView.as_view(), name='summary'),
     path('notify/', AttendanceNotifyView.as_view(), name='notify'),
+    path('sms/', AttendanceSMSView.as_view(), name='sms'),
+    path('custom-sms/', CustomSMSView.as_view(), name='custom_sms'),
 ]

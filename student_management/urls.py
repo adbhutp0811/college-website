@@ -30,6 +30,9 @@ urlpatterns = [
     path('antiragging/', include('antiragging.urls', namespace='antiragging')),
     path('exam-seating/', include('exam_seating.urls', namespace='exam_seating')),
     path('quiz/', include('quiz.urls', namespace='quiz')),
+    path('course-materials/', include('course_materials.urls', namespace='course_materials')),
+    path('feedback/', include('feedback.urls', namespace='feedback')),
+    path('leave-management/', include('leave_management.urls', namespace='leave_management')),
 ]
 
 if settings.DEBUG:

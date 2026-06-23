@@ -1,16 +1,33 @@
 from collections import defaultdict
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from io import BytesIO
 
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.mail import EmailMessage
+from django.core.mail import send_mail
 from django.db.models import Avg, Sum
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect
+from django.template.loader import render_to_string
 from django.urls import reverse_lazy
+from django.utils.html import strip_tags
 from django.views import View
 from django.views.generic import DetailView, FormView, ListView, TemplateView
 from students.models import Class, Student
+from xhtml2pdf import pisa
 from .forms import BulkResultForm, ResultForm
 from .models import Exam, Result, Subject, calculate_sgpa
+
+
+def render_to_pdf(template_src, context_dict):
+    html = render_to_string(template_src, context_dict)
+    result = BytesIO()
+    pdf = pisa.pisaDocument(BytesIO(html.encode('utf-8')), result)
+    if pdf.err:
+        return None
+    return result.getvalue()
 
 
 class ManageResultsView(LoginRequiredMixin, TemplateView):
@@ -173,3 +190,77 @@ class ReportCardView(LoginRequiredMixin, DetailView):
                            if e.student_class.section == f'Sem {selected_sem}'}
         ctx['exam_groups'] = exam_groups
         return ctx
+
+
+class SendResultsView(LoginRequiredMixin, View):
+    def _send_single(self, student, exam, base_url):
+        if not student.email:
+            return 'skip'
+        results = list(Result.objects.filter(student=student, exam=exam).select_related('subject'))
+        if not results:
+            return 'skip'
+
+        total_marks = sum(r.total_marks for r in results)
+        max_marks = sum(r.subject.max_marks for r in results)
+        sgpa, total_credits = calculate_sgpa(results)
+        failed = any(not r.is_pass for r in results)
+
+        context = {
+            'student': student,
+            'exam': exam,
+            'branch': student.student_class.name,
+            'semester': student.student_class.section,
+            'results': results,
+            'total_marks': round(total_marks, 2),
+            'max_marks': max_marks,
+            'sgpa': sgpa,
+            'total_credits': total_credits,
+            'failed': failed,
+            'result_portal_url': f'{base_url}/accounts/result-portal/',
+        }
+
+        pdf = render_to_pdf('results/emails/result_pdf.html', context)
+        if pdf is None:
+            return 'skip'
+
+        try:
+            email = EmailMessage(
+                subject=f'Result Published - {exam.name}',
+                body=f'Dear {student.full_name},\n\nYour result for {exam.name} is attached as PDF.\n\nRegards,\nMiracle Institute of Technology, Kanpur',
+                from_email=settings.DEFAULT_FROM_EMAIL or None,
+                to=[student.email],
+            )
+            email.attach(f'Result_{student.roll_number}_{exam.name}.pdf', pdf, 'application/pdf')
+            email.send(fail_silently=False)
+            return 'sent'
+        except Exception:
+            return 'skip'
+
+    def post(self, request, *args, **kwargs):
+        class_id = request.POST.get('class_id')
+        exam_id = request.POST.get('exam_id')
+
+        if not class_id or not exam_id:
+            messages.error(request, 'Please select both a branch and an exam.')
+            return redirect('results:class_summary')
+
+        exam = get_object_or_404(Exam, pk=exam_id)
+        students = Student.objects.filter(student_class_id=class_id, is_deleted=False)
+        base_url = f'{request.scheme}://{request.get_host()}'
+
+        sent = 0
+        skipped = 0
+        with ThreadPoolExecutor(max_workers=5) as executor:
+            futures = [executor.submit(self._send_single, s, exam, base_url) for s in students]
+            for f in as_completed(futures):
+                result = f.result()
+                if result == 'sent':
+                    sent += 1
+                else:
+                    skipped += 1
+
+        msg = f'Results sent to {sent} student(s) via email.'
+        if skipped:
+            msg += f' {skipped} student(s) skipped (no email or no results).'
+        messages.success(request, msg)
+        return redirect(f'{reverse_lazy("results:class_summary")}?class={class_id}&exam={exam_id}')

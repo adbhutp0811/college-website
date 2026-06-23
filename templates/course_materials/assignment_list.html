@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assignments - Miracle Institute of Technology</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *{font-family:'Inter',sans-serif;}
+        :root{--primary:#0b1d3a;--accent:#c62828;}
+        .page-header{background:linear-gradient(135deg,#0b1d3a,#1a3a6b);color:#fff;padding:50px 0 40px;position:relative;overflow:hidden;}
+        .page-header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--accent),#ff6b35);}
+        .nav-link-main{color:#333!important;font-weight:500;padding:1.2rem 0.9rem!important;font-size:0.88rem;transition:all 0.2s;border-bottom:3px solid transparent;text-decoration:none;}
+        .nav-link-main:hover,.nav-link-main.active{color:var(--primary)!important;border-bottom-color:var(--accent);}
+        .assignment-card{border:none;border-radius:12px;transition:all 0.2s;}
+        .assignment-card:hover{box-shadow:0 4px 20px rgba(0,0,0,0.08);transform:translateY(-2px);}
+        .due-badge{font-size:0.75rem;}
+    </style>
+</head>
+<body>
+<nav style="background:#fff;box-shadow:0 2px 15px rgba(0,0,0,0.06);">
+    <div class="container d-flex justify-content-between align-items-center" style="padding:8px 0;">
+        <a href="/" style="font-weight:800;color:var(--primary);text-decoration:none;font-size:1.1rem;"><i class="bi bi-mortarboard-fill me-2" style="color:var(--accent);"></i>Miracle Institute</a>
+        <div><a href="/" class="nav-link-main d-inline-block">Home</a></div>
+    </div>
+</nav>
+{% include '_back_button.html' %}
+
+<div class="page-header">
+    <div class="container text-center">
+        <h1 class="fw-bold display-5">Assignments</h1>
+        <p class="mb-0 opacity-75">Course assignments and submissions</p>
+    </div>
+</div>
+<div class="container py-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+        <div class="d-flex gap-2 flex-wrap">
+            <form method="get" class="d-flex gap-2 flex-wrap">
+                <select name="class" class="form-select form-select-sm" style="width:auto;" onchange="this.form.submit()">
+                    <option value="">All Classes</option>
+                    {% for cls in classes %}
+                    <option value="{{ cls.id }}" {% if current_class|stringformat:"s" == cls.id|stringformat:"s" %}selected{% endif %}>{{ cls }}</option>
+                    {% endfor %}
+                </select>
+                <select name="subject" class="form-select form-select-sm" style="width:auto;" onchange="this.form.submit()">
+                    <option value="">All Subjects</option>
+                    {% for sub in subjects %}
+                    <option value="{{ sub.id }}" {% if current_subject|stringformat:"s" == sub.id|stringformat:"s" %}selected{% endif %}>{{ sub.name }}</option>
+                    {% endfor %}
+                </select>
+            </form>
+        </div>
+        {% if user.is_authenticated %}
+        <a href="{% url 'course_materials:create_assignment' %}" class="btn btn-primary btn-sm"><i class="bi bi-plus-lg"></i> Create Assignment</a>
+        {% endif %}
+    </div>
+    <div class="row g-4">
+        {% for assignment in assignments %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card assignment-card shadow-sm h-100">
+                <div class="card-body d-flex flex-column">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <span class="badge bg-light text-dark due-badge">{{ assignment.subject.name }}</span>
+                        {% if assignment.is_past_due %}
+                        <span class="badge bg-danger due-badge">Past Due</span>
+                        {% else %}
+                        <span class="badge bg-success due-badge">{{ assignment.due_date|timeuntil }} left</span>
+                        {% endif %}
+                    </div>
+                    <h6 class="fw-bold mb-1">{{ assignment.title }}</h6>
+                    <p class="text-muted small mb-2">{{ assignment.student_class }} &middot; Max Marks: {{ assignment.max_marks }}</p>
+                    {% if assignment.description %}
+                    <p class="text-muted small mb-3 flex-grow-1">{{ assignment.description|truncatewords:20 }}</p>
+                    {% endif %}
+                    <div class="d-flex gap-2 mt-auto">
+                        {% if request.session.student_id and not assignment.is_past_due %}
+                        <a href="{% url 'course_materials:submit_assignment' assignment.pk %}" class="btn btn-success btn-sm"><i class="bi bi-upload"></i> Submit</a>
+                        {% endif %}
+                        {% if assignment.file %}
+                        <a href="{{ assignment.file.url }}" class="btn btn-outline-dark btn-sm" target="_blank"><i class="bi bi-paperclip"></i> Attachment</a>
+                        {% endif %}
+                        {% if user.is_authenticated %}
+                        <a href="{% url 'course_materials:staff_submissions' assignment.pk %}" class="btn btn-outline-primary btn-sm"><i class="bi bi-list-check"></i> Submissions</a>
+                        {% endif %}
+                    </div>
+                    <small class="text-muted mt-2">Due: {{ assignment.due_date|date:"d M Y h:i A" }}</small>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <i class="bi bi-pencil-square display-1 text-muted"></i>
+            <h4 class="mt-3 text-muted">No assignments posted yet</h4>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+<footer style="background:var(--primary);color:rgba(255,255,255,0.7);padding:20px 0;margin-top:30px;">
+    <div class="container text-center small">&copy; 2026 Miracle Institute of Technology</div>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
