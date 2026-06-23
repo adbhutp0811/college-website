@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}Quiz Result - {{ quiz.title }}{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4><i class="bi bi-bar-chart-fill"></i> {{ quiz.title }} - Result</h4>
+    <a href="{% url 'quiz:my_results' %}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i> Back</a>
+</div>
+<div class="row g-3 mb-4">
+    <div class="col-md-4"><div class="card bg-primary text-white text-center p-3"><h6>Score</h6><h3>{{ attempt.score }}/{{ attempt.total_marks }}</h3></div></div>
+    <div class="col-md-4"><div class="card bg-{% if attempt.is_passed %}success{% else %}danger{% endif %} text-white text-center p-3"><h6>Percentage</h6><h3>{{ attempt.percentage }}%</h3></div></div>
+    <div class="col-md-4"><div class="card bg-info text-white text-center p-3"><h6>Status</h6><h3>{% if attempt.is_passed %}PASS{% else %}FAIL{% endif %}</h3></div></div>
+</div>
+<div class="card"><div class="card-header">Answer Review</div>
+    <div class="card-body">{% for a in answers %}
+        <div class="mb-3 p-3 border rounded {% if a.is_correct %}bg-success-subtle{% else %}bg-danger-subtle{% endif %}">
+            <p class="mb-1"><strong>Q{{ forloop.counter }}.</strong> {{ a.question.text }}</p>
+            <p class="mb-0 small">Your answer: <strong>{{ a.selected_answer }}</strong> | Correct: <strong>{{ a.question.correct_answer }}</strong></p>
+        </div>{% empty %}<p class="text-muted text-center py-3">No answers found.</p>{% endfor %}
+    </div>
+</div>
+{% endblock %}

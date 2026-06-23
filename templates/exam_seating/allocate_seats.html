@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Allocate Seats{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4><i class="bi bi-person-plus"></i> Allocate Seats - {{ schedule.subject.name }}</h4>
+    <a href="{% url 'exam_seating:schedule_detail' schedule.pk %}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i> Back</a>
+</div>
+<div class="row g-3">
+    <div class="col-md-12">
+        <div class="card"><div class="card-header">Existing Allocations</div><div class="card-body p-0">
+            <div class="table-responsive"><table class="table table-hover mb-0">
+                <thead><tr><th>Seat No</th><th>Student</th></tr></thead>
+                <tbody>{% for seat in existing %}<tr><td>{{ seat.seat_number }}</td><td>{{ seat.student.full_name }}</td></tr>{% empty %}<tr><td colspan="2" class="text-center text-muted py-3">No allocations.</td></tr>{% endfor %}</tbody>
+            </table></div>
+        </div></div>
+    </div>
+    <div class="col-md-12">
+        <div class="card"><div class="card-header">Allocate Seats</div><div class="card-body">
+            <form method="post">{% csrf_token %}
+                <div class="mb-3"><label class="form-label">Select Students (order determines seat numbers)</label>
+                    <div class="row">{% for s in students %}
+                        <div class="col-md-3"><div class="form-check"><input class="form-check-input" type="checkbox" name="students" value="{{ s.pk }}" id="s{{ s.pk }}" {% if s in existing %}checked{% endif %}><label class="form-check-label" for="s{{ s.pk }}">{{ s.roll_number }} - {{ s.full_name }}</label></div></div>
+                    {% endfor %}</div>
+                </div>
+                <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Save Allocations</button>
+            </form>
+        </div></div>
+    </div>
+</div>
+{% endblock %}

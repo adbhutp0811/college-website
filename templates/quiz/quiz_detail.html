@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}{{ quiz.title }}{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4><i class="bi bi-question-circle-fill"></i> {{ quiz.title }}</h4>
+    <a href="{% url 'quiz:quiz_list' %}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i> Back</a>
+</div>
+<div class="card"><div class="card-body">
+    <p>{{ quiz.description }}</p>
+    <ul class="list-group list-group-flush mb-3">
+        <li class="list-group-item"><strong>Subject:</strong> {{ quiz.subject.name }}</li>
+        <li class="list-group-item"><strong>Duration:</strong> {{ quiz.duration_minutes }} minutes</li>
+        <li class="list-group-item"><strong>Total Marks:</strong> {{ quiz.total_marks }}</li>
+        <li class="list-group-item"><strong>Questions:</strong> {{ quiz.total_questions }}</li>
+        <li class="list-group-item"><strong>Starts:</strong> {{ quiz.start_time|date:"d M Y h:i A" }}</li>
+        <li class="list-group-item"><strong>Ends:</strong> {{ quiz.end_time|date:"d M Y h:i A" }}</li>
+    </ul>
+</div></div>
+{% endblock %}

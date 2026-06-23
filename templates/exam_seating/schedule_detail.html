@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}Schedule Detail{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4><i class="bi bi-calendar-event"></i> {{ schedule.exam.name }} - {{ schedule.subject.name }}</h4>
+    <div><a href="{% url 'exam_seating:allocate_seats' schedule.pk %}" class="btn btn-primary btn-sm"><i class="bi bi-person-plus"></i> Allocate Seats</a> <a href="{% url 'exam_seating:schedule_list' %}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i> Back</a></div>
+</div>
+<div class="row g-3">
+    <div class="col-md-4">
+        <div class="card"><div class="card-body">
+            <p><strong>Date:</strong> {{ schedule.exam_date|date:"d M Y" }}</p>
+            <p><strong>Time:</strong> {{ schedule.start_time|time:"h:i A" }} - {{ schedule.end_time|time:"h:i A" }}</p>
+            <p><strong>Room:</strong> {{ schedule.room }}</p>
+            <p><strong>Notes:</strong> {{ schedule.notes|default:"-" }}</p>
+        </div></div>
+    </div>
+    <div class="col-md-8">
+        <div class="card"><div class="card-header d-flex justify-content-between"><span><i class="bi bi-people"></i> Seat Allocations ({{ seats|length }})</span></div>
+            <div class="card-body p-0"><div class="table-responsive"><table class="table table-hover mb-0">
+                <thead><tr><th>Seat No</th><th>Student</th><th>Roll Number</th></tr></thead>
+                <tbody>{% for seat in seats %}<tr>
+                    <td>{{ seat.seat_number }}</td><td>{{ seat.student.full_name }}</td><td>{{ seat.student.roll_number }}</td>
+                </tr>{% empty %}<tr><td colspan="3" class="text-center text-muted py-4">No seats allocated yet.</td></tr>{% endfor %}</tbody>
+            </table></div></div>
+        </div>
+    </div>
+</div>
+{% endblock %}

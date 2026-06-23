@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Anti-Ragging{% endblock %}
+{% block content %}
+<h4><i class="bi bi-shield-exclamation"></i> Anti-Ragging Cell</h4>
+<div class="row g-3 mt-2">
+    <div class="col-md-3"><div class="card text-center h-100"><div class="card-body">
+        <i class="bi bi-people-fill text-primary" style="font-size:3rem"></i>
+        <h5 class="mt-2">Committee</h5>
+        <a href="{% url 'antiragging:committee' %}" class="btn btn-primary w-100 mt-2">View</a>
+    </div></div></div>
+    <div class="col-md-3"><div class="card text-center h-100"><div class="card-body">
+        <i class="bi bi-file-earmark-text text-success" style="font-size:3rem"></i>
+        <h5 class="mt-2">Undertaking</h5>
+        <a href="{% url 'antiragging:undertaking' %}" class="btn btn-success w-100 mt-2">Submit</a>
+    </div></div></div>
+    <div class="col-md-3"><div class="card text-center h-100"><div class="card-body">
+        <i class="bi bi-megaphone text-warning" style="font-size:3rem"></i>
+        <h5 class="mt-2">Report</h5>
+        <a href="{% url 'antiragging:submit_complaint' %}" class="btn btn-warning w-100 mt-2">Report Incident</a>
+    </div></div></div>
+    <div class="col-md-3"><div class="card text-center h-100"><div class="card-body">
+        <i class="bi bi-list-check text-info" style="font-size:3rem"></i>
+        <h5 class="mt-2">My Complaints</h5>
+        <a href="{% url 'antiragging:complaint_list' %}" class="btn btn-info w-100 mt-2">View</a>
+    </div></div></div>
+</div>
+{% endblock %}

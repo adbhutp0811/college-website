@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}Scholarships{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4><i class="bi bi-cash-stack"></i> Scholarship Schemes</h4>
+</div>
+<div class="row g-3">{% for s in schemes %}
+    <div class="col-md-4"><div class="card h-100">
+        <div class="card-body">
+            <h5>{{ s.name }}</h5>
+            <h6 class="text-success fw-bold">₹{{ s.amount }}</h6>
+            <p class="text-muted small">{{ s.description|truncatewords:20 }}</p>
+            <p class="mb-1"><small><i class="bi bi-calendar"></i> Deadline: {{ s.application_deadline|date:"d M Y" }}</small></p>
+            <a href="{% url 'scholarships:scheme_detail' s.pk %}" class="btn btn-outline-primary btn-sm w-100 mt-2">View Details</a>
+        </div>
+    </div></div>{% empty %}<div class="col-12"><p class="text-muted text-center py-5">No scholarship schemes available.</p></div>{% endfor %}
+</div>
+{% endblock %}

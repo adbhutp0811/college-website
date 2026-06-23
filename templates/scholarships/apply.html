@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}Apply - {{ scheme.name }}{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4><i class="bi bi-send"></i> Apply for {{ scheme.name }}</h4>
+    <a href="{% url 'scholarships:scheme_detail' scheme.pk %}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i> Back</a>
+</div>
+{% if existing %}
+<div class="alert alert-info">You have already applied for this scheme. Status: <strong>{{ existing.get_status_display }}</strong></div>
+{% else %}
+<div class="card"><div class="card-body">
+    <form method="post" enctype="multipart/form-data">{% csrf_token %}
+        <div class="mb-3"><label class="form-label">Upload Documents</label><input type="file" name="documents" class="form-control"></div>
+        <div class="mb-3"><label class="form-label">Additional Remarks</label><textarea name="remarks" class="form-control" rows="3"></textarea></div>
+        <p class="text-muted small"><i class="bi bi-info-circle"></i> By submitting, you confirm that you meet the eligibility criteria.</p>
+        <button type="submit" class="btn btn-primary"><i class="bi bi-send"></i> Submit Application</button>
+    </form>
+</div></div>
+{% endif %}
+{% endblock %}

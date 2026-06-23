@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Mentor Dashboard{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4><i class="bi bi-people"></i> Mentor Dashboard</h4>
+    <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i> Back</a>
+</div>
+<div class="row g-3 mb-4">
+    <div class="col-md-4"><div class="card bg-primary text-white text-center p-3"><h6>My Mentees</h6><h3>{{ mentee_count }}</h3></div></div>
+    <div class="col-md-4"><div class="card bg-success text-white text-center p-3"><h6>Meetings</h6><h3>{{ meeting_count }}</h3></div></div>
+    <div class="col-md-4"><div class="card bg-info text-white text-center p-3"><h6>Recent Notes</h6><h3>{{ recent_notes|length }}</h3></div></div>
+</div>
+<div class="row g-3">
+    <div class="col-md-6">
+        <div class="card"><div class="card-header">Quick Actions</div><div class="card-body">
+            <a href="{% url 'mentor:my_mentees' %}" class="btn btn-primary w-100 mb-2"><i class="bi bi-person-lines-fill"></i> View My Mentees</a>
+            <a href="{% url 'mentor:meetings' %}" class="btn btn-success w-100 mb-2"><i class="bi bi-calendar-event"></i> View Meetings</a>
+            <a href="{% url 'mentor:create_meeting' %}" class="btn btn-warning w-100 mb-2"><i class="bi bi-plus-circle"></i> Log Meeting</a>
+            <a href="{% url 'mentor:assign' %}" class="btn btn-outline-primary w-100"><i class="bi bi-person-plus"></i> Assign Mentors</a>
+        </div></div>
+    </div>
+    <div class="col-md-6">
+        <div class="card"><div class="card-header">Recent Meetings</div><div class="card-body p-0">
+            <ul class="list-group list-group-flush">
+                {% for m in recent_meetings %}<li class="list-group-item d-flex justify-content-between"><span>{{ m.meeting_date }}</span><small class="text-muted">{{ m.notes|truncatewords:10 }}</small></li>{% empty %}<li class="list-group-item text-muted">No meetings yet.</li>{% endfor %}
+            </ul>
+        </div></div>
+    </div>
+</div>
+{% endblock %}

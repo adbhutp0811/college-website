@@ -23,6 +23,13 @@ urlpatterns = [
     path('grievances/', include('grievances.urls', namespace='grievances')),
     path('exam-forms/', include('exam_forms.urls', namespace='exam_forms')),
     path('faculty/', include('faculty.urls', namespace='faculty')),
+    path('mentor/', include('mentor.urls', namespace='mentor')),
+    path('sports/', include('sports.urls', namespace='sports')),
+    path('scholarships/', include('scholarships.urls', namespace='scholarships')),
+    path('mess/', include('mess.urls', namespace='mess')),
+    path('antiragging/', include('antiragging.urls', namespace='antiragging')),
+    path('exam-seating/', include('exam_seating.urls', namespace='exam_seating')),
+    path('quiz/', include('quiz.urls', namespace='quiz')),
 ]
 
 if settings.DEBUG:

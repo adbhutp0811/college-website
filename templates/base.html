@@ -23,6 +23,13 @@
                     <li class="nav-item"><a class="nav-link" href="{% url 'fees:student_fees' %}"><i class="bi bi-credit-card"></i> Fees</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'exam_forms:list' %}"><i class="bi bi-file-text"></i> Exam Forms</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'grievances:list' %}"><i class="bi bi-megaphone"></i> Grievances</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'mentor:student_mentor' %}"><i class="bi bi-people"></i> Mentor</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'sports:sport_list' %}"><i class="bi bi-trophy"></i> Sports</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'scholarships:scheme_list' %}"><i class="bi bi-cash-stack"></i> Scholarships</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'mess:home' %}"><i class="bi bi-cup-hot"></i> Mess</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'antiragging:home' %}"><i class="bi bi-shield"></i> Anti-Ragging</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'exam_seating:student_seating' %}"><i class="bi bi-calendar-range"></i> Exam Seating</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'quiz:quiz_list' %}"><i class="bi bi-question-circle"></i> Quizzes</a></li>
                 </ul>
                 <ul class="navbar-nav">
                     <li class="nav-item">
@@ -78,8 +85,23 @@
                         <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown"><i class="bi bi-file-text"></i> Exams</a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="{% url 'exam_forms:staff_list' %}">Exam Registrations</a></li>
+                            <li><a class="dropdown-item" href="{% url 'exam_seating:schedule_list' %}">Exam Schedule & Seating</a></li>
                         </ul>
                     </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown"><i class="bi bi-people"></i> Mentor</a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'mentor:dashboard' %}">Mentor Dashboard</a></li>
+                            <li><a class="dropdown-item" href="{% url 'mentor:my_mentees' %}">My Mentees</a></li>
+                            <li><a class="dropdown-item" href="{% url 'mentor:meetings' %}">Meetings</a></li>
+                            <li><a class="dropdown-item" href="{% url 'mentor:assign' %}">Assign Mentors</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'sports:sport_list' %}"><i class="bi bi-trophy"></i> Sports</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'scholarships:staff_list' %}"><i class="bi bi-cash-stack"></i> Scholarships</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'mess:staff_complaints' %}"><i class="bi bi-cup-hot"></i> Mess</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'antiragging:staff_complaints' %}"><i class="bi bi-shield"></i> Anti-Ragging</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'quiz:quiz_list' %}"><i class="bi bi-question-circle"></i> Quizzes</a></li>
                 </ul>
                 <ul class="navbar-nav">
                     <li class="nav-item dropdown">

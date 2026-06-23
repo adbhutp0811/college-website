@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}{{ sport.name }}{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4><i class="bi bi-trophy-fill"></i> {{ sport.name }}</h4>
+    <a href="{% url 'sports:sport_list' %}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i> Back</a>
+</div>
+<div class="row g-3">
+    <div class="col-md-6">
+        <div class="card"><div class="card-header d-flex justify-content-between"><span><i class="bi bi-people"></i> Teams</span>{% if user.is_authenticated %}<a href="{% url 'sports:create_team' sport.pk %}" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg"></i> Add Team</a>{% endif %}</div>
+            <div class="card-body p-0"><div class="table-responsive"><table class="table table-hover mb-0"><thead><tr><th>Name</th><th>Members</th><th>Coach</th></tr></thead><tbody>
+                {% for t in teams %}<tr><td><a href="{% url 'sports:team_detail' t.pk %}">{{ t.name }}</a></td><td>{{ t.members.count }}</td><td>{{ t.coach_name|default:"-" }}</td></tr>{% empty %}<tr><td colspan="3" class="text-center text-muted py-3">No teams.</td></tr>{% endfor %}
+            </tbody></table></div></div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card"><div class="card-header"><i class="bi bi-award"></i> Tournaments</div>
+            <div class="card-body p-0"><div class="table-responsive"><table class="table table-hover mb-0"><thead><tr><th>Name</th><th>Dates</th><th>Status</th></tr></thead><tbody>
+                {% for t in tournaments %}<tr><td><a href="{% url 'sports:tournament_detail' t.pk %}">{{ t.name }}</a></td><td>{{ t.start_date|date:"d M" }} - {{ t.end_date|date:"d M Y" }}</td><td><span class="badge bg-{% if t.status == 'completed' %}success{% elif t.status == 'ongoing' %}warning{% else %}info{% endif %}">{{ t.get_status_display }}</span></td></tr>{% empty %}<tr><td colspan="3" class="text-center text-muted py-3">No tournaments.</td></tr>{% endfor %}
+            </tbody></table></div></div>
+        </div>
+    </div>
+    <div class="col-12">
+        <div class="card"><div class="card-header"><i class="bi bi-star-fill"></i> Achievements</div>
+            <div class="card-body p-0"><div class="table-responsive"><table class="table table-hover mb-0"><thead><tr><th>Student</th><th>Achievement</th><th>Medal</th><th>Date</th></tr></thead><tbody>
+                {% for a in achievements %}<tr><td>{{ a.student.full_name }}</td><td>{{ a.title }}</td><td><span class="badge bg-{% if a.medal == 'gold' %}warning{% elif a.medal == 'silver' %}secondary{% elif a.medal == 'bronze' %}danger{% else %}info{% endif %}">{{ a.get_medal_display }}</span></td><td>{{ a.achievement_date|date:"d M Y" }}</td></tr>{% empty %}<tr><td colspan="4" class="text-center text-muted py-3">No achievements yet.</td></tr>{% endfor %}
+            </tbody></table></div></div>
+        </div>
+    </div>
+</div>
+{% endblock %}

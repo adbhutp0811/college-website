@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}Add Questions - {{ quiz.title }}{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4><i class="bi bi-list-check"></i> Questions: {{ quiz.title }}</h4>
+    <a href="{% url 'quiz:quiz_list' %}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i> Back</a>
+</div>
+<div class="row g-3">
+    <div class="col-md-5">
+        <div class="card"><div class="card-header">Add Question</div><div class="card-body">
+            <form method="post">{% csrf_token %}
+                <div class="mb-3"><label class="form-label">Question Text</label><textarea name="text" class="form-control" rows="2" required></textarea></div>
+                <div class="row g-2 mb-3">
+                    <div class="col-6"><label class="form-label">Option A</label><input type="text" name="option_a" class="form-control" required></div>
+                    <div class="col-6"><label class="form-label">Option B</label><input type="text" name="option_b" class="form-control" required></div>
+                    <div class="col-6"><label class="form-label">Option C</label><input type="text" name="option_c" class="form-control" required></div>
+                    <div class="col-6"><label class="form-label">Option D</label><input type="text" name="option_d" class="form-control" required></div>
+                </div>
+                <div class="row g-2 mb-3">
+                    <div class="col-6"><label class="form-label">Correct Answer</label><select name="correct_answer" class="form-select"><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option></select></div>
+                    <div class="col-6"><label class="form-label">Marks</label><input type="number" name="marks" class="form-control" value="1"></div>
+                </div>
+                <button type="submit" class="btn btn-primary w-100"><i class="bi bi-plus-lg"></i> Add Question</button>
+            </form>
+        </div></div>
+    </div>
+    <div class="col-md-7">
+        <div class="card"><div class="card-header">Questions ({{ questions|length }})</div>
+            <div class="card-body p-0"><div class="table-responsive"><table class="table table-hover mb-0">
+                <thead><tr><th>#</th><th>Question</th><th>Options</th><th>Correct</th><th>Marks</th></tr></thead>
+                <tbody>{% for q in questions %}<tr>
+                    <td>{{ forloop.counter }}</td><td>{{ q.text|truncatewords:8 }}</td><td>A:{{ q.option_a|truncatechars:10 }}, B:{{ q.option_b|truncatechars:10 }}, C:{{ q.option_c|truncatechars:10 }}, D:{{ q.option_d|truncatechars:10 }}</td>
+                    <td><span class="badge bg-success">{{ q.correct_answer }}</span></td><td>{{ q.marks }}</td>
+                </tr>{% empty %}<tr><td colspan="5" class="text-center text-muted py-4">No questions yet.</td></tr>{% endfor %}</tbody>
+            </table></div></div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}Anti-Ragging Undertaking{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4><i class="bi bi-file-earmark-text"></i> Anti-Ragging Undertaking</h4>
+    <a href="{% url 'antiragging:home' %}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i> Back</a>
+</div>
+<div class="card"><div class="card-body">
+    {% if undertaking and undertaking.is_accepted %}
+    <div class="alert alert-success"><i class="bi bi-check-circle-fill"></i> You have already submitted your undertaking on {{ undertaking.signed_date|date:"d M Y" }}.</div>
+    {% else %}
+    <div class="alert alert-warning"><i class="bi bi-exclamation-triangle"></i> All students are required to submit an anti-ragging undertaking.</div>
+    <form method="post" enctype="multipart/form-data" action="{% url 'antiragging:sign_undertaking' %}">{% csrf_token %}
+        <div class="mb-3">
+            <p>I, <strong>{{ student.full_name }}</strong> ({{ student.roll_number }}), hereby declare that I shall not indulge in any act of ragging and shall abide by the regulations of the institute and the Government.</p>
+        </div>
+        <div class="mb-3"><label class="form-label">Upload Signed Undertaking (PDF/Image) - Optional</label><input type="file" name="uploaded_file" class="form-control"></div>
+        <button type="submit" class="btn btn-success"><i class="bi bi-check-lg"></i> I Accept & Submit</button>
+    </form>
+    {% endif %}
+</div></div>
+{% endblock %}

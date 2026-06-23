@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Mess Fees{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4><i class="bi bi-currency-rupee"></i> Mess Fees</h4>
+    <a href="{% url 'mess:home' %}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i> Back</a>
+</div>
+<div class="card"><div class="card-body p-0">
+    <div class="table-responsive"><table class="table table-hover mb-0">
+        <thead><tr><th>Period</th><th>Amount</th><th>Due Date</th><th>Status</th><th>Action</th></tr></thead>
+        <tbody>{% for fp in fee_periods %}
+            {% with payment=fp.payments.all|first %}
+            <tr>
+                <td>{{ fp.get_month_display }} {{ fp.year }}</td>
+                <td>₹{{ fp.amount }}</td>
+                <td>{{ fp.due_date|date:"d M Y" }}</td>
+                <td>{% if payment %}<span class="badge bg-success">Paid</span>{% else %}<span class="badge bg-warning">Pending</span>{% endif %}</td>
+                <td>{% if payment %}<span class="text-muted small">{{ payment.transaction_id }}</span>{% else %}<form method="post" action="{% url 'mess:pay' fp.pk %}">{% csrf_token %}<button class="btn btn-sm btn-primary"><i class="bi bi-credit-card"></i> Pay</button></form>{% endif %}</td>
+            </tr>{% endwith %}
+        {% empty %}<tr><td colspan="5" class="text-center text-muted py-4">No fee periods available.</td></tr>{% endfor %}
+        </tbody>
+    </table></div>
+</div></div>
+{% endblock %}

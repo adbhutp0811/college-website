@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}Mess & Canteen{% endblock %}
+{% block content %}
+<h4><i class="bi bi-cup-hot-fill"></i> Mess & Canteen</h4>
+<div class="row g-3 mt-2">
+    <div class="col-md-4"><div class="card text-center h-100"><div class="card-body">
+        <i class="bi bi-list-check text-primary" style="font-size:3rem"></i>
+        <h5 class="mt-2">Menu</h5>
+        <p class="text-muted small">View mess menu for the week</p>
+        <a href="{% url 'mess:menu' %}" class="btn btn-primary w-100">View Menu</a>
+    </div></div></div>
+    <div class="col-md-4"><div class="card text-center h-100"><div class="card-body">
+        <i class="bi bi-currency-rupee text-success" style="font-size:3rem"></i>
+        <h5 class="mt-2">Mess Fees</h5>
+        <p class="text-muted small">Pay monthly mess fees</p>
+        <a href="{% url 'mess:fees' %}" class="btn btn-success w-100">Pay Fees</a>
+    </div></div></div>
+    <div class="col-md-4"><div class="card text-center h-100"><div class="card-body">
+        <i class="bi bi-megaphone text-warning" style="font-size:3rem"></i>
+        <h5 class="mt-2">Complaints</h5>
+        <p class="text-muted small">Submit mess-related complaints</p>
+        <a href="{% url 'mess:complaints' %}" class="btn btn-warning w-100">Submit</a>
+    </div></div></div>
+</div>
+{% endblock %}

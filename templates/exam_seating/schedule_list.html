@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}Exam Schedule{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4><i class="bi bi-calendar-range"></i> Exam Schedule</h4>
+    {% if user.is_authenticated %}<a href="{% url 'exam_seating:create_schedule' %}" class="btn btn-primary btn-sm"><i class="bi bi-plus-lg"></i> Add Schedule</a>{% endif %}
+</div>
+{% regroup schedules by exam_date as date_groups %}
+{% for date_group in date_groups %}
+<div class="card mb-3"><div class="card-header bg-light"><strong>{{ date_group.grouper|date:"l, d F Y" }}</strong></div>
+    <div class="card-body p-0"><div class="table-responsive"><table class="table table-hover mb-0">
+        <thead><tr><th>Exam</th><th>Subject</th><th>Time</th><th>Room</th><th>Seating</th></tr></thead>
+        <tbody>{% for s in date_group.list %}<tr>
+            <td>{{ s.exam.name }}</td><td>{{ s.subject.name }}</td><td>{{ s.start_time|time:"h:i A" }} - {{ s.end_time|time:"h:i A" }}</td><td>{{ s.room }}</td>
+            <td><a href="{% url 'exam_seating:schedule_detail' s.pk %}" class="btn btn-sm btn-info"><i class="bi bi-eye"></i> View</a></td>
+        </tr>{% endfor %}</tbody>
+    </table></div></div>
+</div>{% empty %}<p class="text-muted text-center py-5">No exam schedules yet.</p>{% endfor %}
+{% endblock %}

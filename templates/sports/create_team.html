@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Create Team{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4><i class="bi bi-plus-circle"></i> Create Team - {{ sport.name }}</h4>
+    <a href="{% url 'sports:sport_detail' sport.pk %}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i> Back</a>
+</div>
+<div class="card"><div class="card-body">
+    <form method="post">{% csrf_token %}
+        <div class="mb-3"><label class="form-label">Team Name</label><input type="text" name="name" class="form-control" required></div>
+        <div class="mb-3"><label class="form-label">Coach Name</label><input type="text" name="coach_name" class="form-control"></div>
+        <div class="mb-3"><label class="form-label">Members</label><select name="members" class="form-select" multiple size="10">{% for s in students %}<option value="{{ s.pk }}">{{ s.roll_number }} - {{ s.full_name }}</option>{% endfor %}</select></div>
+        <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Create Team</button>
+    </form>
+</div></div>
+{% endblock %}

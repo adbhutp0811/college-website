@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}Taking: {{ quiz.title }}{% endblock %}
+{% block extra_css %}
+<style>.question-card{border-left:4px solid #0d6efd}.timer{font-size:1.5rem;font-weight:bold;color:#dc3545}</style>
+{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4><i class="bi bi-pencil-square"></i> {{ quiz.title }}</h4>
+    <div class="timer" id="timer"></div>
+</div>
+<div class="alert alert-info"><i class="bi bi-info-circle"></i> You have {{ quiz.duration_minutes }} minutes to complete this quiz.</div>
+<form method="post" action="{% url 'quiz:submit_quiz' quiz.pk %}" id="quizForm">{% csrf_token %}
+    {% for question in quiz.questions.all %}
+    <div class="card mb-3 question-card"><div class="card-body">
+        <h6>Q{{ forloop.counter }}. {{ question.text }} <span class="text-muted small">({{ question.marks }} mark{% if question.marks > 1 %}s{% endif %})</span></h6>
+        <div class="ms-3">
+            <div class="form-check"><input class="form-check-input" type="radio" name="q_{{ question.id }}" value="A" id="q{{ question.id }}_A"><label class="form-check-label" for="q{{ question.id }}_A">A. {{ question.option_a }}</label></div>
+            <div class="form-check"><input class="form-check-input" type="radio" name="q_{{ question.id }}" value="B" id="q{{ question.id }}_B"><label class="form-check-label" for="q{{ question.id }}_B">B. {{ question.option_b }}</label></div>
+            <div class="form-check"><input class="form-check-input" type="radio" name="q_{{ question.id }}" value="C" id="q{{ question.id }}_C"><label class="form-check-label" for="q{{ question.id }}_C">C. {{ question.option_c }}</label></div>
+            <div class="form-check"><input class="form-check-input" type="radio" name="q_{{ question.id }}" value="D" id="q{{ question.id }}_D"><label class="form-check-label" for="q{{ question.id }}_D">D. {{ question.option_d }}</label></div>
+        </div>
+    </div></div>{% endfor %}
+    <button type="submit" class="btn btn-primary btn-lg w-100"><i class="bi bi-send"></i> Submit Quiz</button>
+</form>
+{% endblock %}
+{% block extra_js %}
+<script>
+    var duration = {{ quiz.duration_minutes }} * 60;
+    var timer = document.getElementById('timer');
+    function updateTimer() {
+        var m = Math.floor(duration / 60);
+        var s = duration % 60;
+        timer.textContent = m.toString().padStart(2,'0') + ':' + s.toString().padStart(2,'0');
+        if (duration <= 0) { document.getElementById('quizForm').submit(); }
+        else { duration--; }
+    }
+    setInterval(updateTimer, 1000);
+    updateTimer();
+</script>
+{% endblock %}

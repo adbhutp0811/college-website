@@ -53,6 +53,13 @@ INSTALLED_APPS = [
     'grievances',
     'exam_forms',
     'faculty',
+    'mentor',
+    'sports',
+    'scholarships',
+    'mess',
+    'antiragging',
+    'exam_seating',
+    'quiz',
 ]
 
 MIDDLEWARE = [
