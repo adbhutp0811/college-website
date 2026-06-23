@@ -30,7 +30,6 @@ A full-stack Student Management System built with **Django 6**, **MySQL/SQLite**
 - 18+ company logos (real SVGs from Wikimedia Commons)
 
 ### Student ID Card
-- IIT-style landscape A5 PDF via reportlab
 - Circular student photo via PIL `Image.composite`
 - Name, roll number, class, DOB, blood group, guardian details, address
 - Navy/gold bands, signature fields, QR code, validity dates
