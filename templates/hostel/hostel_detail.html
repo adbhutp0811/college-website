@@ -25,6 +25,8 @@
         <div><a href="/" class="nav-link-main d-inline-block">Home</a><a href="{% url 'hostel:hostel_list' %}" class="nav-link-main d-inline-block">Hostels</a></div>
     </div>
 </nav>
+{% include '_back_button.html' %}
+
 <div class="page-header">
     <div class="container">
         <h1 class="fw-bold display-5">{{ hostel.name }}</h1>

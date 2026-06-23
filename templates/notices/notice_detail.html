@@ -24,6 +24,8 @@
         <div><a href="/" class="nav-link-main d-inline-block">Home</a><a href="{% url 'notices:notice_list' %}" class="nav-link-main d-inline-block">Notices</a></div>
     </div>
 </nav>
+{% include '_back_button.html' %}
+
 <div class="page-header">
     <div class="container">
         <span class="badge bg-light text-dark mb-2">{{ notice.get_category_display }}</span>

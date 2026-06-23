@@ -6,6 +6,7 @@
     <h4 class="mb-0"><i class="bi bi-person-badge"></i> Student Profile</h4>
     <div>
         <a href="{% url 'students:edit' student.pk %}" class="btn btn-warning"><i class="bi bi-pencil"></i> Edit</a>
+        <a href="{% url 'students:id_card' student.pk %}" class="btn btn-info"><i class="bi bi-card-text"></i> ID Card</a>
         <a href="{% url 'students:list' %}" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Back</a>
     </div>
 </div>

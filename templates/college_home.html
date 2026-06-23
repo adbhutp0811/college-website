@@ -187,6 +187,15 @@
                         </ul>
                     </li>
                     <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Student Services</a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'fees:student_fees' %}"><i class="bi bi-credit-card me-2"></i>Online Fee Payment</a></li>
+                            <li><a class="dropdown-item" href="{% url 'exam_forms:submit' %}"><i class="bi bi-file-text me-2"></i>Exam Registration</a></li>
+                            <li><a class="dropdown-item" href="{% url 'grievances:submit' %}"><i class="bi bi-megaphone me-2"></i>Submit Grievance</a></li>
+                            <li><a class="dropdown-item" href="{% url 'grievances:list' %}"><i class="bi bi-list me-2"></i>Track Grievance</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">More</a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="{% url 'notices:notice_list' %}"><i class="bi bi-megaphone me-2"></i>Notices</a></li>
@@ -382,6 +391,30 @@
             {% for dept in departments %}
             <div class="col-md-4 col-6"><div class="dept-card"><div class="code">B.Tech - {{ dept.code }}</div><h5 class="mt-1">{{ dept.name }}</h5><p class="small text-muted mb-0">{{ dept.desc }}</p></div></div>
             {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="py-5" style="background:#fafafa;">
+    <div class="container py-3">
+        <div class="text-center mb-5">
+            <p class="text-uppercase small fw-bold" style="color:var(--accent);letter-spacing:1px;">Recruiters</p>
+            <h2 class="section-title">Our Placement Partners</h2>
+            <div class="section-title-bar" style="margin:8px auto 0;"></div>
+            <p class="text-muted mt-3">Our students are placed in leading multinational corporations worldwide</p>
+        </div>
+        <div class="row g-3 justify-content-center align-items-center">
+            {% with 'tcs.svg infosys.svg wipro.svg cognizant.png accenture.svg capgemini.svg hcl.svg techmahindra.svg amazon.svg ibm.svg lti.svg deloitte.svg' as companies %}
+            {% for c in companies.split %}
+            {% with c|cut:'.svg'|cut:'.png' as name %}
+            <div class="col-4 col-md-3 col-lg-2">
+                <div class="p-2 text-center">
+                    <img src="{% static 'images/partners/'|add:c %}" alt="{{ name|title }}" class="img-fluid" style="max-height:50px;filter:grayscale(0.4);opacity:0.8;transition:all 0.3s;" onmouseover="this.style.filter='grayscale(0)';this.style.opacity='1';" onmouseout="this.style.filter='grayscale(0.4)';this.style.opacity='0.8';">
+                </div>
+            </div>
+            {% endwith %}
+            {% endfor %}
+            {% endwith %}
         </div>
     </div>
 </section>

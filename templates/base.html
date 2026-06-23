@@ -11,7 +11,31 @@
     {% block extra_css %}{% endblock %}
 </head>
 <body>
-    {% if user.is_authenticated and not request.session.student_id %}
+    {% if request.session.student_id %}
+    <nav class="navbar navbar-expand-lg navbar-dark bg-success shadow-sm">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="{% url 'accounts:student_portal' %}"><i class="bi bi-person-circle"></i> Student Portal</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#studentNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="studentNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a class="nav-link" href="{% url 'fees:student_fees' %}"><i class="bi bi-credit-card"></i> Fees</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'exam_forms:list' %}"><i class="bi bi-file-text"></i> Exam Forms</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'grievances:list' %}"><i class="bi bi-megaphone"></i> Grievances</a></li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <span class="nav-link text-light"><i class="bi bi-person-fill"></i> {{ request.session.student_name }}</span>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'accounts:student_logout' %}" class="btn btn-outline-light btn-sm my-1"><i class="bi bi-box-arrow-right"></i> Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    {% elif user.is_authenticated %}
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
         <div class="container-fluid">
             <a class="navbar-brand fw-bold" href="{% url 'dashboard' %}"><i class="bi bi-mortarboard-fill"></i> B.Tech Students</a>
@@ -43,6 +67,18 @@
                             <li><a class="dropdown-item" href="{% url 'results:class_summary' %}">Branch Summary</a></li>
                         </ul>
                     </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown"><i class="bi bi-megaphone"></i> Grievances</a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'grievances:staff_list' %}">Manage Grievances</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown"><i class="bi bi-file-text"></i> Exams</a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'exam_forms:staff_list' %}">Exam Registrations</a></li>
+                        </ul>
+                    </li>
                 </ul>
                 <ul class="navbar-nav">
                     <li class="nav-item dropdown">
@@ -57,16 +93,6 @@
                         </ul>
                     </li>
                 </ul>
-            </div>
-        </div>
-    </nav>
-    {% elif request.session.student_id %}
-    <nav class="navbar navbar-expand-lg navbar-dark bg-success shadow-sm">
-        <div class="container-fluid">
-            <a class="navbar-brand fw-bold" href="{% url 'accounts:student_portal' %}"><i class="bi bi-person-circle"></i> Student Portal</a>
-            <div class="ms-auto">
-                <span class="text-light me-2"><i class="bi bi-person-fill"></i> {{ request.session.student_name }}</span>
-                <a href="{% url 'accounts:student_logout' %}" class="btn btn-outline-light btn-sm"><i class="bi bi-box-arrow-right"></i> Logout</a>
             </div>
         </div>
     </nav>
@@ -89,6 +115,7 @@
                     {% endfor %}
                 </div>
                 {% endif %}
+                {% include '_back_button.html' %}
                 {% block content %}{% endblock %}
             </main>
         </div>

@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block title %}My Grievances{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0"><i class="bi bi-megaphone"></i> My Grievances</h4>
+    <div>
+        <a href="{% url 'grievances:submit' %}" class="btn btn-primary btn-sm"><i class="bi bi-plus-lg"></i> New Grievance</a>
+        <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i> Back</a>
+    </div>
+</div>
+<div class="card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead><tr><th>#</th><th>Category</th><th>Subject</th><th>Status</th><th>Date</th></tr></thead>
+                <tbody>
+                    {% for g in grievances %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td><span class="badge bg-info">{{ g.get_category_display }}</span></td>
+                        <td>{{ g.subject }}</td>
+                        <td>
+                            <span class="badge bg-{% if g.status == 'resolved' %}success{% elif g.status == 'rejected' %}danger{% elif g.status == 'reviewing' %}warning{% else %}secondary{% endif %}">
+                                {{ g.get_status_display }}
+                            </span>
+                        </td>
+                        <td>{{ g.created_at|date:"d M Y" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="5" class="text-center text-muted py-4">No grievances submitted yet.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

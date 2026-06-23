@@ -25,6 +25,8 @@
         <div><a href="/" class="nav-link-main d-inline-block">Home</a><a href="{% url 'events:event_list' %}" class="nav-link-main d-inline-block">Events</a></div>
     </div>
 </nav>
+{% include '_back_button.html' %}
+
 <div class="page-header">
     <div class="container">
         <span class="badge bg-warning text-dark mb-2">{{ event.get_category_display }}</span>

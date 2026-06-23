@@ -25,6 +25,8 @@
         <div><a href="/" class="nav-link-main d-inline-block">Home</a><a href="{% url 'clubs:club_list' %}" class="nav-link-main d-inline-block">Clubs</a></div>
     </div>
 </nav>
+{% include '_back_button.html' %}
+
 
 {% if messages %}
 <div class="container mt-3">
@@ -131,12 +133,16 @@
                 <div class="card-body p-4">
                     <h5 class="fw-bold mb-3" style="color:var(--primary);"><i class="bi bi-people me-2" style="color:var(--accent);"></i>Members ({{ member_count }})</h5>
                     <ul class="list-group list-group-flush">
-                        {% for m in club.memberships.all %}
+                        {% for m in members %}
                         <li class="list-group-item d-flex align-items-center gap-2">
-                            <div class="bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center" style="width:35px;height:35px;font-size:0.8rem;">{{ m.student.first_name|first }}</div>
+                            {% if m.student.profile_photo %}
+                            <img src="{{ m.student.profile_photo.url }}" alt="{{ m.student.full_name }}" class="rounded-circle flex-shrink-0" style="width:35px;height:35px;object-fit:cover;">
+                            {% else %}
+                            <div class="bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width:35px;height:35px;font-size:0.8rem;">{{ m.student.first_name|first }}</div>
+                            {% endif %}
                             <div>
                                 <strong class="small">{{ m.student.full_name }}</strong><br>
-                                <span class="text-muted" style="font-size:0.7rem;">{{ m.get_role_display }}</span>
+                                <span class="badge bg-{% if m.role == 'coordinator' %}primary{% elif m.role == 'vice_coordinator' %}info{% else %}secondary{% endif %} me-1" style="font-size:0.65rem;">{{ m.get_role_display }}</span>
                             </div>
                         </li>
                         {% empty %}

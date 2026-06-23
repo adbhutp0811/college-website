@@ -25,6 +25,8 @@
         <div><a href="/" class="nav-link-main d-inline-block">Home</a></div>
     </div>
 </nav>
+{% include '_back_button.html' %}
+
 <div class="page-header">
     <div class="container text-center">
         <h1 class="fw-bold display-5">Class Timetable</h1>
@@ -44,26 +46,32 @@
     </form>
     {% if selected_class %}
     <div class="table-responsive">
-        <table class="table table-bordered">
+        <table class="table table-bordered align-middle">
             <thead class="table-dark">
-                <tr><th>Day</th><th>Subject</th><th>Time</th><th>Room</th></tr>
+                <tr>
+                    <th style="width:100px;">Day</th>
+                    <th>Time</th>
+                    <th>Subject</th>
+                    <th>Type</th>
+                    <th>Room</th>
+                </tr>
             </thead>
             <tbody>
-                {% for day in days %}
-                {% with day_slots=time_slots|dictsort:"start_time" %}
-                {% for slot in time_slots %}
-                {% if slot.day == day %}
-                <tr>
-                    {% ifchanged slot.day %}<td class="tt-day" rowspan="1">{{ slot.get_day_display }}</td>{% endifchanged %}
-                    <td>{{ slot.subject.name }}</td>
-                    <td>{{ slot.start_time|time:"h:i A" }} - {{ slot.end_time|time:"h:i A" }}</td>
-                    <td>{{ slot.room|default:"-" }}</td>
-                </tr>
-                {% endif %}
+                {% regroup time_slots by day as day_groups %}
+                {% for group in day_groups %}
+                    {% for slot in group.list %}
+                    <tr>
+                        {% if forloop.first %}
+                        <td class="tt-day" rowspan="{{ group.list|length }}" style="vertical-align:middle;">{{ slot.get_day_display }}</td>
+                        {% endif %}
+                        <td class="text-nowrap">{{ slot.start_time|time:"h:i A" }} - {{ slot.end_time|time:"h:i A" }}</td>
+                        <td>{{ slot.subject.name }}</td>
+                        <td>{% if slot.subject.is_lab %}<span class="badge bg-info">LAB</span>{% else %}<span class="badge bg-secondary">THEORY</span>{% endif %}</td>
+                        <td>{{ slot.room|default:"-" }}</td>
+                    </tr>
+                    {% endfor %}
                 {% empty %}
-                <tr><td colspan="4" class="text-muted text-center">No slots for {{ day }}</td></tr>
-                {% endfor %}
-                {% endwith %}
+                    <tr><td colspan="5" class="text-center text-muted py-4">No timetable slots for this class.</td></tr>
                 {% endfor %}
             </tbody>
         </table>

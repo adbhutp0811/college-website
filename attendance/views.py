@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.mail import send_mail
 from django.db.models import Count, Q
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect
@@ -129,3 +130,26 @@ class AttendanceSummaryView(LoginRequiredMixin, TemplateView):
             })
         ctx['summary'] = summary
         return ctx
+
+
+class AttendanceNotifyView(LoginRequiredMixin, View):
+    def get(self, request):
+        today = timezone.localdate()
+        absences = Attendance.objects.filter(date=today, status='absent').select_related('student')
+        count = 0
+        for a in absences:
+            student = a.student
+            if student.email:
+                try:
+                    send_mail(
+                        subject='Attendance Alert - Absent Today',
+                        message=f'Dear Parent,\n\nYour ward {student.full_name} ({student.roll_number}) was marked ABSENT on {today}.\n\nPlease contact the institute for more details.\n\n- Miracle Institute of Technology',
+                        from_email=None,
+                        recipient_list=[student.email],
+                        fail_silently=True,
+                    )
+                    count += 1
+                except Exception:
+                    pass
+        messages.success(request, f'Attendance alerts sent to {count} parent(s).')
+        return redirect('attendance:summary')

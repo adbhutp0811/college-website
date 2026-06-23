@@ -5,6 +5,7 @@ from .views import (
     GetStudentsForClassView,
     MarkAttendanceView,
     SaveAttendanceView,
+    AttendanceNotifyView,
 )
 
 app_name = 'attendance'
@@ -15,4 +16,5 @@ urlpatterns = [
     path('api/save/', SaveAttendanceView.as_view(), name='save'),
     path('history/', AttendanceHistoryView.as_view(), name='history'),
     path('summary/', AttendanceSummaryView.as_view(), name='summary'),
+    path('notify/', AttendanceNotifyView.as_view(), name='notify'),
 ]

@@ -26,6 +26,8 @@
         <div><a href="/" class="nav-link-main d-inline-block">Home</a><a href="{% url 'accounts:faculty' %}" class="nav-link-main d-inline-block">Faculty</a></div>
     </div>
 </nav>
+{% include '_back_button.html' %}
+
 
 {% if faculty %}
 <div class="page-header">

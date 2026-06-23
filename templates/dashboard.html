@@ -74,14 +74,18 @@
                     <a href="{% url 'attendance:mark' %}" class="btn btn-success"><i class="bi bi-calendar-check"></i> Mark Today's Attendance</a>
                     <a href="{% url 'results:manage' %}" class="btn btn-warning"><i class="bi bi-pencil-square"></i> Enter Results</a>
                     <a href="{% url 'results:class_summary' %}" class="btn btn-info"><i class="bi bi-bar-chart"></i> View Branch Summary</a>
+                    <hr>
+                    <a href="{% url 'grievances:staff_list' %}" class="btn btn-outline-danger"><i class="bi bi-megaphone"></i> Manage Grievances</a>
+                    <a href="{% url 'exam_forms:staff_list' %}" class="btn btn-outline-primary"><i class="bi bi-file-text"></i> Exam Registrations</a>
                 </div>
             </div>
         </div>
-        <div class="col-md-6">
+    </div>
+    <div class="col-md-6">
         <div class="card">
             <div class="card-header"><i class="bi bi-clock-history"></i> Recent Activity</div>
             <div class="card-body">
-                <p class="text-muted text-center py-4">Welcome to the Student Management System!<br>Use the navigation menu to manage students, attendance, and results.</p>
+                <p class="text-muted text-center py-4">Welcome to the Student Management System!<br>Use the navigation menu to manage students, attendance, results, grievances, and exam forms.</p>
             </div>
         </div>
     </div>

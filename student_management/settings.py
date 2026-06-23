@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     'events',
     'placements',
     'hostel',
+    'grievances',
+    'exam_forms',
 ]
 
 MIDDLEWARE = [

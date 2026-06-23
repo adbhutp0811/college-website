@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Exam Form{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0"><i class="bi bi-file-text"></i> Exam Registration Form</h4>
+    <a href="{% url 'exam_forms:list' %}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i> My Forms</a>
+</div>
+<div class="card">
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="mb-3">
+                <label class="form-label">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+                {% if field.errors %}<div class="text-danger small">{{ field.errors }}</div>{% endif %}
+            </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary"><i class="bi bi-send"></i> Submit</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -10,13 +10,16 @@ from students.models import Student
 
 CELL_CATEGORIES = ['Student Welfare', 'Career & Placement', 'Innovation & Entrepreneurship', 'Student Activities']
 
+
 class ClubListView(ListView):
     model = Club
     template_name = 'clubs/club_list.html'
     context_object_name = 'clubs'
 
     def get_queryset(self):
-        return Club.objects.filter(is_active=True).exclude(category__in=CELL_CATEGORIES)
+        return Club.objects.filter(is_active=True).exclude(category__in=CELL_CATEGORIES).prefetch_related(
+            'memberships__student',
+        )
 
 
 class ClubDetailView(DetailView):
@@ -25,10 +28,20 @@ class ClubDetailView(DetailView):
     context_object_name = 'club'
     slug_field = 'pk'
 
+    def get_queryset(self):
+        return Club.objects.filter(is_active=True).prefetch_related(
+            'memberships__student',
+            'events',
+            'coordinators',
+        )
+
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         club = self.object
-        ctx['member_count'] = club.memberships.count()
+        members = list(club.memberships.all().select_related('student'))
+        members.sort(key=lambda m: {'coordinator': 0, 'vice_coordinator': 1, 'member': 2}.get(m.role, 3))
+        ctx['members'] = members
+        ctx['member_count'] = len(members)
         ctx['pending_apps'] = club.applications.filter(status='pending').count()
         ctx['coordinators'] = club.coordinators.all()
 
@@ -36,7 +49,7 @@ class ClubDetailView(DetailView):
         if student_id:
             student = Student.objects.filter(id=student_id).first()
             ctx['student'] = student
-            ctx['is_member'] = club.memberships.filter(student_id=student_id).exists() if student else False
+            ctx['is_member'] = any(m.student_id == student_id for m in members) if student else False
             if student:
                 app = club.applications.filter(student=student).first()
                 ctx['application'] = app

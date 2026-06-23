@@ -81,6 +81,18 @@
                 </div>
             </div>
         </div>
+
+        <div class="card mt-3 no-print">
+            <div class="card-header"><i class="bi bi-link-45deg"></i> Quick Links</div>
+            <div class="card-body">
+                <div class="d-flex flex-wrap gap-2">
+                    <a href="{% url 'fees:student_fees' %}" class="btn btn-outline-primary btn-sm"><i class="bi bi-credit-card"></i> Fee Account</a>
+                    <a href="{% url 'exam_forms:list' %}" class="btn btn-outline-success btn-sm"><i class="bi bi-file-text"></i> Exam Forms</a>
+                    <a href="{% url 'grievances:submit' %}" class="btn btn-outline-danger btn-sm"><i class="bi bi-megaphone"></i> Submit Grievance</a>
+                    <a href="{% url 'grievances:list' %}" class="btn btn-outline-warning btn-sm"><i class="bi bi-list"></i> My Grievances</a>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 

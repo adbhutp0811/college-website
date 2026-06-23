@@ -20,6 +20,8 @@ urlpatterns = [
     path('events/', include('events.urls', namespace='events')),
     path('placements/', include('placements.urls', namespace='placements')),
     path('hostel/', include('hostel.urls', namespace='hostel')),
+    path('grievances/', include('grievances.urls', namespace='grievances')),
+    path('exam-forms/', include('exam_forms.urls', namespace='exam_forms')),
 ]
 
 if settings.DEBUG:

@@ -15,6 +15,10 @@
         .page-header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--accent),#ff6b35);}
         .nav-link-main{color:#333!important;font-weight:500;padding:1.2rem 0.9rem!important;font-size:0.88rem;transition:all 0.2s;border-bottom:3px solid transparent;text-decoration:none;}
         .nav-link-main:hover,.nav-link-main.active{color:var(--primary)!important;border-bottom-color:var(--accent);}
+        .partner-card{transition:transform 0.3s,box-shadow 0.3s;cursor:default;}
+        .partner-card:hover{transform:translateY(-5px);box-shadow:0 10px 30px rgba(0,0,0,0.1)!important;}
+        .logo-img{max-height:60px;max-width:100%;filter:grayscale(0.4);opacity:0.85;transition:all 0.3s;}
+        .partner-card:hover .logo-img{filter:grayscale(0);opacity:1;}
     </style>
 </head>
 <body>
@@ -24,6 +28,8 @@
         <div><a href="/" class="nav-link-main d-inline-block">Home</a></div>
     </div>
 </nav>
+{% include '_back_button.html' %}
+
 <div class="page-header">
     <div class="container text-center">
         <h1 class="fw-bold display-5">Our Placement Partners</h1>
@@ -33,13 +39,22 @@
 <div class="container py-5">
     <div class="row g-4">
         {% for company in companies %}
+        {% with company.logo_key as logo_key %}
         <div class="col-md-4 col-6">
-            <div class="card border-0 shadow-sm h-100 text-center p-4">
-                <div class="bg-secondary text-white d-flex align-items-center justify-content-center rounded-circle mx-auto" style="width:80px;height:80px;font-size:1.8rem;">{{ company.name|first }}</div>
+            <div class="card border-0 shadow-sm h-100 text-center p-4 partner-card">
+                {% if logo_key %}
+                <div class="d-flex align-items-center justify-content-center mx-auto" style="width:120px;height:80px;">
+                    <img src="{% static 'images/partners/'|add:logo_key|add:'.svg' %}" alt="{{ company.name }}" class="logo-img" onerror="this.src='{% static 'images/partners/'|add:logo_key|add:'.png' %}';this.onerror=this.parentElement.innerHTML='<div class=\'bg-secondary text-white d-flex align-items-center justify-content-center rounded-circle\' style=\'width:70px;height:70px;font-size:1.6rem;\'>{{ company.name|first }}</div>'">
+                </div>
+                {% else %}
+                <div class="bg-secondary text-white d-flex align-items-center justify-content-center rounded-circle mx-auto" style="width:70px;height:70px;font-size:1.6rem;">{{ company.name|first }}</div>
+                {% endif %}
                 <h5 class="fw-bold mt-3">{{ company.name }}</h5>
-                {% if company.avg_package %}<p class="text-muted small">Avg Package: ₹{{ company.avg_package }} LPA</p>{% endif %}
+                {% if company.avg_package %}<p class="text-muted small mb-1">Avg Package: ₹{{ company.avg_package }} LPA</p>{% endif %}
+                {% if company.website %}<a href="{{ company.website }}" target="_blank" class="small text-decoration-none">Visit Website <i class="bi bi-box-arrow-up-right"></i></a>{% endif %}
             </div>
         </div>
+        {% endwith %}
         {% empty %}
         <div class="col-12 text-center py-5">
             <i class="bi bi-building display-1 text-muted"></i>
