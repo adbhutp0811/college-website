@@ -17,16 +17,16 @@ services:
       - key: DJANGO_DB_ENGINE
         value: postgresql
       - key: DATABASE_URL
-        value: "postgresql://postgres:Adbhutpatel%402007@db.iqhhekuprbaotdwfkqul.supabase.co:6543/postgres?sslmode=require"
+        value: "postgresql://miracle_3wkm_user:wtLZe3I8LpJMplRlFG41o0lHxB7IXLiR@dpg-d8sophcm0tpm73aqf3dg-a.virginia-postgres.render.com/miracle_3wkm"
       - key: DB_NAME
-        value: postgres
+        value: miracle_3wkm
       - key: DB_USER
-        value: postgres
+        value: miracle_3wkm_user
       - key: DB_PASSWORD
-        value: "Adbhutpatel@2007"
+        value: "wtLZe3I8LpJMplRlFG41o0lHxB7IXLiR"
       - key: DB_HOST
-        value: db.iqhhekuprbaotdwfkqul.supabase.co
+        value: dpg-d8sophcm0tpm73aqf3dg-a.virginia-postgres.render.com
       - key: DB_PORT
-        value: "6543"
+        value: "5432"
       - key: DJANGO_EMAIL_BACKEND
         value: django.core.mail.backends.console.EmailBackend
