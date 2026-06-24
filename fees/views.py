@@ -416,7 +416,7 @@ class OnlinePaymentHistoryView(StudentRequiredMixin, View):
     def get(self, request):
         online_payments = OnlinePayment.objects.filter(
             student=self.student
-        ).select_related('fee_structure', 'payment')
+        ).select_related('fee_structure', 'payment_record')
         return render(request, 'fees/payment_history.html', {
             'student': self.student,
             'online_payments': online_payments,

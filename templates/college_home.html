@@ -163,6 +163,7 @@
                             <li><a class="dropdown-item" href="{% url 'hostel:hostel_list' %}"><i class="bi bi-building me-2"></i>Hostel</a></li>
                             <li><a class="dropdown-item" href="{% url 'library:book_list' %}"><i class="bi bi-book me-2"></i>Library</a></li>
                             <li><a class="dropdown-item" href="{% url 'timetable:timetable' %}"><i class="bi bi-calendar-week me-2"></i>Timetable</a></li>
+                            <li><a class="dropdown-item" href="{% url 'gallery:album_list' %}"><i class="bi bi-images me-2"></i>Photo Gallery</a></li>
                         </ul>
                     </li>
 
@@ -485,10 +486,10 @@
                         <h5 class="fw-bold mb-0" style="color:var(--primary);">Academics</h5>
                     </div>
                     <ul class="list-unstyled" style="font-size:0.88rem;">
-                        <li class="mb-2"><i class="bi bi-chevron-right me-2" style="color:#2e7d32;font-size:0.75rem;"></i>Exam Forms &amp; Seating</li>
-                        <li class="mb-2"><i class="bi bi-chevron-right me-2" style="color:#2e7d32;font-size:0.75rem;"></i>Study Materials &amp; Assignments</li>
-                        <li class="mb-2"><i class="bi bi-chevron-right me-2" style="color:#2e7d32;font-size:0.75rem;"></i>Class Timetable</li>
-                        <li class="mb-2"><i class="bi bi-chevron-right me-2" style="color:#2e7d32;font-size:0.75rem;"></i>Attendance &amp; Results</li>
+                        <li class="mb-2"><i class="bi bi-chevron-right me-2" style="color:#2e7d32;font-size:0.75rem;"></i><a href="{% url 'exam_forms:list' %}" class="text-decoration-none text-dark">Exam Forms &amp; Seating</a></li>
+                        <li class="mb-2"><i class="bi bi-chevron-right me-2" style="color:#2e7d32;font-size:0.75rem;"></i><a href="{% url 'course_materials:material_list' %}" class="text-decoration-none text-dark">Study Materials &amp; Assignments</a></li>
+                        <li class="mb-2"><i class="bi bi-chevron-right me-2" style="color:#2e7d32;font-size:0.75rem;"></i><a href="{% url 'timetable:timetable' %}" class="text-decoration-none text-dark">Class Timetable</a></li>
+                        <li class="mb-2"><i class="bi bi-chevron-right me-2" style="color:#2e7d32;font-size:0.75rem;"></i><a href="{% url 'accounts:result_portal' %}" class="text-decoration-none text-dark">Attendance &amp; Results</a></li>
                     </ul>
                 </div>
             </div>
@@ -499,9 +500,9 @@
                         <h5 class="fw-bold mb-0" style="color:var(--primary);">Finance</h5>
                     </div>
                     <ul class="list-unstyled" style="font-size:0.88rem;">
-                        <li class="mb-2"><i class="bi bi-chevron-right me-2" style="color:#2e7d32;font-size:0.75rem;"></i>Online Fee Payment (Razorpay/Stripe)</li>
-                        <li class="mb-2"><i class="bi bi-chevron-right me-2" style="color:#2e7d32;font-size:0.75rem;"></i>Fee Account &amp; Payment History</li>
-                        <li class="mb-2"><i class="bi bi-chevron-right me-2" style="color:#2e7d32;font-size:0.75rem;"></i>Scholarship Applications</li>
+                        <li class="mb-2"><i class="bi bi-chevron-right me-2" style="color:#2e7d32;font-size:0.75rem;"></i><a href="{% url 'fees:fee_selection' %}" class="text-decoration-none text-dark">Online Fee Payment (Razorpay/Stripe)</a></li>
+                        <li class="mb-2"><i class="bi bi-chevron-right me-2" style="color:#2e7d32;font-size:0.75rem;"></i><a href="{% url 'fees:fee_list' %}" class="text-decoration-none text-dark">Fee Account &amp; Payment History</a></li>
+                        <li class="mb-2"><i class="bi bi-chevron-right me-2" style="color:#2e7d32;font-size:0.75rem;"></i><a href="{% url 'scholarships:scheme_list' %}" class="text-decoration-none text-dark">Scholarship Applications</a></li>
                     </ul>
                 </div>
             </div>
@@ -512,10 +513,10 @@
                         <h5 class="fw-bold mb-0" style="color:var(--primary);">Services</h5>
                     </div>
                     <ul class="list-unstyled" style="font-size:0.88rem;">
-                        <li class="mb-2"><i class="bi bi-chevron-right me-2" style="color:#2e7d32;font-size:0.75rem;"></i>Library Book Issue &amp; Return</li>
-                        <li class="mb-2"><i class="bi bi-chevron-right me-2" style="color:#2e7d32;font-size:0.75rem;"></i>Hostel Room Application</li>
-                        <li class="mb-2"><i class="bi bi-chevron-right me-2" style="color:#2e7d32;font-size:0.75rem;"></i>Mess Menu &amp; Complaints</li>
-                        <li class="mb-2"><i class="bi bi-chevron-right me-2" style="color:#2e7d32;font-size:0.75rem;"></i>Placement Applications</li>
+                        <li class="mb-2"><i class="bi bi-chevron-right me-2" style="color:#2e7d32;font-size:0.75rem;"></i><a href="{% url 'library:book_list' %}" class="text-decoration-none text-dark">Library Book Issue &amp; Return</a></li>
+                        <li class="mb-2"><i class="bi bi-chevron-right me-2" style="color:#2e7d32;font-size:0.75rem;"></i><a href="{% url 'hostel:hostel_list' %}" class="text-decoration-none text-dark">Hostel Room Application</a></li>
+                        <li class="mb-2"><i class="bi bi-chevron-right me-2" style="color:#2e7d32;font-size:0.75rem;"></i><a href="{% url 'mess:menu' %}" class="text-decoration-none text-dark">Mess Menu &amp; Complaints</a></li>
+                        <li class="mb-2"><i class="bi bi-chevron-right me-2" style="color:#2e7d32;font-size:0.75rem;"></i><a href="{% url 'placements:drive_list' %}" class="text-decoration-none text-dark">Placement Applications</a></li>
                     </ul>
                 </div>
             </div>
@@ -526,10 +527,10 @@
                         <h5 class="fw-bold mb-0" style="color:var(--primary);">Engagement</h5>
                     </div>
                     <ul class="list-unstyled" style="font-size:0.88rem;">
-                        <li class="mb-2"><i class="bi bi-chevron-right me-2" style="color:#2e7d32;font-size:0.75rem;"></i>Mentor Connect &amp; Sports</li>
-                        <li class="mb-2"><i class="bi bi-chevron-right me-2" style="color:#2e7d32;font-size:0.75rem;"></i>Quizzes &amp; Feedback</li>
-                        <li class="mb-2"><i class="bi bi-chevron-right me-2" style="color:#2e7d32;font-size:0.75rem;"></i>Photo Gallery &amp; Alumni Network</li>
-                        <li class="mb-2"><i class="bi bi-chevron-right me-2" style="color:#2e7d32;font-size:0.75rem;"></i>Student Elections</li>
+                        <li class="mb-2"><i class="bi bi-chevron-right me-2" style="color:#2e7d32;font-size:0.75rem;"></i><a href="{% url 'sports:sport_list' %}" class="text-decoration-none text-dark">Mentor Connect &amp; Sports</a></li>
+                        <li class="mb-2"><i class="bi bi-chevron-right me-2" style="color:#2e7d32;font-size:0.75rem;"></i><a href="{% url 'quiz:quiz_list' %}" class="text-decoration-none text-dark">Quizzes &amp; Feedback</a></li>
+                        <li class="mb-2"><i class="bi bi-chevron-right me-2" style="color:#2e7d32;font-size:0.75rem;"></i><a href="{% url 'gallery:album_list' %}" class="text-decoration-none text-dark">Photo Gallery</a> &amp; <a href="{% url 'alumni:directory' %}" class="text-decoration-none text-dark">Alumni Network</a></li>
+                        <li class="mb-2"><i class="bi bi-chevron-right me-2" style="color:#2e7d32;font-size:0.75rem;"></i><a href="{% url 'elections:election_list' %}" class="text-decoration-none text-dark">Student Elections</a></li>
                     </ul>
                 </div>
             </div>
@@ -540,10 +541,10 @@
                         <h5 class="fw-bold mb-0" style="color:var(--primary);">Support</h5>
                     </div>
                     <ul class="list-unstyled" style="font-size:0.88rem;">
-                        <li class="mb-2"><i class="bi bi-chevron-right me-2" style="color:#2e7d32;font-size:0.75rem;"></i>Grievance Submission &amp; Tracking</li>
-                        <li class="mb-2"><i class="bi bi-chevron-right me-2" style="color:#2e7d32;font-size:0.75rem;"></i>Leave Application</li>
-                        <li class="mb-2"><i class="bi bi-chevron-right me-2" style="color:#2e7d32;font-size:0.75rem;"></i>Anti-Ragging Support</li>
-                        <li class="mb-2"><i class="bi bi-chevron-right me-2" style="color:#2e7d32;font-size:0.75rem;"></i>Course Materials &amp; Feedback</li>
+                        <li class="mb-2"><i class="bi bi-chevron-right me-2" style="color:#2e7d32;font-size:0.75rem;"></i><a href="{% url 'grievances:submit' %}" class="text-decoration-none text-dark">Grievance Submission &amp; Tracking</a></li>
+                        <li class="mb-2"><i class="bi bi-chevron-right me-2" style="color:#2e7d32;font-size:0.75rem;"></i><a href="{% url 'leave_management:apply' %}" class="text-decoration-none text-dark">Leave Application</a></li>
+                        <li class="mb-2"><i class="bi bi-chevron-right me-2" style="color:#2e7d32;font-size:0.75rem;"></i><a href="{% url 'antiragging:home' %}" class="text-decoration-none text-dark">Anti-Ragging Support</a></li>
+                        <li class="mb-2"><i class="bi bi-chevron-right me-2" style="color:#2e7d32;font-size:0.75rem;"></i><a href="{% url 'course_materials:material_list' %}" class="text-decoration-none text-dark">Course Materials</a> &amp; <a href="{% url 'feedback:give_feedback' %}" class="text-decoration-none text-dark">Feedback</a></li>
                     </ul>
                 </div>
             </div>
