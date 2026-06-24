@@ -437,6 +437,38 @@
     </div>
 </section>
 
+{% if election_winners %}
+<section class="py-5" style="background:linear-gradient(135deg,#fff8e1 0%,#fff3e0 100%);">
+    <div class="container py-3">
+        <div class="text-center mb-5">
+            <p class="text-uppercase small fw-bold" style="color:#e65100;letter-spacing:1px;"><i class="bi bi-trophy me-1"></i> Election Results</p>
+            <h2 class="section-title">Election Winners</h2>
+            <div class="section-title-bar" style="margin:8px auto 0;background:#e65100;"></div>
+        </div>
+        <div class="row g-4">
+            {% for w in election_winners %}
+            <div class="col-md-4 col-lg-3">
+                <div class="card border-0 h-100 p-4 text-center shadow-sm" style="border-radius:12px;border-top:4px solid #e65100;">
+                    <div style="font-size:2rem;color:#e65100;margin-bottom:8px;"><i class="bi bi-trophy-fill"></i></div>
+                    <div style="width:70px;height:70px;margin:0 auto 12px;">
+                        {% if w.candidate.photo %}
+                        <img src="{{ w.candidate.photo.url }}" alt="{{ w.candidate.student.full_name }}" class="rounded-circle" style="width:70px;height:70px;object-fit:cover;">
+                        {% else %}
+                        <div class="bg-secondary text-white d-flex align-items-center justify-content-center rounded-circle mx-auto" style="width:70px;height:70px;font-size:1.5rem;">{{ w.candidate.student.first_name|first }}</div>
+                        {% endif %}
+                    </div>
+                    <h6 class="fw-bold mb-1">{{ w.candidate.student.full_name }}</h6>
+                    <p class="small text-muted mb-1">{{ w.candidate.student.roll_number }}</p>
+                    <span class="badge" style="background:#e65100;">{{ w.position.title }}</span>
+                    <p class="small text-muted mt-2 mb-0">{{ w.election.title }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
 <section id="student-portal" class="py-5" style="background:linear-gradient(135deg,#e8f5e9 0%,#f1f8e9 100%);">
     <div class="container py-3">
         <div class="text-center mb-5">
@@ -527,96 +559,7 @@
     </div>
 </section>
 
-<section id="staff-portal" class="py-5" style="background:linear-gradient(135deg,#e3f2fd 0%,#e8f4f8 100%);">
-    <div class="container py-3">
-        <div class="text-center mb-5">
-            <p class="text-uppercase small fw-bold" style="color:#1565c0;letter-spacing:1px;"><i class="bi bi-mortarboard-fill me-1"></i> Staff Portal</p>
-            <h2 class="section-title">Powerful Tools for Faculty &amp; Staff</h2>
-            <div class="section-title-bar" style="margin:8px auto 0;background:#1565c0;"></div>
-            <p class="text-muted mt-3">Manage academics, content, services, and student life efficiently</p>
-        </div>
-        <div class="row g-4">
-            <div class="col-md-4">
-                <div class="card border-0 h-100 p-4 shadow-sm" style="border-radius:12px;">
-                    <div class="d-flex align-items-center gap-3 mb-3">
-                        <div style="width:48px;height:48px;background:#e3f2fd;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;color:#1565c0;"><i class="bi bi-speedometer2"></i></div>
-                        <h5 class="fw-bold mb-0" style="color:var(--primary);">Dashboard &amp; Students</h5>
-                    </div>
-                    <ul class="list-unstyled" style="font-size:0.88rem;">
-                        <li class="mb-2"><i class="bi bi-chevron-right me-2" style="color:#1565c0;font-size:0.75rem;"></i>Central Dashboard with Quick Actions</li>
-                        <li class="mb-2"><i class="bi bi-chevron-right me-2" style="color:#1565c0;font-size:0.75rem;"></i>Student Directory &amp; Profile Management</li>
-                        <li class="mb-2"><i class="bi bi-chevron-right me-2" style="color:#1565c0;font-size:0.75rem;"></i>Faculty Management</li>
-                        <li class="mb-2"><i class="bi bi-chevron-right me-2" style="color:#1565c0;font-size:0.75rem;"></i>Leave Approvals</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card border-0 h-100 p-4 shadow-sm" style="border-radius:12px;">
-                    <div class="d-flex align-items-center gap-3 mb-3">
-                        <div style="width:48px;height:48px;background:#e3f2fd;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;color:#1565c0;"><i class="bi bi-book"></i></div>
-                        <h5 class="fw-bold mb-0" style="color:var(--primary);">Academics</h5>
-                    </div>
-                    <ul class="list-unstyled" style="font-size:0.88rem;">
-                        <li class="mb-2"><i class="bi bi-chevron-right me-2" style="color:#1565c0;font-size:0.75rem;"></i>Mark Attendance with SMS Alerts</li>
-                        <li class="mb-2"><i class="bi bi-chevron-right me-2" style="color:#1565c0;font-size:0.75rem;"></i>Manage Results &amp; Email PDFs</li>
-                        <li class="mb-2"><i class="bi bi-chevron-right me-2" style="color:#1565c0;font-size:0.75rem;"></i>Exam Registrations &amp; Seating</li>
-                        <li class="mb-2"><i class="bi bi-chevron-right me-2" style="color:#1565c0;font-size:0.75rem;"></i>Manage Timetable</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card border-0 h-100 p-4 shadow-sm" style="border-radius:12px;">
-                    <div class="d-flex align-items-center gap-3 mb-3">
-                        <div style="width:48px;height:48px;background:#e3f2fd;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;color:#1565c0;"><i class="bi bi-journal-text"></i></div>
-                        <h5 class="fw-bold mb-0" style="color:var(--primary);">Content</h5>
-                    </div>
-                    <ul class="list-unstyled" style="font-size:0.88rem;">
-                        <li class="mb-2"><i class="bi bi-chevron-right me-2" style="color:#1565c0;font-size:0.75rem;"></i>Notices &amp; Events Management</li>
-                        <li class="mb-2"><i class="bi bi-chevron-right me-2" style="color:#1565c0;font-size:0.75rem;"></i>Upload Study Materials</li>
-                        <li class="mb-2"><i class="bi bi-chevron-right me-2" style="color:#1565c0;font-size:0.75rem;"></i>Create &amp; Grade Assignments</li>
-                        <li class="mb-2"><i class="bi bi-chevron-right me-2" style="color:#1565c0;font-size:0.75rem;"></i>Photo Gallery Management</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card border-0 h-100 p-4 shadow-sm" style="border-radius:12px;">
-                    <div class="d-flex align-items-center gap-3 mb-3">
-                        <div style="width:48px;height:48px;background:#e3f2fd;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;color:#1565c0;"><i class="bi bi-building"></i></div>
-                        <h5 class="fw-bold mb-0" style="color:var(--primary);">Services</h5>
-                    </div>
-                    <ul class="list-unstyled" style="font-size:0.88rem;">
-                        <li class="mb-2"><i class="bi bi-chevron-right me-2" style="color:#1565c0;font-size:0.75rem;"></i>Library Catalog &amp; Issue Tracking</li>
-                        <li class="mb-2"><i class="bi bi-chevron-right me-2" style="color:#1565c0;font-size:0.75rem;"></i>Hostel Allocations</li>
-                        <li class="mb-2"><i class="bi bi-chevron-right me-2" style="color:#1565c0;font-size:0.75rem;"></i>Mess Complaints</li>
-                        <li class="mb-2"><i class="bi bi-chevron-right me-2" style="color:#1565c0;font-size:0.75rem;"></i>Placement Applications &amp; Scholarships</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card border-0 h-100 p-4 shadow-sm" style="border-radius:12px;">
-                    <div class="d-flex align-items-center gap-3 mb-3">
-                        <div style="width:48px;height:48px;background:#e3f2fd;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;color:#1565c0;"><i class="bi bi-star"></i></div>
-                        <h5 class="fw-bold mb-0" style="color:var(--primary);">Student Life</h5>
-                    </div>
-                    <ul class="list-unstyled" style="font-size:0.88rem;">
-                        <li class="mb-2"><i class="bi bi-chevron-right me-2" style="color:#1565c0;font-size:0.75rem;"></i>Mentor Dashboard &amp; Assignments</li>
-                        <li class="mb-2"><i class="bi bi-chevron-right me-2" style="color:#1565c0;font-size:0.75rem;"></i>Sports &amp; Quiz Management</li>
-                        <li class="mb-2"><i class="bi bi-chevron-right me-2" style="color:#1565c0;font-size:0.75rem;"></i>Grievances &amp; Anti-Ragging</li>
-                        <li class="mb-2"><i class="bi bi-chevron-right me-2" style="color:#1565c0;font-size:0.75rem;"></i>Elections &amp; Alumni Management</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="col-md-4 d-flex align-items-center justify-content-center">
-                <div class="text-center p-4">
-                    <div style="font-size:3rem;color:#1565c0;margin-bottom:12px;"><i class="bi bi-box-arrow-in-right"></i></div>
-                    <h5 class="fw-bold">Access Your Portal</h5>
-                    <p class="small text-muted mb-3">Staff &amp; faculty login for administrative tools</p>
-                    <a href="{% url 'accounts:login' %}" class="btn" style="background:#1565c0;color:#fff;padding:10px 30px;font-weight:600;border-radius:8px;">Staff Login <i class="bi bi-arrow-right ms-1"></i></a>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
+
 
 {% if contact_info %}
 <section id="contact" class="py-5" style="background:#fafafa;">

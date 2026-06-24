@@ -227,6 +227,8 @@ class CollegeHomeView(TemplateView):
         from attendance.models import Attendance
         from django.utils import timezone
         from .models import LeadershipMember, DirectorMessage, Department, PlacementPartner, Testimonial, ContactInfo
+        from elections.models import Election, Position, Candidate
+        from django.db.models import Max
         today = timezone.localdate()
         context['total_students'] = Student.objects.filter(is_deleted=False).count()
         context['classes_count'] = Class.objects.values('name').distinct().count()
@@ -237,6 +239,27 @@ class CollegeHomeView(TemplateView):
         context['placement_partners'] = PlacementPartner.objects.filter(is_active=True)
         context['testimonials'] = Testimonial.objects.filter(is_active=True)
         context['contact_info'] = ContactInfo.objects.filter(is_active=True).first()
+
+        election_winners = []
+        ended_elections = Election.objects.filter(end_date__lt=timezone.now(), is_published=True)
+        for election in ended_elections:
+            positions = election.positions.all()
+            for position in positions:
+                max_votes = Candidate.objects.filter(
+                    election=election, position=position
+                ).aggregate(Max('vote_count'))['vote_count__max']
+                if max_votes and max_votes > 0:
+                    winners = Candidate.objects.filter(
+                        election=election, position=position, vote_count=max_votes
+                    ).select_related('student')[:position.max_winners]
+                    for w in winners:
+                        election_winners.append({
+                            'election': election,
+                            'position': position,
+                            'candidate': w,
+                        })
+        context['election_winners'] = election_winners
+
         context['quick_links'] = [
             {'title': 'Admissions', 'icon': 'bi-pencil-square', 'url': '/accounts/admissions/'},
             {'title': 'Academic Calendar', 'icon': 'bi-calendar-event', 'url': '/accounts/academic-calendar/'},

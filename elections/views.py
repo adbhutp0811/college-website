@@ -67,7 +67,7 @@ class ElectionDetailView(View):
                 .values_list('position_id', flat=True)
             )
         candidates = Candidate.objects.filter(
-            election=election, is_approved=True
+            election=election
         ).select_related('student', 'position').order_by('position__display_order', 'student')
         positions = election.positions.all().order_by('display_order')
         return render(request, self.template_name, {
@@ -146,9 +146,16 @@ class ElectionResultsView(View):
 class RegisterCandidacyView(StudentRequiredMixin, View):
     template_name = 'elections/register_candidacy.html'
 
+    def is_final_year(self, student):
+        sem = student.student_class.section
+        return sem in ['Sem 7', 'Sem 8']
+
     def get(self, request):
         student = get_student(request)
-        elections = Election.objects.filter(is_active=True, start_date__gte=timezone.now())
+        if not self.is_final_year(student):
+            messages.error(request, 'Only final year students (Sem 7 & Sem 8) can register as candidates.')
+            return redirect('elections:election_list')
+        elections = Election.objects.filter(is_active=True, end_date__gte=timezone.now())
         return render(request, self.template_name, {
             'elections': elections,
             'positions': Position.objects.all(),
@@ -157,6 +164,9 @@ class RegisterCandidacyView(StudentRequiredMixin, View):
 
     def post(self, request):
         student = get_student(request)
+        if not self.is_final_year(student):
+            messages.error(request, 'Only final year students (Sem 7 & Sem 8) can register as candidates.')
+            return redirect('elections:election_list')
         election_id = request.POST.get('election')
         position_id = request.POST.get('position')
         manifesto = request.POST.get('manifesto', '')
