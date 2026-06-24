@@ -20,7 +20,7 @@ A full-stack Student Management System built with **Django 6**, **MySQL/SQLite**
 - **Feedback System** — Faculty feedback with categories & questions, student submission, staff results view
 - **Photo Gallery** — Albums with multiple photos, cover images, staff upload/deletion, public viewing
 - **Alumni Management** — Alumni registration, verified directory with search/filter, alumni events with registration, donation system
-- **Student Council/Elections** — Position-based elections, candidate registration with approval workflow, one-student-one-vote-per-position, live vote counting with `F()` atomic increments, results with progress bars
+- **Student Council/Elections** — Position-based elections, candidate registration (final year students only — Sem 7 & 8), one-student-one-vote-per-position, live vote counting with `F()` atomic increments, results with progress bars, winners displayed on homepage
 - **Online Fee Payment** — Select pending fees, pay via Razorpay (checkout.js) or Stripe (Checkout Sessions), demo mode without API keys, signature verification, payment history
 
 ### Clubs & Cells
@@ -52,7 +52,7 @@ A full-stack Student Management System built with **Django 6**, **MySQL/SQLite**
 - **Testimonials** — Student name, batch, program, content
 - **Contact Info** — Address, phone, email (single-instance)
 - **Student Portal Section** — Green-themed cards highlighting Academics, Finance, Services, Engagement, Support features with login CTA
-- **Staff Portal Section** — Blue-themed cards highlighting Dashboard, Students, Academics, Content, Services, Student Life tools with login CTA
+- **Election Winners Section** — Orange-themed cards showing winners from ended elections with name, photo, position, and election title
 
 ### Student ID Card
 - Circular student photo via PIL `Image.composite`
@@ -71,7 +71,7 @@ A full-stack Student Management System built with **Django 6**, **MySQL/SQLite**
 
 ## Tech Stack
 
-- **Backend:** Django 6, Python 3.12
+- **Backend:** Django 6, Python 3.14
 - **Database:** MySQL (production) / SQLite (development)
 - **Frontend:** Bootstrap 5, jQuery, HTML5, CSS3
 - **Static Files:** Whitenoise
