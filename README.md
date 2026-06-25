@@ -100,3 +100,7 @@ The project includes configuration for **Render** (`render.yaml`, `build.sh`, `s
 | `STRIPE_PUBLISHABLE_KEY` | Stripe publishable key | - |
 | `STRIPE_SECRET_KEY` | Stripe secret key | - |
 | `PAYMENT_GATEWAY` | Active payment gateway | `razorpay` |
+
+---
+
+> Made by **Miracle AD**
