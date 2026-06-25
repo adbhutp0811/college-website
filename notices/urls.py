@@ -1,9 +1,11 @@
 from django.urls import path
-from .views import NoticeListView, NoticeDetailView, CreateNoticeView
+from .views import NoticeListView, NoticeDetailView, CreateNoticeView, UpdateNoticeView, DeleteNoticeView
 
 app_name = 'notices'
 urlpatterns = [
     path('', NoticeListView.as_view(), name='notice_list'),
     path('<int:pk>/', NoticeDetailView.as_view(), name='notice_detail'),
     path('create/', CreateNoticeView.as_view(), name='create_notice'),
+    path('<int:pk>/edit/', UpdateNoticeView.as_view(), name='update_notice'),
+    path('<int:pk>/delete/', DeleteNoticeView.as_view(), name='delete_notice'),
 ]

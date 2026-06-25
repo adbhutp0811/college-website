@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, CreateView, TemplateView, View
 from django.views.generic.detail import SingleObjectMixin
-from django.views.generic.edit import FormView
+from django.views.generic.edit import FormView, UpdateView
 from django import forms
 from students.models import Class, Student
 from results.models import Subject
@@ -107,9 +107,34 @@ class AssignmentCreateView(LoginRequiredMixin, CreateView):
     template_name = 'course_materials/assignment_form.html'
     success_url = reverse_lazy('course_materials:assignment_list')
 
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        subjects = Subject.objects.all().select_related('student_class')
+        subject_class_map = {s.id: s.student_class_id for s in subjects}
+        ctx['subject_class_map'] = subject_class_map
+        return ctx
+
     def form_valid(self, form):
         form.instance.created_by = self.request.user
         messages.success(self.request, 'Assignment created successfully!')
+        return super().form_valid(form)
+
+
+class AssignmentUpdateView(LoginRequiredMixin, UpdateView):
+    model = Assignment
+    form_class = AssignmentForm
+    template_name = 'course_materials/assignment_form.html'
+    success_url = reverse_lazy('course_materials:assignment_list')
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        subjects = Subject.objects.all().select_related('student_class')
+        subject_class_map = {s.id: s.student_class_id for s in subjects}
+        ctx['subject_class_map'] = subject_class_map
+        return ctx
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Assignment updated successfully!')
         return super().form_valid(form)
 
 
@@ -202,3 +227,14 @@ class GradeSubmissionView(LoginRequiredMixin, View):
         else:
             messages.error(request, 'Please correct the errors below.')
         return redirect('course_materials:staff_submissions', pk=submission.assignment_id)
+
+
+class AssignmentDeleteView(LoginRequiredMixin, View):
+    def post(self, request, pk):
+        assignment = get_object_or_404(Assignment, pk=pk)
+        assignment.delete()
+        messages.success(request, 'Assignment deleted successfully!')
+        return redirect('course_materials:assignment_list')
+
+    def get(self, request, pk):
+        return self.post(request, pk)

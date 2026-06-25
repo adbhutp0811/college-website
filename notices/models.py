@@ -1,3 +1,4 @@
+import os
 from django.db import models
 from django.conf import settings
 
@@ -16,6 +17,7 @@ class Notice(models.Model):
     category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default='general')
     posted_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
     is_published = models.BooleanField(default=True)
+    attachment = models.FileField(upload_to='notice_attachments/', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -24,3 +26,7 @@ class Notice(models.Model):
 
     def __str__(self):
         return self.title
+
+    @property
+    def attachment_filename(self):
+        return os.path.basename(self.attachment.name) if self.attachment else ''

@@ -9,7 +9,16 @@
 <div class="card">
     <div class="card-body">
         <div class="row g-2 mb-4">
-            <div class="col-md-3">
+            <div class="col-md-2">
+                <label class="form-label">Session</label>
+                <select id="sessionSelect" class="form-select">
+                    <option value="">All Sessions</option>
+                    {% for ay in academic_years %}
+                    <option value="{{ ay }}">{{ ay }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
                 <label class="form-label">Branch</label>
                 <select id="classSelect" class="form-select">
                     <option value="">Select Branch</option>
@@ -18,19 +27,19 @@
                     {% endfor %}
                 </select>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <label class="form-label">Exam</label>
                 <select id="examSelect" class="form-select" disabled>
                     <option value="">Select Exam</option>
                 </select>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <label class="form-label">Subject</label>
                 <select id="subjectSelect" class="form-select" disabled>
                     <option value="">Select Subject</option>
                 </select>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <label class="form-label">&nbsp;</label>
                 <button id="loadResultsBtn" class="btn btn-primary w-100" disabled><i class="bi bi-search"></i> Load</button>
             </div>
@@ -66,18 +75,23 @@ function gradeSelectHtml(val, isAuto) {
     return h + '</select>';
 }
 
+function loadClassData() {
+    var cid = $('#classSelect').val();
+    var ay = $('#sessionSelect').val();
+    $('#examSelect, #subjectSelect').prop('disabled', true).html('<option value="">Select</option>');
+    $('#loadResultsBtn').prop('disabled', true);
+    if (!cid) return;
+    $.get('{% url "results:get_data" %}', {class_id: cid, academic_year: ay}, function(d) {
+        var eo = '<option value="">Select Exam</option>'; $.each(d.exams, function(i, e) { eo += '<option value="' + e.id + '">' + e.name + ' (' + e.exam_type + ')</option>'; });
+        $('#examSelect').html(eo).prop('disabled', false);
+        var so = '<option value="">Select Subject</option>'; $.each(d.subjects, function(i, s) { so += '<option value="' + s.id + '" data-max="' + s.max_marks + '" data-max-internal="' + s.internal_max_marks + '" data-max-external="' + s.external_max_marks + '">' + s.name + ' (Int: ' + s.internal_max_marks + ' / Ext: ' + s.external_max_marks + ')</option>'; });
+        $('#subjectSelect').html(so).prop('disabled', false);
+    });
+}
+
 $(document).ready(function() {
-    $('#classSelect').change(function() {
-        var cid = $(this).val();
-        $('#examSelect, #subjectSelect').prop('disabled', true).html('<option value="">Select</option>');
-        $('#loadResultsBtn').prop('disabled', true);
-        if (!cid) return;
-        $.get('{% url "results:get_data" %}', {class_id: cid}, function(d) {
-            var eo = '<option value="">Select Exam</option>'; $.each(d.exams, function(i, e) { eo += '<option value="' + e.id + '">' + e.name + ' (' + e.exam_type + ')</option>'; });
-            $('#examSelect').html(eo).prop('disabled', false);
-            var so = '<option value="">Select Subject</option>'; $.each(d.subjects, function(i, s) { so += '<option value="' + s.id + '" data-max="' + s.max_marks + '">' + s.name + ' (Max: ' + s.max_marks + ')</option>'; });
-            $('#subjectSelect').html(so).prop('disabled', false);
-        });
+    $('#sessionSelect, #classSelect').change(function() {
+        loadClassData();
     });
 
     $('#examSelect, #subjectSelect').change(function() {
@@ -88,7 +102,10 @@ $(document).ready(function() {
         var cid = $('#classSelect').val(), eid = $('#examSelect').val(), sid = $('#subjectSelect').val();
         $('#examIdInput').val(eid); $('#subjectIdInput').val(sid);
         $('#marksContainer').empty(); $('#submitSection').hide();
-        var maxMarks = parseInt($('#subjectSelect option:selected').data('max')) || 100;
+        var selOpt = $('#subjectSelect option:selected');
+        var maxMarks = parseInt(selOpt.data('max')) || 100;
+        var maxInternal = parseInt(selOpt.data('max-internal')) || 30;
+        var maxExternal = parseInt(selOpt.data('max-external')) || 70;
 
         Promise.all([
             $.get('{% url "results:get_data" %}', {class_id: cid, exam_id: eid, subject_id: sid}),
@@ -97,17 +114,21 @@ $(document).ready(function() {
             var apiData = responses[0], studentsData = responses[1];
             var resultsMap = {};
             if (apiData.results) { apiData.results.forEach(function(r) { resultsMap[r.student_id] = r; }); }
-            var h = '<table class="table table-hover"><thead><tr><th>Student</th><th>Roll</th><th>Marks (Max: ' + maxMarks + ')</th><th>Grade</th><th>Auto</th></tr></thead><tbody>';
+            var h = '<table class="table table-hover"><thead><tr><th>Student</th><th>Roll</th><th>Internal (Max: ' + maxInternal + ')</th><th>External (Max: ' + maxExternal + ')</th><th>Total</th><th>Grade</th><th>Auto</th></tr></thead><tbody>';
             $.each(studentsData.students || [], function(i, s) {
                 var r = resultsMap[s.id] || {};
-                var m = r.marks_obtained !== undefined ? r.marks_obtained : '';
+                var im = r.internal_marks !== undefined ? r.internal_marks : '';
+                var em = r.external_marks !== undefined ? r.external_marks : '';
                 var g = r.grade || '';
                 var ga = r.grade_auto !== undefined ? r.grade_auto : true;
+                var total = ((parseFloat(im) || 0) + (parseFloat(em) || 0)).toFixed(1);
                 var gradeSelHtml = '<select name="grade_' + s.id + '" class="form-select form-select-sm grade-select" style="min-width:80px;"><option value="">Auto</option>';
                 GRADE_CHOICES.forEach(function(gv) { gradeSelHtml += '<option value="' + gv + '"' + (g === gv && !ga ? ' selected' : '') + '>' + gv + '</option>'; });
                 gradeSelHtml += '</select>';
                 h += '<tr><td>' + s.name + '</td><td>' + s.roll + '</td>';
-                h += '<td><input type="number" name="marks_' + s.id + '" value="' + m + '" class="form-control form-control-sm marks-input" min="0" max="' + maxMarks + '" step="0.5" data-sid="' + s.id + '" data-max="' + maxMarks + '"></td>';
+                h += '<td><input type="number" name="internal_marks_' + s.id + '" value="' + im + '" class="form-control form-control-sm marks-input mark-internal" min="0" max="' + maxInternal + '" step="0.5" data-sid="' + s.id + '" data-max="' + maxMarks + '"></td>';
+                h += '<td><input type="number" name="external_marks_' + s.id + '" value="' + em + '" class="form-control form-control-sm marks-input mark-external" min="0" max="' + maxExternal + '" step="0.5" data-sid="' + s.id + '" data-max="' + maxMarks + '"></td>';
+                h += '<td><span class="total-marks" data-sid="' + s.id + '">' + total + '/' + maxMarks + '</span></td>';
                 h += '<td>' + gradeSelHtml + '</td>';
                 h += '<td><input type="checkbox" name="grade_auto_' + s.id + '" class="grade-auto-cb" data-sid="' + s.id + '"' + (ga ? ' checked' : '') + '></td></tr>';
             });
@@ -117,10 +138,18 @@ $(document).ready(function() {
         });
     });
 
+    function getTotalMarks(sid) {
+        var im = parseFloat($('input[name="internal_marks_' + sid + '"]').val()) || 0;
+        var em = parseFloat($('input[name="external_marks_' + sid + '"]').val()) || 0;
+        return im + em;
+    }
+
     $(document).on('input', '.marks-input', function() {
-        var sid = $(this).data('sid'), marks = parseFloat($(this).val()), maxM = parseFloat($(this).data('max'));
+        var sid = $(this).data('sid'), maxM = parseFloat($(this).data('max'));
+        var total = getTotalMarks(sid);
+        $('span.total-marks[data-sid="' + sid + '"]').text((total).toFixed(1) + '/' + maxM);
         var cb = $('input[name="grade_auto_' + sid + '"]'), sel = $('select[name="grade_' + sid + '"]');
-        if (cb.prop('checked') && !isNaN(marks) && !isNaN(maxM) && maxM > 0) { sel.val(calcGrade(marks, maxM)); }
+        if (cb.prop('checked') && !isNaN(total) && !isNaN(maxM) && maxM > 0) { sel.val(calcGrade(total, maxM)); }
     });
 
     $(document).on('change', '.grade-select', function() {
@@ -129,9 +158,12 @@ $(document).ready(function() {
     });
 
     $(document).on('change', '.grade-auto-cb', function() {
-        var sid = $(this).data('sid'), marks = parseFloat($('input[name="marks_' + sid + '"]').val()), maxM = parseFloat($('input[name="marks_' + sid + '"]').data('max'));
+        var sid = $(this).data('sid');
+        var total = getTotalMarks(sid);
+        var maxM = parseFloat($('input[name="internal_marks_' + sid + '"]').data('max'));
+        $('span.total-marks[data-sid="' + sid + '"]').text((total).toFixed(1) + '/' + maxM);
         var sel = $('select[name="grade_' + sid + '"]');
-        if ($(this).prop('checked') && !isNaN(marks) && !isNaN(maxM) && maxM > 0) { sel.val(calcGrade(marks, maxM)); }
+        if ($(this).prop('checked') && !isNaN(total) && !isNaN(maxM) && maxM > 0) { sel.val(calcGrade(total, maxM)); }
         else if ($(this).prop('checked')) { sel.val(''); }
     });
 });

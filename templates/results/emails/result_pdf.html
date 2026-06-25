@@ -3,44 +3,69 @@
 <head><meta charset="utf-8"><style>
     body { font-family: sans-serif; padding: 30px; font-size: 12px; }
     h2 { color: #c62828; text-align: center; margin-bottom: 5px; }
-    .subtitle { text-align: center; color: #555; font-size: 11px; margin-bottom: 20px; }
+    .subtitle { text-align: center; color: #555; font-size: 13px; margin-bottom: 5px; }
+    .subtitle2 { text-align: center; color: #555; font-size: 11px; margin-bottom: 20px; }
     .info { width: 100%; margin-bottom: 15px; }
     .info td { padding: 3px 8px; }
     table.det { width: 100%; border-collapse: collapse; margin: 15px 0; }
-    table.det th { background: #c62828; color: #fff; padding: 6px 8px; text-align: left; }
+    table.det th { background: #c62828; color: #fff; padding: 6px 8px; text-align: left; font-size: 11px; }
     table.det td { padding: 5px 8px; border: 1px solid #ddd; }
     table.det tr:nth-child(even) { background: #f9f9f9; }
-    .total { font-weight: bold; margin-top: 10px; }
+    .total-row td { background: #e9ecef; font-weight: bold; border-top: 2px solid #c62828; }
     .status { text-align: center; font-size: 14px; margin-top: 15px; }
-    .pass { color: green; }
-    .fail { color: red; }
+    .pass { color: green; font-weight: bold; }
+    .fail { color: red; font-weight: bold; }
     .footer { text-align: center; color: #888; font-size: 10px; margin-top: 30px; border-top: 1px solid #ddd; padding-top: 10px; }
 </style></head>
 <body>
     <h2>Miracle Institute of Technology, Kanpur</h2>
-    <p class="subtitle">Result Statement - {{ exam.name }} ({{ exam.exam_type }})</p>
+    <p class="subtitle">Report Card</p>
+    <p class="subtitle2">{{ exam.name }} ({{ exam.get_exam_type_display }}) - {{ exam.academic_year }}</p>
     <table class="info">
         <tr><td><strong>Student:</strong> {{ student.full_name }}</td><td><strong>Roll No:</strong> {{ student.roll_number }}</td></tr>
         <tr><td><strong>Branch:</strong> {{ branch }}</td><td><strong>Semester:</strong> {{ semester }}</td></tr>
+        <tr><td><strong>Date of Birth:</strong> {{ student.date_of_birth }}</td><td><strong>Father's Name:</strong> {{ student.father_name }}</td></tr>
     </table>
     <table class="det">
-        <tr><th>#</th><th>Subject</th><th>Code</th><th>Max Marks</th><th>Marks Obtained</th><th>Grade</th></tr>
+        <tr>
+            <th>#</th>
+            <th>Code</th>
+            <th style="width:30%;">Subject</th>
+            <th>Type</th>
+            <th>M.M.</th>
+            <th>Int.</th>
+            <th>Ext.</th>
+            <th>Total</th>
+            <th>Grade</th>
+            <th>Cr.</th>
+        </tr>
         {% for r in results %}
         <tr>
             <td>{{ forloop.counter }}</td>
-            <td>{{ r.subject.name }}</td>
             <td>{{ r.subject.code }}</td>
+            <td>{{ r.subject.name }}</td>
+            <td>{% if r.subject.is_lab %}PRACTICAL{% else %}THEORY{% endif %}</td>
             <td>{{ r.subject.max_marks }}</td>
-            <td>{{ r.marks_obtained }}</td>
+            <td>{{ r.internal_marks|floatformat:0 }}</td>
+            <td>{{ r.external_marks|floatformat:0 }}</td>
+            <td>{{ r.total_marks|floatformat:0 }}</td>
             <td>{{ r.grade }}</td>
+            <td>{{ r.subject.credits }}</td>
         </tr>
         {% endfor %}
+        <tr class="total-row">
+            <td colspan="4">Total</td>
+            <td>{{ max_marks }}</td>
+            <td colspan="2"></td>
+            <td>{{ total_marks }}</td>
+            <td>SGPA: {{ sgpa }}</td>
+            <td>{{ total_credits }}</td>
+        </tr>
     </table>
-    <p class="total">Total: {{ total_marks }} / {{ max_marks }} | SGPA: {{ sgpa }} | Credits: {{ total_credits }}</p>
     <p class="status {% if failed %}fail{% else %}pass{% endif %}">
         Status: {% if failed %}FAIL{% else %}PASS{% endif %}
     </p>
-    <p><strong>Note:</strong> This is a computer-generated statement. For official verification, visit the result portal.</p>
+    <p><strong>Note:</strong> This is a computer-generated report. For official verification, visit the result portal.</p>
     <div class="footer">Miracle Institute of Technology, Kanpur &bull; GT Road, Kanpur - 208001</div>
 </body>
 </html>

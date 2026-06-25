@@ -64,6 +64,8 @@ class Command(BaseCommand):
                     semester=sem,
                     is_lab=False,
                     max_marks=100,
+                    internal_max_marks=30,
+                    external_max_marks=70,
                     pass_marks=33,
                 )
             for lab in ['Science Lab', 'Computer Lab']:
@@ -74,6 +76,8 @@ class Command(BaseCommand):
                     semester=sem,
                     is_lab=True,
                     max_marks=100,
+                    internal_max_marks=50,
+                    external_max_marks=50,
                     pass_marks=40,
                 )
 

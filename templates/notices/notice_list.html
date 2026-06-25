@@ -18,6 +18,8 @@
         .notice-item{border-left:4px solid var(--accent);transition:0.2s;}
         .notice-item:hover{background:#f8f9fa;}
         .cat-badge{font-size:0.7rem;text-transform:uppercase;letter-spacing:0.5px;}
+        .blink-new { animation: blink 1s ease-in-out infinite; }
+        @keyframes blink { 0%,100% { opacity:1; } 50% { opacity:0.2; } }
     </style>
 </head>
 <body>
@@ -44,16 +46,24 @@
     </div>
     <div class="list-group">
         {% for notice in notices %}
-        <a href="{% url 'notices:notice_detail' notice.pk %}" class="list-group-item list-group-item-action notice-item py-3">
-            <div class="d-flex justify-content-between align-items-start">
-                <div>
-                    <h6 class="fw-bold mb-1">{{ notice.title }}</h6>
-                    <p class="text-muted small mb-0">{{ notice.content|truncatewords:30 }}</p>
+        <div class="list-group-item list-group-item-action notice-item py-3">
+            <a href="{% url 'notices:notice_detail' notice.pk %}" class="text-decoration-none text-reset d-block">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h6 class="fw-bold mb-1">{{ notice.title }}{% if forloop.counter <= 3 %} <span class="badge bg-danger ms-1 blink-new" style="font-size:0.6rem;">NEW</span>{% endif %}</h6>
+                        <p class="text-muted small mb-0">{{ notice.content|truncatewords:30 }}</p>
+                    </div>
+                    <small class="text-muted ms-3">{{ notice.created_at|date:"d M Y" }}</small>
                 </div>
-                <small class="text-muted ms-3">{{ notice.created_at|date:"d M Y" }}</small>
+                <span class="badge bg-light text-dark cat-badge mt-1">{{ notice.get_category_display }}</span>
+            </a>
+            {% if user.is_authenticated %}
+            <div class="mt-2 d-flex gap-2">
+                <a href="{% url 'notices:update_notice' notice.pk %}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i> Edit</a>
+                <a href="{% url 'notices:delete_notice' notice.pk %}" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i> Delete</a>
             </div>
-            <span class="badge bg-light text-dark cat-badge mt-1">{{ notice.get_category_display }}</span>
-        </a>
+            {% endif %}
+        </div>
         {% empty %}
         <div class="text-center py-5">
             <i class="bi bi-megaphone display-1 text-muted"></i>

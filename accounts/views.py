@@ -229,16 +229,22 @@ class CollegeHomeView(TemplateView):
         from .models import LeadershipMember, DirectorMessage, Department, PlacementPartner, Testimonial, ContactInfo
         from elections.models import Election, Position, Candidate
         from django.db.models import Max
+        from notices.models import Notice
+        from faculty.models import Faculty
         today = timezone.localdate()
         context['total_students'] = Student.objects.filter(is_deleted=False).count()
         context['classes_count'] = Class.objects.values('name').distinct().count()
-        context['exams_count'] = Exam.objects.count()
+        context['exams_count'] = Exam.objects.filter(start_date__year=today.year).count()
         context['leadership_members'] = LeadershipMember.objects.filter(is_active=True)
         context['director_message'] = DirectorMessage.objects.filter(is_active=True).first()
         context['departments'] = Department.objects.filter(is_active=True)
         context['placement_partners'] = PlacementPartner.objects.filter(is_active=True)
         context['testimonials'] = Testimonial.objects.filter(is_active=True)
         context['contact_info'] = ContactInfo.objects.filter(is_active=True).first()
+        context['latest_notices'] = Notice.objects.filter(is_published=True)[:5]
+        faculty_qs = Faculty.objects.filter(is_active=True)
+        context['faculty_count'] = faculty_qs.count()
+        context['faculty_phd_count'] = faculty_qs.filter(qualification__icontains='ph.d').count()
 
         election_winners = []
         ended_elections = Election.objects.filter(end_date__lt=timezone.now(), is_published=True)

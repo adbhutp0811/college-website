@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+<head><meta charset="utf-8"><style>
+    body { font-family: sans-serif; padding: 30px; font-size: 12px; }
+    .header { text-align: center; margin-bottom: 20px; }
+    .header img { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; margin-bottom: 8px; }
+    .header h3 { margin: 0 0 4px; font-size: 18px; }
+    .header h5 { margin: 0 0 4px; font-size: 14px; color: #555; }
+    .header p { margin: 0; color: #888; font-size: 12px; }
+    .info { width: 100%; margin-bottom: 15px; border-collapse: collapse; }
+    .info td { padding: 3px 8px; font-size: 12px; vertical-align: top; }
+    .info th { padding: 3px 8px; font-size: 12px; text-align: left; font-weight: bold; width: 130px; }
+    .exam-title { font-size: 13px; font-weight: bold; color: #0d6efd; margin: 15px 0 5px; }
+    table.det { width: 100%; border-collapse: collapse; margin: 8px 0; font-size: 11px; }
+    table.det th { background: #c62828; color: #fff; padding: 6px 8px; text-align: left; }
+    table.det td { padding: 5px 8px; border: 1px solid #ddd; }
+    table.det tr:nth-child(even) { background: #f9f9f9; }
+    .total-row td { background: #e9ecef; font-weight: bold; border-top: 2px solid #c62828; }
+    .status { text-align: center; font-size: 14px; margin-top: 15px; }
+    .pass { color: green; font-weight: bold; }
+    .fail { color: red; font-weight: bold; }
+    .footer { text-align: center; color: #888; font-size: 10px; margin-top: 30px; border-top: 1px solid #ddd; padding-top: 10px; }
+</style></head>
+<body>
+
+<div class="header">
+    <img src="file:///D:/project/student_management_system/static/images/college-logo.png" alt="College Logo">
+    <h3>Miracle Institute of Technology, Kanpur</h3>
+    <h5>Report Card</h5>
+    <p>{{ student.student_class }}</p>
+</div>
+
+<table class="info">
+    <tr><th>Student Name:</th><td>{{ student.full_name }}</td><th>Date of Birth:</th><td>{{ student.date_of_birth }}</td></tr>
+    <tr><th>Roll Number:</th><td>{{ student.roll_number }}</td><th>Gender:</th><td>{{ student.get_gender_display }}</td></tr>
+    <tr><th>Branch:</th><td>{{ student.student_class }}</td><th>Father's Name:</th><td>{{ student.father_name }}</td></tr>
+</table>
+
+{% for exam, result_list in exam_groups.items %}
+<div class="exam-title">{{ exam.name }} ({{ exam.get_exam_type_display }}) - {{ exam.academic_year }}</div>
+<table class="det">
+    <tr>
+        <th>S.No</th><th>Subject Code</th><th style="width:30%;">Subject Name</th><th>Type</th>
+        <th>M.M.</th><th>Internal</th><th>External</th><th>Total</th><th>Grade</th><th>Credit</th>
+    </tr>
+    {% for r in result_list %}
+    {% if r.is_total_row %}
+    <tr class="total-row">
+        <td colspan="4">Total</td>
+        <td>{{ r.total_max }}</td><td></td><td></td>
+        <td>{{ r.total_obtained }}</td>
+        <td>SGPA: {{ r.sgpa }}</td><td>{{ r.total_credits }}</td>
+    </tr>
+    {% else %}
+    <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ r.subject.code }}</td>
+        <td>{{ r.subject.name }}</td>
+        <td>{% if r.subject.is_lab %}PRACTICAL{% else %}THEORY{% endif %}</td>
+        <td>{{ r.subject.max_marks }}</td>
+        <td>{{ r.internal_marks|floatformat:0 }}</td>
+        <td>{{ r.external_marks|floatformat:0 }}</td>
+        <td>{{ r.total_marks|floatformat:0 }}</td>
+        <td>{{ r.grade }}</td>
+        <td>{{ r.subject.credits }}</td>
+    </tr>
+    {% endif %}
+    {% endfor %}
+</table>
+{% empty %}
+<p style="text-align:center;color:#999;padding:20px;">No exam results found.</p>
+{% endfor %}
+
+<p class="footer">This is a computer-generated report. Generated on {% now "jS F Y" %}.</p>
+</body>
+</html>

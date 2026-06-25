@@ -36,6 +36,7 @@ class ManageResultsView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         ctx['classes'] = Class.objects.all()
+        ctx['academic_years'] = Exam.objects.values_list('academic_year', flat=True).distinct().order_by('-academic_year')
         ctx['exam_form'] = ResultForm()
         return ctx
 
@@ -45,8 +46,12 @@ class GetSubjectsExamView(LoginRequiredMixin, View):
         class_id = request.GET.get('class_id')
         exam_id = request.GET.get('exam_id')
         subject_id = request.GET.get('subject_id')
-        subjects = Subject.objects.filter(student_class_id=class_id).values('id', 'name', 'max_marks')
-        exams = Exam.objects.filter(student_class_id=class_id).values('id', 'name', 'exam_type')
+        academic_year = request.GET.get('academic_year')
+        subjects = Subject.objects.filter(student_class_id=class_id).values('id', 'name', 'max_marks', 'internal_max_marks', 'external_max_marks')
+        exams = Exam.objects.filter(student_class_id=class_id)
+        if academic_year:
+            exams = exams.filter(academic_year=academic_year)
+        exams = exams.values('id', 'name', 'exam_type', 'academic_year')
         data = {
             'subjects': list(subjects),
             'exams': list(exams),
@@ -54,7 +59,7 @@ class GetSubjectsExamView(LoginRequiredMixin, View):
         if exam_id and subject_id:
             results = Result.objects.filter(
                 exam_id=exam_id, subject_id=subject_id
-            ).values('student_id', 'marks_obtained', 'grade', 'grade_auto')
+            ).values('student_id', 'internal_marks', 'external_marks', 'grade', 'grade_auto')
             data['results'] = list(results)
         return JsonResponse(data)
 
@@ -63,17 +68,22 @@ class SaveResultsView(LoginRequiredMixin, View):
     def post(self, request):
         exam_id = request.POST.get('exam')
         subject_id = request.POST.get('subject')
-        marks_data = {k: v for k, v in request.POST.items() if k.startswith('marks_')}
+        internal_data = {k: v for k, v in request.POST.items() if k.startswith('internal_marks_')}
+        external_data = {k: v for k, v in request.POST.items() if k.startswith('external_marks_')}
         grade_data = {k: v for k, v in request.POST.items() if k.startswith('grade_')}
         grade_auto_data = {k: v for k, v in request.POST.items() if k.startswith('grade_auto_')}
         subject = get_object_or_404(Subject, id=subject_id)
-        for key, value in marks_data.items():
+        for key, value in internal_data.items():
             if value:
-                student_id = int(key.replace('marks_', ''))
+                student_id = int(key.replace('internal_marks_', ''))
+                internal_marks = float(value)
+                external_marks = float(external_data.get(f'external_marks_{student_id}', 0) or 0)
                 grade = grade_data.get(f'grade_{student_id}', '')
                 grade_auto = grade_auto_data.get(f'grade_auto_{student_id}', 'true') == 'true'
                 defaults = {
-                    'marks_obtained': float(value),
+                    'internal_marks': internal_marks,
+                    'external_marks': external_marks,
+                    'marks_obtained': internal_marks + external_marks,
                     'grade': grade,
                     'grade_auto': grade_auto,
                 }
@@ -84,7 +94,9 @@ class SaveResultsView(LoginRequiredMixin, View):
                     defaults=defaults,
                 )
                 if not created:
-                    result.marks_obtained = float(value)
+                    result.internal_marks = internal_marks
+                    result.external_marks = external_marks
+                    result.marks_obtained = internal_marks + external_marks
                     result.grade = grade
                     result.grade_auto = grade_auto
                     result.save()
@@ -99,10 +111,16 @@ class ClassResultSummaryView(LoginRequiredMixin, TemplateView):
         ctx = super().get_context_data(**kwargs)
         class_id = self.request.GET.get('class', '')
         exam_id = self.request.GET.get('exam', '')
+        academic_year = self.request.GET.get('academic_year', '')
         ctx['classes'] = Class.objects.all()
-        ctx['exams'] = Exam.objects.all()
+        exams_qs = Exam.objects.all()
+        if academic_year:
+            exams_qs = exams_qs.filter(academic_year=academic_year)
+        ctx['exams'] = exams_qs
+        ctx['academic_years'] = Exam.objects.values_list('academic_year', flat=True).distinct().order_by('-academic_year')
         ctx['current_class'] = class_id
         ctx['current_exam'] = exam_id
+        ctx['current_academic_year'] = academic_year
 
         if class_id and exam_id:
             students = Student.objects.filter(student_class_id=class_id, is_deleted=False)
@@ -205,21 +223,23 @@ class SendResultsView(LoginRequiredMixin, View):
         sgpa, total_credits = calculate_sgpa(results)
         failed = any(not r.is_pass for r in results)
 
-        context = {
-            'student': student,
-            'exam': exam,
-            'branch': student.student_class.name,
-            'semester': student.student_class.section,
-            'results': results,
-            'total_marks': round(total_marks, 2),
-            'max_marks': max_marks,
+        rlist = list(results)
+        rlist.append({
+            'is_total_row': True,
+            'total_obtained': round(total_marks, 2),
+            'total_max': max_marks,
             'sgpa': sgpa,
             'total_credits': total_credits,
-            'failed': failed,
+        })
+        exam_groups = {exam: rlist}
+
+        context = {
+            'student': student,
+            'exam_groups': exam_groups,
             'result_portal_url': f'{base_url}/accounts/result-portal/',
         }
 
-        pdf = render_to_pdf('results/emails/result_pdf.html', context)
+        pdf = render_to_pdf('results/emails/report_card_pdf.html', context)
         if pdf is None:
             return 'skip'
 

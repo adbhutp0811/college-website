@@ -21,16 +21,27 @@ class BulkResultForm(forms.Form):
                 existing = Result.objects.filter(
                     student=student, subject=subject, exam=exam
                 ).first()
-                val = existing.marks_obtained if existing else ''
-                self.fields[f'marks_{student.id}'] = forms.FloatField(
+                i_val = existing.internal_marks if existing else ''
+                e_val = existing.external_marks if existing else ''
+                self.fields[f'internal_marks_{student.id}'] = forms.FloatField(
                     required=False,
-                    initial=val,
+                    initial=i_val,
                     min_value=0,
-                    max_value=subject.max_marks,
                     widget=forms.NumberInput(attrs={
-                        'class': 'form-control form-control-sm marks-input',
-                        'placeholder': f'Max: {subject.max_marks}',
-                        'data-max': subject.max_marks,
+                        'class': 'form-control form-control-sm marks-input mark-internal',
+                        'placeholder': 'Internal',
+                        'data-sid': student.id,
                     }),
-                    label=f'{student.first_name} {student.last_name} ({student.roll_number})',
+                    label=f'{student.first_name} {student.last_name} ({student.roll_number}) - Internal',
+                )
+                self.fields[f'external_marks_{student.id}'] = forms.FloatField(
+                    required=False,
+                    initial=e_val,
+                    min_value=0,
+                    widget=forms.NumberInput(attrs={
+                        'class': 'form-control form-control-sm marks-input mark-external',
+                        'placeholder': 'External',
+                        'data-sid': student.id,
+                    }),
+                    label=f'{student.first_name} {student.last_name} ({student.roll_number}) - External',
                 )

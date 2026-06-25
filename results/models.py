@@ -11,6 +11,8 @@ class Subject(models.Model):
     is_lab = models.BooleanField(default=False)
     is_language = models.BooleanField(default=False)
     max_marks = models.IntegerField(default=100)
+    internal_max_marks = models.IntegerField(default=30)
+    external_max_marks = models.IntegerField(default=70)
     pass_marks = models.IntegerField(default=33)
     credits = models.IntegerField(default=3)
 
@@ -93,8 +95,7 @@ class Result(models.Model):
         return self.internal_marks + self.external_marks
 
     def save(self, *args, **kwargs):
-        if not self.marks_obtained:
-            self.marks_obtained = self.total_marks
+        self.marks_obtained = self.total_marks
         if self.grade_auto or not self.grade:
             self.grade = self.calculate_grade()
         super().save(*args, **kwargs)

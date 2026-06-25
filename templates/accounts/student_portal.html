@@ -213,9 +213,7 @@ function printResults() {
         'table.tbl td { padding: 6px 10px; border-bottom: 1px solid #dee2e6; }' +
         'table.tbl tr:nth-child(even) td { background: #f8f9fa; }' +
         'table.tbl .total td { background: #e9ecef; font-weight: bold; border-top: 2px solid #0d6efd; }' +
-        '.signatures { display: flex; justify-content: space-between; margin-top: 30px; font-size: 13px; }' +
-        '.signatures div { text-align: center; width: 30%; }' +
-        '.signatures .line { border-top: 1px solid #333; padding-top: 5px; margin-top: 40px; }' +
+
         '.footer { text-align: center; margin-top: 15px; font-size: 11px; color: #aaa; }' +
         '.exam-title { font-size: 14px; font-weight: bold; color: #0d6efd; margin: 15px 0 5px; }' +
         '.photo-box { text-align: right; }' +
@@ -254,11 +252,7 @@ function printResults() {
         h += '</tbody></table></div>';
     }
 
-    h += '<div class="signatures">';
-    h += '<div><div class="line">(Dr. G. Nalankilli)</div><div style="font-size:12px;color:#666;margin-top:4px;">Director</div></div>';
-    h += '<div><div class="line">(Dr. Rajendra Prasad)</div><div style="font-size:12px;color:#666;margin-top:4px;">COE</div></div>';
-    h += '<div><div class="line">(Dr. Alok Kumar)</div><div style="font-size:12px;color:#666;margin-top:4px;">HOD</div></div>';
-    h += '</div>';
+
     h += '<div class="footer">This is a computer-generated report. Generated on ' + new Date().toLocaleDateString() + '.</div>';
     h += '</div></body></html>';
 

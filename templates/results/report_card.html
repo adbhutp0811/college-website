@@ -89,24 +89,6 @@
     </table>
     {% endfor %}
 
-    <div class="row mt-4">
-        <div class="col-4 text-center">
-            {% load static %}
-            <img src="{% static 'images/teacher-signature.svg' %}" alt="HOD Signature" style="height:40px;margin-bottom:4px;">
-            <p class="border-top pt-1 mb-1 small">({% if student.student_class.name == 'CSE' %}Dr. I.P. Mishra{% else %}Dr. Alok Kumar{% endif %})</p>
-            <p class="small text-muted">HOD</p>
-        </div>
-        <div class="col-4 text-center">
-            <img src="{% static 'images/principal-signature.svg' %}" alt="Director Signature" style="height:40px;margin-bottom:4px;">
-            <p class="border-top pt-1 mb-1 small">(Dr. G. Nalankilli)</p>
-            <p class="small text-muted">Director</p>
-        </div>
-        <div class="col-4 text-center">
-            <img src="{% static 'images/guardian-signature.svg' %}" alt="COE Signature" style="height:40px;margin-bottom:4px;">
-            <p class="border-top pt-1 mb-1 small">(Dr. Rajendra Prasad)</p>
-            <p class="small text-muted">COE</p>
-        </div>
-    </div>
 </div>
 {% else %}
 <div class="card">

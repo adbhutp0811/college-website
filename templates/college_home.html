@@ -57,6 +57,12 @@
         .news-ticker { background: #fff; border: 1px solid #e0e0e0; border-radius: 0; padding: 12px 18px; display: flex; align-items: center; gap: 15px; }
         .news-ticker .label { background: var(--accent); color: #fff; padding: 4px 14px; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; border-radius: 3px; white-space: nowrap; }
         .news-ticker .text { color: var(--text); font-size: 0.85rem; margin-bottom: 0; }
+        .ticker-wrap { overflow: hidden; flex: 1; white-space: nowrap; }
+        .ticker-scroll { display: inline-block; animation: ticker 25s linear infinite; }
+        .ticker-wrap:hover .ticker-scroll { animation-play-state: paused; }
+        @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+        .blink-new { animation: blink 1s ease-in-out infinite; }
+        @keyframes blink { 0%,100% { opacity:1; } 50% { opacity:0.2; } }
 
         .quick-link-card { border: 1px solid #e8e8e8; border-radius: 0; padding: 1.2rem; text-align: center; background: #fff; transition: 0.2s; text-decoration: none; display: block; height: 100%; }
         .quick-link-card:hover { border-color: var(--accent); box-shadow: 0 4px 20px rgba(198,40,40,0.08); }
@@ -214,8 +220,21 @@
 
 <div class="news-ticker container mt-3">
     <span class="label"><i class="bi bi-megaphone-fill me-1"></i> Announcements</span>
-    <div class="d-flex overflow-hidden" style="flex:1;">
-        <p class="text mb-0"><i class="bi bi-dot text-danger"></i> Even Semester Results Published — <a href="{% url 'accounts:result_portal' %}" class="text-decoration-none fw-semibold" style="color:var(--accent);">Check Now</a></p>
+    <div class="ticker-wrap">
+        <div class="ticker-scroll">
+            {% for notice in latest_notices %}
+            <span class="text mb-0"><i class="bi bi-dot text-danger"></i> {{ notice.title }}{% if forloop.counter <= 3 %} <span class="badge bg-danger blink-new" style="font-size:0.55rem;">NEW</span>{% endif %} — <a href="{% url 'notices:notice_detail' notice.pk %}" class="text-decoration-none fw-semibold" style="color:var(--accent);">Read More</a></span>
+            <span class="text mx-3 opacity-25">|</span>
+            {% endfor %}
+            {% if latest_notices %}
+            {% for notice in latest_notices %}
+            <span class="text mb-0"><i class="bi bi-dot text-danger"></i> {{ notice.title }}{% if forloop.counter <= 3 %} <span class="badge bg-danger blink-new" style="font-size:0.55rem;">NEW</span>{% endif %} — <a href="{% url 'notices:notice_detail' notice.pk %}" class="text-decoration-none fw-semibold" style="color:var(--accent);">Read More</a></span>
+            <span class="text mx-3 opacity-25">|</span>
+            {% endfor %}
+            {% else %}
+            <span class="text mb-0 text-muted">No announcements at this time.</span>
+            {% endif %}
+        </div>
     </div>
 </div>
 
@@ -281,8 +300,8 @@
                 <div class="row g-3">
                     <div class="col-6"><div class="about-card"><div class="num">{{ total_students }}</div><div class="label">Total Students</div><span class="small text-muted">Across all programs</span></div></div>
                     <div class="col-6"><div class="about-card"><div class="num">{{ classes_count|default:"6" }}</div><div class="label">Departments</div><span class="small text-muted">Engineering branches</span></div></div>
-                    <div class="col-6"><div class="about-card"><div class="num">{{ exams_count|default:"96" }}+</div><div class="label">Exams</div><span class="small text-muted">Conducted annually</span></div></div>
-                    <div class="col-6"><div class="about-card"><div class="num">65+</div><div class="label">Faculty</div><span class="small text-muted">Highly qualified</span></div></div>
+                    <div class="col-6"><div class="about-card"><div class="num">{{ exams_count }}+</div><div class="label">Exams</div><span class="small text-muted">Conducted this year</span></div></div>
+                    <div class="col-6"><div class="about-card"><div class="num">{{ faculty_count }}+</div><div class="label">Faculty</div><span class="small text-muted">{{ faculty_phd_count }}+ Ph.D qualified</span></div></div>
                 </div>
             </div>
         </div>

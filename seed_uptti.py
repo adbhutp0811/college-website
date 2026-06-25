@@ -138,7 +138,7 @@ for (branch, sem), subjects in SUBJECTS.items():
             code = f'{prefix}{sem*100 + i + 1}_{i}'
         seen_codes.add(code)
         Subject.objects.create(name=sub, code=code, student_class=cls,
-                               semester=sem, is_lab=False, max_marks=100, pass_marks=35)
+                               semester=sem, is_lab=False, max_marks=100, internal_max_marks=30, external_max_marks=70, pass_marks=35)
 for (branch, sem), labs in LABS.items():
     cls = classes[(branch, sem)]
     prefix = BRANCH_PREFIX[branch]
@@ -148,7 +148,7 @@ for (branch, sem), labs in LABS.items():
             code = f'{prefix}{sem*100 + 50 + i + 1}_{i}'
         seen_codes.add(code)
         Subject.objects.create(name=lab, code=code, student_class=cls,
-                               semester=sem, is_lab=True, max_marks=100, pass_marks=40)
+                               semester=sem, is_lab=True, max_marks=100, internal_max_marks=50, external_max_marks=50, pass_marks=40)
 
 male_names = ['Aarav','Vivaan','Aditya','Vihaan','Arjun','Pranav','Dhruv','Krishna','Shaurya','Reyansh','Atharv','Aryan','Ishan','Rohan','Amit','Vikram','Rahul','Akash','Manoj','Sunil','Rajesh']
 female_names = ['Anaya','Diya','Ishita','Aadhya','Riya','Sara','Aanya','Saanvi','Kavya','Neha','Priya','Pooja','Anjali','Shreya','Tanya','Divya','Meera','Asha']

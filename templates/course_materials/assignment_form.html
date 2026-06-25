@@ -61,5 +61,24 @@
     <div class="container text-center small">&copy; 2026 Miracle Institute of Technology</div>
 </footer>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+var subjectClassMap = {{ subject_class_map|safe }};
+document.addEventListener('DOMContentLoaded', function() {
+    var subjectSel = document.getElementById('id_subject');
+    var classSel = document.getElementById('id_student_class');
+    if (!subjectSel || !classSel) return;
+    subjectSel.addEventListener('change', function() {
+        var cid = subjectClassMap[this.value];
+        if (cid) {
+            for (var i = 0; i < classSel.options.length; i++) {
+                if (classSel.options[i].value == cid) {
+                    classSel.selectedIndex = i;
+                    break;
+                }
+            }
+        }
+    });
+});
+</script>
 </body>
 </html>
