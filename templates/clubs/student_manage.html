@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% block title %}Manage Club{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0"><i class="bi bi-people-fill"></i> Manage Club</h4>
+    <a href="{% url 'accounts:student_portal' %}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i> Back</a>
+</div>
+
+{% if not my_clubs %}
+<div class="alert alert-info">You are not a coordinator or vice coordinator of any club.</div>
+{% else %}
+<ul class="nav nav-tabs mb-3" id="clubTab" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="apps-tab" data-bs-toggle="tab" data-bs-target="#apps" type="button">Applications {% if applications %}<span class="badge bg-danger">{{ applications|length }}</span>{% endif %}</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="members-tab" data-bs-toggle="tab" data-bs-target="#members" type="button">Members</button>
+    </li>
+</ul>
+<div class="tab-content">
+    <div class="tab-pane fade show active" id="apps">
+        {% if not applications %}
+        <div class="alert alert-info">No pending applications.</div>
+        {% else %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead><tr><th>Student</th><th>Roll</th><th>Club</th><th>Reason</th><th>Date</th><th>Actions</th></tr></thead>
+                <tbody>
+                    {% for app in applications %}
+                    <tr>
+                        <td>{{ app.student.full_name }}</td>
+                        <td>{{ app.student.roll_number }}</td>
+                        <td><span class="badge bg-primary">{{ app.club.name }}</span></td>
+                        <td><small>{{ app.reason|truncatechars:60 }}</small></td>
+                        <td><small>{{ app.created_at|date:'d M Y' }}</small></td>
+                        <td>
+                            <form method="post" class="d-inline">
+                                {% csrf_token %}
+                                <input type="hidden" name="application_id" value="{{ app.id }}">
+                                <button type="submit" name="action" value="approve" class="btn btn-success btn-sm" onclick="return confirm('Approve {{ app.student.full_name }}?')"><i class="bi bi-check-lg"></i></button>
+                                <button type="submit" name="action" value="reject" class="btn btn-danger btn-sm" onclick="return confirm('Reject {{ app.student.full_name }}?')"><i class="bi bi-x-lg"></i></button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+    </div>
+    <div class="tab-pane fade" id="members">
+        {% if not members %}
+        <div class="alert alert-info">No members yet.</div>
+        {% else %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead><tr><th>Student</th><th>Club</th><th>Role</th>{% if is_coordinator %}<th>Actions</th>{% endif %}</tr></thead>
+                <tbody>
+                    {% for m in members %}
+                    <tr>
+                        <td>{{ m.student.full_name }}</td>
+                        <td><span class="badge bg-primary">{{ m.club.name }}</span></td>
+                        <td><span class="badge bg-{% if m.role == 'coordinator' %}danger{% elif m.role == 'vice_coordinator' %}warning{% else %}secondary{% endif %}">{{ m.get_role_display }}</span></td>
+                        {% if is_coordinator and m.role != 'coordinator' %}
+                        <td>
+                            <form method="post" class="d-inline">
+                                {% csrf_token %}
+                                <input type="hidden" name="member_id" value="{{ m.id }}">
+                                {% if m.role == 'member' %}
+                                <button type="submit" name="action" value="set_vc" class="btn btn-outline-warning btn-sm" onclick="return confirm('Make {{ m.student.full_name }} Vice Coordinator?')"><i class="bi bi-star"></i> Vice Coord</button>
+                                {% elif m.role == 'vice_coordinator' %}
+                                <button type="submit" name="action" value="demote" class="btn btn-outline-secondary btn-sm" onclick="return confirm('Demote {{ m.student.full_name }} to Member?')"><i class="bi bi-arrow-down"></i> Demote</button>
+                                {% endif %}
+                                <button type="submit" name="action" value="remove" class="btn btn-outline-danger btn-sm" onclick="return confirm('Remove {{ m.student.full_name }} from club?')"><i class="bi bi-person-x"></i> Remove</button>
+                            </form>
+                        </td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+{% endblock %}

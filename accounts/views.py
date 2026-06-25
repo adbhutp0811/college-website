@@ -169,6 +169,15 @@ class StudentPortalView(TemplateView):
         total_days = Attendance.objects.filter(student=student).count()
         ctx['attendance_pct'] = round((total_present / total_days * 100)) if total_days else 0
         ctx['department_name'] = DEPT_NAMES.get(student.student_class.name, [student.student_class.name])[0]
+        from clubs.models import ClubApplication, ClubMembership
+        ctx['club_apps'] = ClubApplication.objects.filter(student=student).select_related('club')
+        ctx['club_memberships'] = ClubMembership.objects.filter(student=student).select_related('club')
+        from mentor.models import MentorAssignment
+        try:
+            mentor_assignment = MentorAssignment.objects.get(student=student, is_active=True)
+            ctx['faculty_mentor'] = mentor_assignment.faculty
+        except MentorAssignment.DoesNotExist:
+            ctx['faculty_mentor'] = None
         return ctx
 
     @method_decorator(csrf_protect)
@@ -196,6 +205,10 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         from attendance.models import Attendance
         from django.utils import timezone
+        from attendance.views import check_low_attendance
+        import json, os, calendar
+        from django.conf import settings
+
         today = timezone.localdate()
         total_students = Student.objects.filter(is_deleted=False).count()
         today_records = Attendance.objects.filter(date=today)
@@ -207,6 +220,41 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         context['today_present'] = today_present
         context['classes_count'] = Class.objects.values('name').distinct().count()
         context['exams_count'] = Exam.objects.count()
+
+        last_day = calendar.monthrange(today.year, today.month)[1]
+        if today.day >= last_day - 1:
+            tracker = settings.BASE_DIR / '.attendance_tracker.json'
+            month_key = today.strftime('%Y-%m')
+            last_sent = {}
+            if tracker.exists():
+                try:
+                    last_sent = json.loads(tracker.read_text())
+                except Exception:
+                    pass
+            if last_sent.get('month') != month_key:
+                students = Student.objects.filter(is_deleted=False)
+                sent_count = 0
+                for s in students:
+                    if check_low_attendance(s, month_key):
+                        sent_count += 1
+                last_sent['month'] = month_key
+                tracker.write_text(json.dumps(last_sent))
+
+        recent_students = Student.objects.filter(is_deleted=False).order_by('-created_at')[:5]
+        recent_attendance = Attendance.objects.select_related('student').order_by('-date', '-id')[:5]
+        from grievances.models import Grievance
+        recent_grievances = Grievance.objects.order_by('-created_at')[:5]
+        from leave_management.models import LeaveApplication
+        recent_leaves = LeaveApplication.objects.order_by('-applied_at')[:5]
+        from notices.models import Notice
+        recent_notices = Notice.objects.filter(is_published=True).order_by('-created_at')[:3]
+
+        context['recent_students'] = recent_students
+        context['recent_attendance'] = recent_attendance
+        context['recent_grievances'] = recent_grievances
+        context['recent_leaves'] = recent_leaves
+        context['recent_notices'] = recent_notices
+
         return context
 
 

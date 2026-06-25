@@ -53,3 +53,16 @@ class MentorNote(models.Model):
 
     def __str__(self):
         return f'Note on {self.student.full_name} by {self.faculty.get_full_name()}'
+
+
+class PeerMentor(models.Model):
+    mentor = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='peer_mentees')
+    mentee = models.OneToOneField(Student, on_delete=models.CASCADE, related_name='peer_mentor')
+    assigned_at = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ['mentor', 'mentee']
+
+    def __str__(self):
+        return f'{self.mentor.full_name} -> {self.mentee.full_name}'

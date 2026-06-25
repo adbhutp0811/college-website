@@ -37,6 +37,7 @@ class Student(models.Model):
         max_length=15,
         validators=[RegexValidator(r'^\+?1?\d{9,15}$')]
     )
+    session = models.CharField(max_length=20, default='2025-2026')
     admission_date = models.DateField(auto_now_add=True)
     profile_photo = models.ImageField(upload_to='student_photos/', blank=True)
     is_deleted = models.BooleanField(default=False)

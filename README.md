@@ -60,6 +60,8 @@ A full-stack Student Management System built with **Django 6**, **MySQL/SQLite**
 - Navy/gold bands, signature fields, QR code, validity dates
 
 - **Additional Modules**
+  - **Notices** — Publish categorized notices (Academic, Exam, Event, etc.) with file attachments, category filtering, publish/unpublish toggle
+  - **Events** — Schedule and manage events with date/time, venue, category, and optional registration links
   - **Quiz** — Create quizzes, add questions, student attempts with auto-grading
   - **Mentor** — Mentor assignment, meetings, mentee tracking
   - **Sports** — Sports/tournament management, team registration
@@ -71,11 +73,13 @@ A full-stack Student Management System built with **Django 6**, **MySQL/SQLite**
 
 ## Tech Stack
 
-- **Backend:** Django 6, Python 3.14
-- **Database:** MySQL (production) / SQLite (development)
-- **Frontend:** Bootstrap 5, jQuery, HTML5, CSS3
-- **Static Files:** Whitenoise
-- **Libraries:** xhtml2pdf, reportlab, Pillow, openpyxl, requests, razorpay, stripe
+- **Backend:** Django 6.0, Python 3.14
+- **Database:** MySQL (production) / SQLite (development) / PostgreSQL (optional)
+- **Frontend:** Bootstrap 5, crispy-bootstrap5, jQuery, HTML5, CSS3
+- **Server:** Gunicorn, Whitenoise
+- **Payments:** Razorpay, Stripe
+- **PDF:** xhtml2pdf, reportlab, Pillow
+- **Other:** django-crispy-forms, django-environ, python-dotenv, mysqlclient, requests
 
 ## Setup Instructions
 
@@ -202,7 +206,8 @@ student_management/
 ├── gallery/                # Photo albums with multi-upload
 ├── alumni/                 # Alumni directory, events, donations
 ├── elections/              # Student council candidates, voting, results
-├── notices/                # Notice publishing
+├── events/                 # Event management with scheduling & categories
+├── notices/                # Notice publishing with categories & attachments
 ├── events/                 # Event management
 ├── mentor/                 # Mentor/mentee assignments & meetings
 ├── sports/                 # Sports & tournament management

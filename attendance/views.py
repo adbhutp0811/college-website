@@ -14,6 +14,37 @@ from .models import Attendance
 from .sms_utils import send_sms
 
 
+def check_low_attendance(student, month):
+    year, m = month.split('-')
+    records = Attendance.objects.filter(student=student, date__year=year, date__month=m)
+    total = records.count()
+    if total == 0:
+        return False
+    present = records.filter(status='present').count()
+    pct = round((present / total * 100))
+    if pct >= 75 or not student.email:
+        return False
+    try:
+        send_mail(
+            subject='Low Attendance Alert',
+            message=(
+                f'Dear {student.full_name},\n\n'
+                f'Your attendance for {month} is {pct}%, which is below the required 75%.\n'
+                f'Total working days: {total}\n'
+                f'Days present: {present}\n'
+                f'Attendance: {pct}%\n\n'
+                f'Please ensure regular attendance.\n\n'
+                f'- Miracle Institute of Technology'
+            ),
+            from_email=None,
+            recipient_list=[student.email],
+            fail_silently=True,
+        )
+        return True
+    except Exception:
+        return False
+
+
 class MarkAttendanceView(LoginRequiredMixin, TemplateView):
     template_name = 'attendance/mark_attendance.html'
 
@@ -151,25 +182,43 @@ class AttendanceSummaryView(LoginRequiredMixin, TemplateView):
 
 
 class AttendanceNotifyView(LoginRequiredMixin, View):
-    def get(self, request):
+    def post(self, request):
+        student_id = request.POST.get('student_id')
+        class_id = request.POST.get('class_id')
         today = timezone.localdate()
-        absences = Attendance.objects.filter(date=today, status='absent').select_related('student')
-        count = 0
-        for a in absences:
-            student = a.student
-            if student.email:
-                try:
-                    send_mail(
-                        subject='Attendance Alert - Absent Today',
-                        message=f'Dear Parent,\n\nYour ward {student.full_name} ({student.roll_number}) was marked ABSENT on {today}.\n\nPlease contact the institute for more details.\n\n- Miracle Institute of Technology',
-                        from_email=None,
-                        recipient_list=[student.email],
-                        fail_silently=True,
-                    )
-                    count += 1
-                except Exception:
-                    pass
-        messages.success(request, f'Attendance alerts sent to {count} parent(s).')
+
+        if student_id:
+            students = Student.objects.filter(pk=student_id, is_deleted=False)
+        elif class_id:
+            students = Student.objects.filter(student_class_id=class_id, is_deleted=False)
+        else:
+            students = Student.objects.filter(is_deleted=False)
+
+        sent = 0
+        skipped = 0
+        for student in students:
+            if not student.email:
+                skipped += 1
+                continue
+            absences = Attendance.objects.filter(student=student, status='absent', date=today)
+            if not absences.exists():
+                skipped += 1
+                continue
+            try:
+                send_mail(
+                    subject='Attendance Alert - Absent Today',
+                    message=f'Dear {student.full_name},\n\nYou were marked ABSENT on {today}.\n\nPlease contact the institute for more details.\n\n- Miracle Institute of Technology',
+                    from_email=None,
+                    recipient_list=[student.email],
+                    fail_silently=True,
+                )
+                sent += 1
+            except Exception:
+                skipped += 1
+        msg = f'Attendance alerts sent to {sent} student(s).'
+        if skipped:
+            msg += f' {skipped} skipped.'
+        messages.success(request, msg)
         return redirect('attendance:summary')
 
 
@@ -255,3 +304,59 @@ class CustomSMSView(LoginRequiredMixin, TemplateView):
             messages.error(request, 'Failed to send SMS.')
 
         return redirect('attendance:custom_sms')
+
+
+class CustomEmailView(LoginRequiredMixin, TemplateView):
+    template_name = 'attendance/custom_email.html'
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx['classes'] = Class.objects.all()
+        ctx['students'] = Student.objects.filter(is_deleted=False)
+        return ctx
+
+    def post(self, request):
+        student_id = request.POST.get('student_id')
+        class_id = request.POST.get('class_id')
+        subject = request.POST.get('subject', '').strip()
+        message = request.POST.get('message', '').strip()
+
+        if not subject or not message:
+            messages.error(request, 'Please fill in all fields.')
+            return redirect('attendance:custom_email')
+
+        if student_id:
+            students = Student.objects.filter(pk=student_id, is_deleted=False)
+        elif class_id:
+            students = Student.objects.filter(student_class_id=class_id, is_deleted=False)
+        else:
+            students = Student.objects.filter(is_deleted=False)
+
+        if not students.exists():
+            messages.error(request, 'No students found for the selected criteria.')
+            return redirect('attendance:custom_email')
+
+        sent = 0
+        skipped = 0
+        for student in students:
+            if not student.email:
+                skipped += 1
+                continue
+            full_msg = f'Dear {student.full_name},\n\n{message}\n\n- Miracle Institute of Technology'
+            try:
+                send_mail(
+                    subject=subject,
+                    message=full_msg,
+                    from_email=None,
+                    recipient_list=[student.email],
+                    fail_silently=False,
+                )
+                sent += 1
+            except Exception:
+                skipped += 1
+
+        msg_text = f'Email sent to {sent} student(s).'
+        if skipped:
+            msg_text += f' {skipped} skipped (no email address or send failed).'
+        messages.success(request, msg_text)
+        return redirect('attendance:custom_email')

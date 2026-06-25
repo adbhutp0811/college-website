@@ -10,5 +10,6 @@ urlpatterns = [
     path('meetings/', views.MeetingListView.as_view(), name='meetings'),
     path('meetings/create/', views.CreateMeetingView.as_view(), name='create_meeting'),
     path('assign/', views.AssignMentorView.as_view(), name='assign'),
+    path('peer-assign/', views.AssignPeerMentorView.as_view(), name='peer_assign'),
     path('student/', views.StudentMentorView.as_view(), name='student_mentor'),
 ]

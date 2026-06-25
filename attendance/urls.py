@@ -8,6 +8,7 @@ from .views import (
     AttendanceNotifyView,
     AttendanceSMSView,
     CustomSMSView,
+    CustomEmailView,
 )
 
 app_name = 'attendance'
@@ -21,4 +22,5 @@ urlpatterns = [
     path('notify/', AttendanceNotifyView.as_view(), name='notify'),
     path('sms/', AttendanceSMSView.as_view(), name='sms'),
     path('custom-sms/', CustomSMSView.as_view(), name='custom_sms'),
+    path('custom-email/', CustomEmailView.as_view(), name='custom_email'),
 ]

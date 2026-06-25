@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block title %}Send Custom Email{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0"><i class="bi bi-envelope-fill"></i> Send Custom Email</h4>
+    <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i> Back</a>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label">Class / Branch</label>
+                        <select name="class_id" class="form-select">
+                            <option value="">All Students</option>
+                            {% for c in classes %}
+                            <option value="{{ c.id }}">{{ c }} ({{ c.academic_year }})</option>
+                            {% endfor %}
+                        </select>
+                        <div class="form-text">Select a class or leave as "All Students".</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Specific Student <span class="text-muted">(optional)</span></label>
+                        <select name="student_id" class="form-select">
+                            <option value="">-- None (send to all in class above) --</option>
+                            {% for c in classes %}
+                            <optgroup label="{{ c }}">
+                                {% for s in students %}
+                                {% if s.student_class_id == c.id %}
+                                <option value="{{ s.id }}">{{ s.full_name }} ({{ s.roll_number }})</option>
+                                {% endif %}
+                                {% endfor %}
+                            </optgroup>
+                            {% endfor %}
+                        </select>
+                        <div class="form-text">Pick a specific student to override the class selection above.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Subject <span class="text-danger">*</span></label>
+                        <input type="text" name="subject" class="form-control" required placeholder="Enter email subject">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Message <span class="text-danger">*</span></label>
+                        <textarea name="message" class="form-control" rows="5" required placeholder="Type your message here..."></textarea>
+                        <div class="form-text">"Dear {Student Name}," will be prepended automatically.</div>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100"><i class="bi bi-send-fill"></i> Send Email</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

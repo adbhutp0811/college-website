@@ -8,6 +8,7 @@ class StudentForm(forms.ModelForm):
         fields = '__all__'
         labels = {
             'student_class': 'Branch',
+            'session': 'Academic Session',
         }
         widgets = {
             'first_name': forms.TextInput(attrs={'class': 'form-control'}),
@@ -22,6 +23,10 @@ class StudentForm(forms.ModelForm):
             'father_name': forms.TextInput(attrs={'class': 'form-control'}),
             'mother_name': forms.TextInput(attrs={'class': 'form-control'}),
             'guardian_contact': forms.TextInput(attrs={'class': 'form-control'}),
+            'session': forms.Select(attrs={'class': 'form-select'}, choices=[
+                ('2024-2025', '2024-2025'), ('2025-2026', '2025-2026'),
+                ('2026-2027', '2026-2027'), ('2027-2028', '2027-2028'),
+            ]),
             'profile_photo': forms.FileInput(attrs={'class': 'form-control'}),
         }
 

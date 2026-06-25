@@ -7,6 +7,8 @@
     .navbar, .no-print, footer { display: none !important; }
     body { background: #fff; }
 }
+.stat-card { min-height: 110px; }
+.stat-card .card-body { display: flex; flex-direction: column; justify-content: center; }
 </style>
 {% endblock %}
 {% block content %}
@@ -62,6 +64,55 @@
                         <h6 class="text-muted">Branch</h6>
                         <h2 class="mb-0">{{ department_name }}</h2>
                         <small class="text-muted">{{ student.student_class.section }}</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card stat-card warning">
+                    <div class="card-body">
+                        <h6 class="text-muted">Club / Post</h6>
+                        {% if club_memberships %}
+                            {% for m in club_memberships %}
+                            <span class="badge bg-success me-1">{{ m.club.name }} — {{ m.get_role_display }}</span>
+                            {% endfor %}
+                        {% elif club_apps %}
+                            {% for app in club_apps %}
+                            <span class="badge bg-{% if app.status == 'approved' %}success{% elif app.status == 'rejected' %}danger{% else %}warning{% endif %} me-1">{{ app.club.name }}: {{ app.get_status_display }}</span>
+                            {% endfor %}
+                        {% else %}
+                            <h2 class="mb-0">--</h2>
+                            <small class="text-muted">Not applied</small>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card stat-card secondary">
+                    <div class="card-body">
+                        <h6 class="text-muted">Faculty Mentor</h6>
+                        {% if faculty_mentor %}
+                            <h5 class="mb-0">{{ faculty_mentor.get_full_name }}</h5>
+                            <small class="text-muted">{{ faculty_mentor.email }}</small>
+                        {% else %}
+                            <h2 class="mb-0">--</h2>
+                            <small class="text-muted">Not assigned</small>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card stat-card dark">
+                    <div class="card-body">
+                        <h6 class="text-muted">Peer Mentor</h6>
+                        {% with peer=student.peer_mentor %}
+                        {% if peer and peer.is_active %}
+                            <h5 class="mb-0">{{ peer.mentor.full_name }}</h5>
+                            <small class="text-muted">{{ peer.mentor.roll_number }}</small>
+                        {% else %}
+                            <h2 class="mb-0">--</h2>
+                            <small class="text-muted">Not assigned</small>
+                        {% endif %}
+                        {% endwith %}
                     </div>
                 </div>
             </div>

@@ -56,6 +56,7 @@
                             <li><a class="dropdown-item" href="{% url 'feedback:give_feedback' %}"><i class="bi bi-chat-square-text me-2"></i>Feedback</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="{% url 'gallery:album_list' %}"><i class="bi bi-images me-2"></i>Photo Gallery</a></li>
+                            <li><a class="dropdown-item" href="{% url 'clubs:student_manage' %}"><i class="bi bi-people-fill me-2"></i>Manage Club Apps</a></li>
                             <li><a class="dropdown-item" href="{% url 'elections:election_list' %}"><i class="bi bi-person-check me-2"></i>Elections</a></li>
                             <li><a class="dropdown-item" href="{% url 'alumni:directory' %}"><i class="bi bi-people-fill me-2"></i>Alumni</a></li>
                         </ul>
@@ -109,6 +110,8 @@
                             <li><a class="dropdown-item" href="{% url 'attendance:mark' %}">Mark Attendance</a></li>
                             <li><a class="dropdown-item" href="{% url 'attendance:history' %}">Attendance History</a></li>
                             <li><a class="dropdown-item" href="{% url 'attendance:summary' %}">Monthly Summary</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'attendance:custom_email' %}"><i class="bi bi-envelope me-2"></i>Send Custom Email</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="{% url 'results:manage' %}">Manage Results</a></li>
                             <li><a class="dropdown-item" href="{% url 'results:class_summary' %}">Branch Summary</a></li>
@@ -164,6 +167,7 @@
                             <li><a class="dropdown-item" href="{% url 'sports:sport_list' %}"><i class="bi bi-trophy me-2"></i>Sports</a></li>
                             <li><a class="dropdown-item" href="{% url 'quiz:quiz_list' %}"><i class="bi bi-question-circle me-2"></i>Quizzes</a></li>
                             <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'clubs:staff_applications' %}"><i class="bi bi-people me-2"></i>Club Applications</a></li>
                             <li><a class="dropdown-item" href="{% url 'grievances:staff_list' %}"><i class="bi bi-megaphone me-2"></i>Grievances</a></li>
                             <li><a class="dropdown-item" href="{% url 'antiragging:staff_complaints' %}"><i class="bi bi-shield me-2"></i>Anti-Ragging</a></li>
                             <li><a class="dropdown-item" href="{% url 'feedback:staff_results' %}"><i class="bi bi-chat-square-text me-2"></i>Feedback Results</a></li>

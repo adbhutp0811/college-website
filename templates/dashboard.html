@@ -70,25 +70,31 @@
             <div class="card-header"><i class="bi bi-lightning-charge-fill"></i> Quick Actions</div>
             <div class="card-body">
                 <div class="d-grid gap-2">
+                    <div class="text-muted small fw-bold mt-1">Students</div>
                     <a href="{% url 'students:add' %}" class="btn btn-primary"><i class="bi bi-person-plus"></i> Add New Student</a>
+                    <a href="{% url 'faculty:list' %}" class="btn btn-outline-secondary"><i class="bi bi-person-badge"></i> Manage Faculty</a>
+                    <hr>
+                    <div class="text-muted small fw-bold mt-1">Attendance & Communication</div>
                     <a href="{% url 'attendance:mark' %}" class="btn btn-success"><i class="bi bi-calendar-check"></i> Mark Today's Attendance</a>
-                    <a href="{% url 'attendance:summary' %}" class="btn btn-outline-danger"><i class="bi bi-chat-dots-fill"></i> SMS Attendance to Guardians</a>
-                    <a href="{% url 'attendance:custom_sms' %}" class="btn btn-outline-primary"><i class="bi bi-send-fill"></i> Send Custom SMS</a>
+                    <a href="{% url 'attendance:summary' %}" class="btn btn-outline-danger"><i class="bi bi-bar-chart"></i> Monthly Attendance Summary</a>
+                    <a href="{% url 'attendance:custom_email' %}" class="btn btn-outline-info"><i class="bi bi-envelope-fill"></i> Send Custom Email</a>
+                    <hr>
+                    <div class="text-muted small fw-bold mt-1">Results & Exams</div>
                     <a href="{% url 'results:manage' %}" class="btn btn-warning"><i class="bi bi-pencil-square"></i> Enter Results</a>
                     <a href="{% url 'results:class_summary' %}" class="btn btn-info"><i class="bi bi-bar-chart"></i> View Branch Summary</a>
-                    <hr>
                     <a href="{% url 'results:class_summary' %}" class="btn btn-primary"><i class="bi bi-envelope-paper"></i> Email Results to Students</a>
-                    <hr>
-                    <a href="{% url 'faculty:list' %}" class="btn btn-outline-secondary"><i class="bi bi-person-badge"></i> Manage Faculty</a>
-                    <a href="{% url 'grievances:staff_list' %}" class="btn btn-outline-danger"><i class="bi bi-megaphone"></i> Manage Grievances</a>
                     <a href="{% url 'exam_forms:staff_list' %}" class="btn btn-outline-primary"><i class="bi bi-file-text"></i> Exam Registrations</a>
                     <hr>
-                    <a href="{% url 'notices:create_notice' %}" class="btn btn-outline-info"><i class="bi bi-megaphone"></i> Publish Notice</a>
-                    <a href="{% url 'events:create_event' %}" class="btn btn-outline-warning"><i class="bi bi-calendar-plus"></i> Create Event</a>
+                    <div class="text-muted small fw-bold mt-1">Management</div>
                     <a href="{% url 'timetable:manage' %}" class="btn btn-outline-dark"><i class="bi bi-calendar-week"></i> Manage Timetable</a>
+                    <a href="{% url 'leave_management:staff_list' %}" class="btn btn-outline-secondary"><i class="bi bi-calendar-check"></i> Leave Approvals</a>
+                    <a href="{% url 'grievances:staff_list' %}" class="btn btn-outline-danger"><i class="bi bi-megaphone"></i> Manage Grievances</a>
                     <a href="{% url 'hostel:staff_allocations' %}" class="btn btn-outline-success"><i class="bi bi-building"></i> Hostel Allocations</a>
                     <a href="{% url 'placements:staff_applications' %}" class="btn btn-outline-primary"><i class="bi bi-briefcase"></i> Placement Apps</a>
-                    <a href="{% url 'leave_management:staff_list' %}" class="btn btn-outline-secondary"><i class="bi bi-calendar-check"></i> Leave Approvals</a>
+                    <hr>
+                    <div class="text-muted small fw-bold mt-1">Content</div>
+                    <a href="{% url 'notices:create_notice' %}" class="btn btn-outline-info"><i class="bi bi-megaphone"></i> Publish Notice</a>
+                    <a href="{% url 'events:create_event' %}" class="btn btn-outline-warning"><i class="bi bi-calendar-plus"></i> Create Event</a>
                     <a href="{% url 'course_materials:create_material' %}" class="btn btn-outline-info"><i class="bi bi-journal-text"></i> Upload Material</a>
                     <a href="{% url 'course_materials:create_assignment' %}" class="btn btn-outline-warning"><i class="bi bi-pencil-square"></i> Create Assignment</a>
                 </div>
@@ -98,8 +104,42 @@
     <div class="col-md-6">
         <div class="card">
             <div class="card-header"><i class="bi bi-clock-history"></i> Recent Activity</div>
-            <div class="card-body">
-                <p class="text-muted text-center py-4">Welcome to the Student Management System!<br>Use the navigation menu to manage students, attendance, results, grievances, and exam forms.</p>
+            <div class="card-body p-0">
+                <ul class="list-group list-group-flush">
+                    {% if recent_students %}
+                    <li class="list-group-item"><small class="text-muted fw-bold">New Students</small></li>
+                    {% for s in recent_students %}
+                    <li class="list-group-item py-1 px-3"><i class="bi bi-person-plus text-primary me-2"></i>{{ s.full_name }} <span class="text-muted small">({{ s.roll_number }})</span></li>
+                    {% endfor %}
+                    {% endif %}
+                    {% if recent_attendance %}
+                    <li class="list-group-item"><small class="text-muted fw-bold">Recent Attendance</small></li>
+                    {% for a in recent_attendance %}
+                    <li class="list-group-item py-1 px-3"><i class="bi bi-calendar-check text-success me-2"></i>{{ a.student.full_name }} — <span class="{% if a.status == 'absent' %}text-danger{% else %}text-success{% endif %}">{{ a.status|title }}</span> on {{ a.date }}</li>
+                    {% endfor %}
+                    {% endif %}
+                    {% if recent_grievances %}
+                    <li class="list-group-item"><small class="text-muted fw-bold">Recent Grievances</small></li>
+                    {% for g in recent_grievances %}
+                    <li class="list-group-item py-1 px-3"><i class="bi bi-megaphone text-danger me-2"></i>{{ g.title|truncatechars:40 }}</li>
+                    {% endfor %}
+                    {% endif %}
+                    {% if recent_leaves %}
+                    <li class="list-group-item"><small class="text-muted fw-bold">Leave Applications</small></li>
+                    {% for l in recent_leaves %}
+                    <li class="list-group-item py-1 px-3"><i class="bi bi-calendar-check text-warning me-2"></i>{{ l.student.full_name }} — {{ l.status|title }}</li>
+                    {% endfor %}
+                    {% endif %}
+                    {% if recent_notices %}
+                    <li class="list-group-item"><small class="text-muted fw-bold">Latest Notices</small></li>
+                    {% for n in recent_notices %}
+                    <li class="list-group-item py-1 px-3"><i class="bi bi-megaphone text-info me-2"></i>{{ n.title|truncatechars:40 }}</li>
+                    {% endfor %}
+                    {% endif %}
+                    {% if not recent_students and not recent_attendance and not recent_grievances and not recent_leaves and not recent_notices %}
+                    <li class="list-group-item text-muted text-center py-4">No recent activity yet.</li>
+                    {% endif %}
+                </ul>
             </div>
         </div>
     </div>

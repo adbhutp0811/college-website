@@ -1,12 +1,53 @@
+import threading
+
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import CreateView, DetailView, ListView, TemplateView
 from accounts.models import User
 from students.models import Student
-from .models import MentorAssignment, MentorMeeting, MentorMeetingAttendance, MentorNote
+from .models import MentorAssignment, MentorMeeting, MentorMeetingAttendance, MentorNote, PeerMentor
+
+
+def _send_faculty_mentor_email(student, faculty):
+    if student.email:
+        try:
+            send_mail(
+                subject='🎓 Faculty Mentor Assigned',
+                message=(
+                    f'Dear {student.full_name},\n\n'
+                    f'You have been assigned a faculty mentor: {faculty.get_full_name()}.\n'
+                    f'Email: {faculty.email}\n\n'
+                    f'Please log in to the student portal to view your mentor details.\n\n'
+                    f'Regards,\n'
+                    f'Miracle Institute of Technology'
+                ),
+                from_email=None, recipient_list=[student.email], fail_silently=True,
+            )
+        except Exception:
+            pass
+
+
+def _send_peer_mentor_email(mentee, mentor):
+    if mentee.email:
+        try:
+            send_mail(
+                subject='👥 Peer Mentor Assigned',
+                message=(
+                    f'Dear {mentee.full_name},\n\n'
+                    f'You have been assigned a peer mentor: {mentor.full_name} ({mentor.roll_number}).\n'
+                    f'Your peer mentor is a final year student who will guide you.\n\n'
+                    f'Please log in to the student portal to view your peer mentor details.\n\n'
+                    f'Regards,\n'
+                    f'Miracle Institute of Technology'
+                ),
+                from_email=None, recipient_list=[mentee.email], fail_silently=True,
+            )
+        except Exception:
+            pass
 
 
 class StaffRequiredMixin(UserPassesTestMixin):
@@ -100,12 +141,20 @@ class AssignMentorView(StaffRequiredMixin, View):
 
     def get(self, request):
         faculty_list = User.objects.filter(role='teacher')
+        filter_type = request.GET.get('filter', '')
         students = Student.objects.filter(is_deleted=False)
+        if filter_type == 'final_year':
+            students = students.filter(student_class__section__in=['Sem 7', 'Sem 8'])
         assignments = MentorAssignment.objects.filter(is_active=True).select_related('faculty', 'student')
+        all_count = Student.objects.filter(is_deleted=False).count()
+        final_year_count = Student.objects.filter(is_deleted=False, student_class__section__in=['Sem 7', 'Sem 8']).count()
         return render(request, self.template_name, {
             'faculty_list': faculty_list,
             'students': students,
             'assignments': assignments,
+            'filter_type': filter_type,
+            'all_count': all_count,
+            'final_year_count': final_year_count,
         })
 
     def post(self, request):
@@ -117,10 +166,13 @@ class AssignMentorView(StaffRequiredMixin, View):
             messages.success(request, 'Mentor assignment removed.')
         else:
             if faculty_id and student_id:
+                faculty = User.objects.get(pk=faculty_id)
+                student = Student.objects.get(pk=student_id)
                 MentorAssignment.objects.update_or_create(
                     student_id=student_id,
                     defaults={'faculty_id': faculty_id, 'is_active': True}
                 )
+                threading.Thread(target=_send_faculty_mentor_email, args=(student, faculty), daemon=True).start()
                 messages.success(request, 'Mentor assigned successfully.')
         return redirect('mentor:assign')
 
@@ -141,3 +193,40 @@ class StudentMentorView(StudentRequiredMixin, TemplateView):
             ctx['mentor'] = None
         ctx['student'] = student
         return ctx
+
+
+class AssignPeerMentorView(StaffRequiredMixin, View):
+    template_name = 'mentor/peer_assign.html'
+
+    def get(self, request):
+        mentors = Student.objects.filter(is_deleted=False, student_class__section__in=['Sem 7', 'Sem 8'])
+        mentees = Student.objects.filter(is_deleted=False, student_class__section__in=['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4', 'Sem 5', 'Sem 6'])
+        assignments = PeerMentor.objects.filter(is_active=True).select_related('mentor', 'mentee')
+        return render(request, self.template_name, {
+            'mentors': mentors,
+            'mentees': mentees,
+            'assignments': assignments,
+        })
+
+    def post(self, request):
+        mentor_id = request.POST.get('mentor')
+        mentee_id = request.POST.get('mentee')
+        action = request.POST.get('action', 'assign')
+        if action == 'remove':
+            PeerMentor.objects.filter(mentor_id=mentor_id, mentee_id=mentee_id).update(is_active=False)
+            messages.success(request, 'Peer mentor assignment removed.')
+        else:
+            if mentor_id and mentee_id:
+                mentor = get_object_or_404(Student, pk=mentor_id)
+                mentee = get_object_or_404(Student, pk=mentee_id)
+                current_count = PeerMentor.objects.filter(mentor=mentor, is_active=True).count()
+                if current_count >= 5:
+                    messages.error(request, f'{mentor.full_name} already has {current_count} mentees. Max 5 allowed.')
+                    return redirect('mentor:peer_assign')
+                PeerMentor.objects.update_or_create(
+                    mentee_id=mentee_id,
+                    defaults={'mentor_id': mentor_id, 'is_active': True}
+                )
+                threading.Thread(target=_send_peer_mentor_email, args=(mentee, mentor), daemon=True).start()
+                messages.success(request, 'Peer mentor assigned successfully.')
+        return redirect('mentor:peer_assign')
