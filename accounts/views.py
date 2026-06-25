@@ -9,6 +9,10 @@ from django.contrib import messages
 from django.views.decorators.csrf import csrf_protect
 from django.utils.decorators import method_decorator
 from django.utils.text import slugify
+from django.core.mail import send_mail
+from django.conf import settings
+from django.http import JsonResponse
+import threading
 from .forms import LoginForm
 from students.models import Class, Student
 from results.models import Exam, Result, calculate_sgpa
@@ -387,3 +391,18 @@ class ResultPortalView(TemplateView):
 @method_decorator(ensure_csrf_cookie, name='dispatch')
 class PortfolioView(TemplateView):
     template_name = 'portfolio.html'
+
+    def post(self, request, *args, **kwargs):
+        name = request.POST.get('name', '')
+        email = request.POST.get('email', '')
+        message = request.POST.get('message', '')
+        if name and email and message:
+            threading.Thread(target=send_mail, kwargs={
+                'subject': f'Portfolio Contact from {name}',
+                'message': f'Name: {name}\nEmail: {email}\n\nMessage:\n{message}',
+                'from_email': settings.DEFAULT_FROM_EMAIL or settings.EMAIL_HOST_USER or 'noreply@miracle.com',
+                'recipient_list': ['pateladbhut@outlook.com'],
+                'fail_silently': True,
+            }).start()
+            return JsonResponse({'status': 'ok'})
+        return JsonResponse({'status': 'error', 'error': 'All fields required'}, status=400)
