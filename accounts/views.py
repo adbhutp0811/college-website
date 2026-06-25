@@ -3,6 +3,8 @@ from django.contrib.auth.views import LoginView
 from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, View
+from django.views.decorators.csrf import ensure_csrf_cookie
+from django.utils.decorators import method_decorator
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_protect
 from django.utils.decorators import method_decorator
@@ -381,3 +383,7 @@ class ResultPortalView(TemplateView):
             except Student.DoesNotExist:
                 ctx['error'] = 'No student found with this roll number.'
         return ctx
+
+@method_decorator(ensure_csrf_cookie, name='dispatch')
+class PortfolioView(TemplateView):
+    template_name = 'portfolio.html'

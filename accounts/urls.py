@@ -14,6 +14,7 @@ from .views import (
     FacultyView,
     FacultyDetailView,
     SyllabusView,
+    PortfolioView,
 )
 
 app_name = 'accounts'
@@ -33,4 +34,5 @@ urlpatterns = [
     path('faculty/', FacultyView.as_view(), name='faculty'),
     path('faculty/<slug:slug>/', FacultyDetailView.as_view(), name='faculty_detail'),
     path('syllabus/', SyllabusView.as_view(), name='syllabus'),
+    path('portfolio/', PortfolioView.as_view(), name='portfolio'),
 ]
