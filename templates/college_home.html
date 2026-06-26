@@ -426,6 +426,10 @@
                     <a href="{{ partner.website }}" target="_blank" rel="noopener">
                         <img src="{{ partner.logo.url }}" alt="{{ partner.name }}" class="img-fluid" style="max-height:50px;filter:grayscale(0.4);opacity:0.8;transition:all 0.3s;" onmouseover="this.style.filter='grayscale(0)';this.style.opacity='1';" onmouseout="this.style.filter='grayscale(0.4)';this.style.opacity='0.8';">
                     </a>
+                    {% elif partner.logo_key %}
+                    <a href="{{ partner.website }}" target="_blank" rel="noopener">
+                        <img src="{% static 'images/partners/'|add:partner.logo_key|add:'.svg' %}" alt="{{ partner.name }}" class="img-fluid" style="max-height:50px;filter:grayscale(0.4);opacity:0.8;transition:all 0.3s;" onerror="this.src='{% static 'images/partners/'|add:partner.logo_key|add:'.png' %}';this.onerror=this.parentElement.innerHTML='<span class=\'fw-semibold small\'>{{ partner.name }}</span>';" onmouseover="this.style.filter='grayscale(0)';this.style.opacity='1';" onmouseout="this.style.filter='grayscale(0.4)';this.style.opacity='0.8';">
+                    </a>
                     {% else %}
                     <a href="{{ partner.website }}" target="_blank" rel="noopener" class="text-decoration-none">
                         <span class="fw-semibold small">{{ partner.name }}</span>

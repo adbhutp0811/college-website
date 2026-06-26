@@ -15,11 +15,10 @@ from students.models import Student
 CELL_CATEGORIES = ['Student Welfare', 'Career & Placement', 'Innovation & Entrepreneurship', 'Student Activities']
 
 
-def _send_application_emails(club, student, reason=''):
+def _send_application_emails(club, student, reason='', dob=None):
     student_info = (
         f'  Name    : {student.full_name}\n'
         f'  Branch  : {student.student_class}\n'
-        f'  Session : {student.session}\n'
         f'  Email   : {student.email}\n'
         f'  Contact : {student.contact_number}\n'
         f'  Reason  : {reason or "Not specified"}'
@@ -124,12 +123,28 @@ class ClubApplyView(View):
     def post(self, request, *args, **kwargs):
         club = get_object_or_404(Club, pk=kwargs['pk'])
         roll = request.POST.get('roll_number', '').strip()
+        dob = request.POST.get('date_of_birth', '').strip()
         reason = request.POST.get('reason', '').strip()
+
+        if not dob:
+            messages.error(request, 'Please enter your date of birth.')
+            return redirect('clubs:club_detail', pk=club.pk)
+
+        from datetime import datetime
+        try:
+            parsed_dob = datetime.strptime(dob, '%Y-%m-%d').date()
+        except ValueError:
+            messages.error(request, 'Invalid date format.')
+            return redirect('clubs:club_detail', pk=club.pk)
 
         try:
             student = Student.objects.get(roll_number=roll, is_deleted=False)
         except Student.DoesNotExist:
             messages.error(request, 'Student not found with this roll number.')
+            return redirect('clubs:club_detail', pk=club.pk)
+
+        if student.date_of_birth != parsed_dob:
+            messages.error(request, 'Date of birth does not match our records.')
             return redirect('clubs:club_detail', pk=club.pk)
 
         if ClubMembership.objects.filter(club=club, student=student).exists():
@@ -143,8 +158,8 @@ class ClubApplyView(View):
                 return redirect('clubs:club_detail', pk=club.pk)
             existing.delete()
 
-        ClubApplication.objects.create(club=club, student=student, reason=reason)
-        threading.Thread(target=_send_application_emails, args=(club, student, reason), daemon=True).start()
+        ClubApplication.objects.create(club=club, student=student, date_of_birth=parsed_dob, reason=reason)
+        threading.Thread(target=_send_application_emails, args=(club, student, reason, dob), daemon=True).start()
         messages.success(request, f'Application submitted to {club.name}. Wait for approval.')
         return redirect('clubs:club_detail', pk=club.pk)
 

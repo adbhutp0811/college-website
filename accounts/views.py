@@ -273,6 +273,15 @@ DEPT_NAMES = {
     'CSE': ('Computer Science & Engineering', 'AI/ML, cybersecurity, cloud computing & data science.'),
 }
 
+LOGO_MAP = {
+    'Infosys': 'infosys', 'Wipro': 'wipro',
+    'Accenture': 'accenture', 'Amazon': 'amazon', 'HCL': 'hcl',
+    'Google': 'google', 'Microsoft': 'microsoft', 'Flipkart': 'flipkart',
+    'Adobe': 'adobe', 'Oracle': 'oracle', 'Mahindra & Mahindra': 'mahindra', 'Larsen & Toubro': 'lnt',
+    'Capgemini': 'capgemini', 'IBM': 'ibm',
+    'Tech Mahindra': 'techmahindra', 'Deloitte': 'deloitte', 'LTI Mindtree': 'lti',
+}
+
 class CollegeHomeView(TemplateView):
     template_name = 'college_home.html'
 
@@ -292,7 +301,10 @@ class CollegeHomeView(TemplateView):
         context['leadership_members'] = LeadershipMember.objects.filter(is_active=True)
         context['director_message'] = DirectorMessage.objects.filter(is_active=True).first()
         context['departments'] = Department.objects.filter(is_active=True)
-        context['placement_partners'] = PlacementPartner.objects.filter(is_active=True)
+        partners = PlacementPartner.objects.filter(is_active=True)
+        for p in partners:
+            p.logo_key = LOGO_MAP.get(p.name, '')
+        context['placement_partners'] = partners
         context['testimonials'] = Testimonial.objects.filter(is_active=True)
         context['contact_info'] = ContactInfo.objects.filter(is_active=True).first()
         context['latest_notices'] = Notice.objects.filter(is_published=True)[:5]

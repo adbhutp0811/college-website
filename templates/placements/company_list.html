@@ -39,22 +39,23 @@
 <div class="container py-5">
     <div class="row g-4">
         {% for company in companies %}
-        {% with company.logo_key as logo_key %}
         <div class="col-md-4 col-6">
             <div class="card border-0 shadow-sm h-100 text-center p-4 partner-card">
-                {% if logo_key %}
+                {% if company.logo %}
                 <div class="d-flex align-items-center justify-content-center mx-auto" style="width:120px;height:80px;">
-                    <img src="{% static 'images/partners/'|add:logo_key|add:'.svg' %}" alt="{{ company.name }}" class="logo-img" onerror="this.src='{% static 'images/partners/'|add:logo_key|add:'.png' %}';this.onerror=this.parentElement.innerHTML='<div class=\'bg-secondary text-white d-flex align-items-center justify-content-center rounded-circle\' style=\'width:70px;height:70px;font-size:1.6rem;\'>{{ company.name|first }}</div>'">
+                    <img src="{{ company.logo.url }}" alt="{{ company.name }}" class="logo-img">
+                </div>
+                {% elif company.logo_key %}
+                <div class="d-flex align-items-center justify-content-center mx-auto" style="width:120px;height:80px;">
+                    <img src="{% static 'images/partners/'|add:company.logo_key|add:'.svg' %}" alt="{{ company.name }}" class="logo-img" onerror="this.parentElement.innerHTML='<span class=\'fw-bold fs-3 text-secondary\'>{{ company.name|first }}</span>'">
                 </div>
                 {% else %}
                 <div class="bg-secondary text-white d-flex align-items-center justify-content-center rounded-circle mx-auto" style="width:70px;height:70px;font-size:1.6rem;">{{ company.name|first }}</div>
                 {% endif %}
                 <h5 class="fw-bold mt-3">{{ company.name }}</h5>
-                {% if company.avg_package %}<p class="text-muted small mb-1">Avg Package: ₹{{ company.avg_package }} LPA</p>{% endif %}
                 {% if company.website %}<a href="{{ company.website }}" target="_blank" class="small text-decoration-none">Visit Website <i class="bi bi-box-arrow-up-right"></i></a>{% endif %}
             </div>
         </div>
-        {% endwith %}
         {% empty %}
         <div class="col-12 text-center py-5">
             <i class="bi bi-building display-1 text-muted"></i>

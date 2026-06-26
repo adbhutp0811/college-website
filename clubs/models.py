@@ -38,6 +38,7 @@ class ClubApplication(models.Model):
     club = models.ForeignKey(Club, on_delete=models.CASCADE, related_name='applications')
     student = models.ForeignKey('students.Student', on_delete=models.CASCADE, related_name='club_applications')
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
+    date_of_birth = models.DateField(blank=True, null=True, help_text='Verify your date of birth')
     reason = models.TextField(blank=True, help_text='Why do you want to join?')
     reviewed_at = models.DateTimeField(null=True, blank=True)
     reviewed_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)

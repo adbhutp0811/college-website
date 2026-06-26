@@ -2,22 +2,26 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect, get_object_or_404, render
 from django.views.generic import ListView, DetailView, View, TemplateView
 from django.contrib import messages
-from .models import Company, PlacementDrive, PlacementApplication
+from .models import PlacementDrive, PlacementApplication
 from students.models import Student
+from accounts.models import PlacementPartner
 
 LOGO_MAP = {
-    'TCS': 'tcs', 'Infosys': 'infosys', 'Wipro': 'wipro',
-    'Accenture': 'accenture', 'Amazon': 'amazon', 'HCL Technologies': 'hcl',
+    'Infosys': 'infosys', 'Wipro': 'wipro',
+    'Accenture': 'accenture', 'Amazon': 'amazon', 'HCL': 'hcl',
     'Google': 'google', 'Microsoft': 'microsoft', 'Flipkart': 'flipkart',
-    'Adobe': 'adobe', 'Mahindra & Mahindra': 'mahindra', 'Larsen & Toubro': 'lnt',
-    'Cognizant': 'cognizant', 'Capgemini': 'capgemini', 'IBM': 'ibm',
-    'Tech Mahindra': 'techmahindra', 'Deloitte': 'deloitte', 'LTIMindtree': 'lti',
+    'Adobe': 'adobe', 'Oracle': 'oracle', 'Mahindra & Mahindra': 'mahindra', 'Larsen & Toubro': 'lnt',
+    'Capgemini': 'capgemini', 'IBM': 'ibm',
+    'Tech Mahindra': 'techmahindra', 'Deloitte': 'deloitte', 'LTI Mindtree': 'lti',
 }
 
 class CompanyListView(ListView):
-    model = Company
+    model = PlacementPartner
     template_name = 'placements/company_list.html'
     context_object_name = 'companies'
+
+    def get_queryset(self):
+        return PlacementPartner.objects.filter(is_active=True)
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
