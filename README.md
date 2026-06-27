@@ -103,4 +103,4 @@ The project includes configuration for **Render** (`render.yaml`, `build.sh`, `s
 
 ---
 
-> Made by **❤Miracle AD**
+> Made by **❤Miracle AD❤**
